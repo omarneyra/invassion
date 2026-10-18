@@ -9,6 +9,7 @@ extends Node3D
 # Elementos del HUD (CanvasLayer)
 @onready var hud: CanvasLayer = $HUD
 
+var icon_energy: TextureRect = null
 var label_energy: Label = null
 var label_wave_timer: Label = null
 var label_status: Label = null
@@ -32,6 +33,20 @@ var btn_close_tech: Button = null
 
 const SAVE_FILE_PATH: String = "user://quicksave.json"
 
+# Procedural UI Textures & Portraits
+const TEX_ICON_WALL = preload("res://assets/ui/icons/icon_wall.png")
+const TEX_ICON_HARVESTER = preload("res://assets/ui/icons/icon_harvester.png")
+const TEX_ICON_TURRET = preload("res://assets/ui/icons/icon_turret.png")
+const TEX_ICON_ASSAULT = preload("res://assets/ui/icons/icon_assault.png")
+const TEX_ICON_WAVE = preload("res://assets/ui/icons/icon_wave.png")
+const TEX_ICON_ENERGY = preload("res://assets/ui/icons/icon_energy.png")
+
+const TEX_PORTRAIT_BASE = preload("res://assets/ui/portraits/portrait_base.png")
+const TEX_PORTRAIT_TURRET = preload("res://assets/ui/portraits/portrait_turret.png")
+const TEX_PORTRAIT_HARVESTER = preload("res://assets/ui/portraits/portrait_harvester.png")
+const TEX_PORTRAIT_WALL = preload("res://assets/ui/portraits/portrait_wall.png")
+const TEX_PORTRAIT_EMPTY = preload("res://assets/ui/portraits/portrait_empty.png")
+
 var factions_state: Dictionary = {}
 var ai_tick_timer: float = 0.0
 var ai_base_node_id: int = -1
@@ -50,6 +65,7 @@ var btn_spectate_game: Button = null
 var radar_overlay: Control = null
 
 # Elementos del Inspector de Selección RTS
+var inspector_portrait: TextureRect = null
 var inspector_icon: Label = null
 var inspector_title: Label = null
 var inspector_owner: Label = null
@@ -118,6 +134,10 @@ func _ready() -> void:
 	economy_state = EconomyLogic.create_initial_economy(100.0, 5.0)
 
 	# 3. Inicializar referencias del HUD dinámicamente
+	icon_energy = hud.find_child("IconEnergy", true, false)
+	if icon_energy != null:
+		icon_energy.texture = TEX_ICON_ENERGY
+
 	label_energy = hud.find_child("LabelEnergy", true, false)
 	label_wave_timer = hud.find_child("LabelWaveTimer", true, false)
 	label_status = hud.find_child("LabelStatus", true, false)
@@ -159,7 +179,15 @@ func _ready() -> void:
 	btn_spectate_game = hud.find_child("BtnSpectate", true, false)
 	radar_overlay = hud.find_child("RadarOverlay", true, false)
 
+	# Asignar iconos procedimentales a botones de comando
+	if btn_wall != null: btn_wall.icon = TEX_ICON_WALL
+	if btn_harvester != null: btn_harvester.icon = TEX_ICON_HARVESTER
+	if btn_turret != null: btn_turret.icon = TEX_ICON_TURRET
+	if btn_assault != null: btn_assault.icon = TEX_ICON_ASSAULT
+	if btn_wave != null: btn_wave.icon = TEX_ICON_WAVE
+
 	# Inspector de Selección RTS
+	inspector_portrait = hud.find_child("InspectorPortrait", true, false)
 	inspector_icon = hud.find_child("InspectorIcon", true, false)
 	inspector_title = hud.find_child("InspectorTitle", true, false)
 	inspector_owner = hud.find_child("InspectorOwner", true, false)
@@ -702,6 +730,20 @@ func _update_inspector(node_id: int) -> void:
 	if inspector_hp != null:
 		inspector_hp.text = info["hp_text"]
 		inspector_hp.modulate = info["hp_color"]
+
+	if inspector_portrait != null:
+		var pkey: String = info.get("portrait_key", "empty")
+		match pkey:
+			"base":
+				inspector_portrait.texture = TEX_PORTRAIT_BASE
+			"turret":
+				inspector_portrait.texture = TEX_PORTRAIT_TURRET
+			"harvester":
+				inspector_portrait.texture = TEX_PORTRAIT_HARVESTER
+			"wall":
+				inspector_portrait.texture = TEX_PORTRAIT_WALL
+			_:
+				inspector_portrait.texture = TEX_PORTRAIT_EMPTY
 
 	if inspector_stats != null:
 		inspector_stats.text = info["stats_line_1"] + " • " + info["stats_line_2"]
