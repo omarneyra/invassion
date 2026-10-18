@@ -1,0 +1,19 @@
+# Godot 4+ ignores
+.godot/
+*.translation
+
+# Binaries, local builds and templates
+bin/
+build/
+export_templates/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS and Editor artifacts
+.DS_Store
+Thumbs.db
+*.tmp
