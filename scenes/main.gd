@@ -65,6 +65,7 @@ var _radar_indicator_buttons: Array = []
 
 var base_node_id: int = 0
 var invader_counter: int = 0
+var assault_cooldown_timer: float = 0.0
 
 # Sistema de Asaltos / Oleadas
 var current_wave: int = 1
@@ -89,21 +90,21 @@ func _ready() -> void:
 	# Asignar base del jugador (Facción 1) con batería defensiva
 	world_state["nodes"][base_node_id]["building"]["faction_id"] = 1
 	world_state["nodes"][base_node_id]["building"]["attack_range_hops"] = 1
-	world_state["nodes"][base_node_id]["building"]["damage"] = 20.0
-	world_state["nodes"][base_node_id]["building"]["cooldown"] = 1.0
+	world_state["nodes"][base_node_id]["building"]["damage"] = 40.0
+	world_state["nodes"][base_node_id]["building"]["cooldown"] = 0.8
 	world_state["nodes"][base_node_id]["building"]["shoot_timer"] = 0.0
 	world_state["nodes"][base_node_id]["is_base"] = true
 
 	# Asignar base de la IA (Facción 2) con batería defensiva
 	world_state["nodes"][ai_base_node_id]["building"] = {
 		"type": "base",
-		"hp": 500.0,
-		"max_hp": 500.0,
+		"hp": 1500.0,
+		"max_hp": 1500.0,
 		"influence_hops": RacesLogic.calculate_initial_influence_hops(factions_state["factions"][2]["race"]),
 		"faction_id": 2,
 		"attack_range_hops": 1,
-		"damage": 20.0,
-		"cooldown": 1.0,
+		"damage": 40.0,
+		"cooldown": 0.8,
 		"shoot_timer": 0.0
 	}
 	world_state["nodes"][ai_base_node_id]["is_base"] = true
@@ -318,6 +319,8 @@ func _process(delta: float) -> void:
 		economy_state["energy"] = factions_state["factions"][1]["energy"]
 
 	# 2. Gestión del temporizador de oleadas / asaltos
+	if assault_cooldown_timer > 0.0:
+		assault_cooldown_timer = maxf(0.0, assault_cooldown_timer - delta)
 	_update_wave_system(delta)
 
 	# 3. Comandante de Inteligencia Artificial procedimental simétrica (cada 1.5s)
@@ -376,7 +379,10 @@ func _process(delta: float) -> void:
 		elif ev.get("type") == "invader_killed":
 			label_status.text = "¡Unidad enemiga eliminada por la torreta defensiva!"
 		elif ev.get("type") == "building_damaged":
-			label_status.text = "¡Alerta! Instalación bajo asedio militar enemigo."
+			if ev.get("shield_active", false):
+				label_status.text = "🛡️ ¡Escudo Perimetral activo (-60% daño a base)! Neutraliza las torretas primero."
+			else:
+				label_status.text = "¡Alerta! Instalación bajo asedio militar enemigo."
 		elif ev.get("type") == "building_destroyed":
 			label_status.text = "¡Una instalación ha sido demolida en combate!"
 			recheck_territory = true
@@ -432,6 +438,9 @@ func _on_wave_button_pressed() -> void:
 		_launch_wave(true)
 
 func _launch_player_assault() -> void:
+	if assault_cooldown_timer > 0.0:
+		label_status.text = "⚠️ Recargando transportes de asalto (%.1fs restantes)" % assault_cooldown_timer
+		return
 	if factions_state.is_empty() or not factions_state.has("factions"):
 		return
 
@@ -439,9 +448,10 @@ func _launch_player_assault() -> void:
 	factions_state["factions"][1]["energy"] = economy_state["energy"]
 
 	var assault_res = AICommanderLogic.launch_faction_assault(
-		1, factions_state, world_state["nodes"], planet_view.icosphere_data, 60.0
+		1, factions_state, world_state["nodes"], planet_view.icosphere_data, 85.0
 	)
 	if assault_res[0]:
+		assault_cooldown_timer = 15.0
 		var squad: Array = assault_res[1]
 		var cost: float = assault_res[2]
 		var msg: String = assault_res[4]
@@ -576,7 +586,13 @@ func _update_ui() -> void:
 	if label_energy != null:
 		label_energy.text = "⚡ %d E" % int(economy_state.get("energy", 0.0))
 	if btn_assault != null:
-		btn_assault.disabled = (economy_state.get("energy", 0.0) < 60.0)
+		var has_energy: bool = (economy_state.get("energy", 0.0) >= 85.0)
+		var on_cooldown: bool = (assault_cooldown_timer > 0.0)
+		btn_assault.disabled = (not has_energy or on_cooldown)
+		if on_cooldown:
+			btn_assault.text = "Asalto (%.0fs)" % ceil(assault_cooldown_timer)
+		else:
+			btn_assault.text = "Asalto [R] (85 E)"
 
 	if is_wave_active:
 		if label_wave_timer != null:
@@ -595,7 +611,7 @@ func _update_ui() -> void:
 		if ai_base_node_id != -1 and factions_state.get("factions", {}).has(2):
 			var enemy_base_bld = world_state["nodes"].get(ai_base_node_id, {}).get("building")
 			if enemy_base_bld != null and enemy_base_bld.get("hp", 0.0) > 0.0:
-				var hp_pct: int = int((enemy_base_bld["hp"] / enemy_base_bld.get("max_hp", 500.0)) * 100.0)
+				var hp_pct: int = int((enemy_base_bld["hp"] / enemy_base_bld.get("max_hp", 1500.0)) * 100.0)
 				label_crater_status.text = "🏛️ Base IA: %d%% HP" % hp_pct
 				label_crater_status.modulate = Color(1.0, 0.4, 0.3)
 			else:
@@ -703,6 +719,7 @@ func restart_game() -> void:
 	is_wave_active = false
 	invader_counter = 0
 	ai_tick_timer = 0.0
+	assault_cooldown_timer = 0.0
 	selected_building_type = ""
 	selected_inspector_node = -1
 
@@ -723,21 +740,21 @@ func restart_game() -> void:
 	# Asignar base del jugador (Facción 1) con batería defensiva
 	world_state["nodes"][base_node_id]["building"]["faction_id"] = 1
 	world_state["nodes"][base_node_id]["building"]["attack_range_hops"] = 1
-	world_state["nodes"][base_node_id]["building"]["damage"] = 20.0
-	world_state["nodes"][base_node_id]["building"]["cooldown"] = 1.0
+	world_state["nodes"][base_node_id]["building"]["damage"] = 40.0
+	world_state["nodes"][base_node_id]["building"]["cooldown"] = 0.8
 	world_state["nodes"][base_node_id]["building"]["shoot_timer"] = 0.0
 	world_state["nodes"][base_node_id]["is_base"] = true
 
 	# Asignar base de la IA (Facción 2) con batería defensiva
 	world_state["nodes"][ai_base_node_id]["building"] = {
 		"type": "base",
-		"hp": 500.0,
-		"max_hp": 500.0,
+		"hp": 1500.0,
+		"max_hp": 1500.0,
 		"influence_hops": RacesLogic.calculate_initial_influence_hops(factions_state["factions"][2]["race"]),
 		"faction_id": 2,
 		"attack_range_hops": 1,
-		"damage": 20.0,
-		"cooldown": 1.0,
+		"damage": 40.0,
+		"cooldown": 0.8,
 		"shoot_timer": 0.0
 	}
 	world_state["nodes"][ai_base_node_id]["is_base"] = true

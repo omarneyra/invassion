@@ -343,6 +343,100 @@ class TestCombatLogic(unittest.TestCase):
         self.assertIsNotNone(target)
         self.assertEqual(target["id"], 102, "La torreta debe priorizar con Focus Fire la unidad con menor HP (scout)")
 
+    def test_perimeter_shield_damage_reduction_on_base(self):
+        """
+        Verifica que el Escudo Perimetral de la Base reduce el daño recibido un 60% (toma solo 40%)
+        mientras la facción defensora tenga al menos 1 torreta activa.
+        Cuando la torreta es destruida, el daño pasa al 100%.
+        """
+        from logic.combat import faction_has_active_turrets
+
+        factions_data = {
+            "factions": {
+                1: {"name": "Player", "race": "solarian", "team": 1, "is_alive": True},
+                2: {"name": "Enemy", "race": "titanforge", "team": 2, "is_alive": True},
+            },
+            "matrix": {
+                1: {2: "enemy"},
+                2: {1: "enemy"},
+            }
+        }
+
+        # 1. Base del jugador con 1500 HP
+        self.world["nodes"][self.base_id]["building"] = {
+            "type": "base",
+            "hp": 1500.0,
+            "max_hp": 1500.0,
+            "faction_id": 1,
+            "attack_range_hops": 1,
+            "damage": 40.0,
+            "cooldown": 0.8,
+            "shoot_timer": 0.0,
+        }
+
+        # 2. Agregar torreta aliada en un nodo vecino
+        turret_node = self.iso["nodes"][self.base_id]["neighbors"][0]
+        self.world["nodes"][turret_node]["building"] = {
+            "type": "turret",
+            "hp": 280.0,
+            "max_hp": 280.0,
+            "faction_id": 1,
+            "attack_range_hops": 2,
+            "damage": 35.0,
+            "cooldown": 0.8,
+            "shoot_timer": 0.0,
+        }
+
+        self.assertTrue(faction_has_active_turrets(1, self.world["nodes"]))
+
+        # 3. Unidad atacante enemiga pesada (25 de daño directo a estructuras)
+        attacker = {
+            "id": 501,
+            "faction_id": 2,
+            "current_node": self.base_id,
+            "path": [self.base_id],
+            "path_index": 0,
+            "speed": 1.0,
+            "progress": 0.0,
+            "hp": 300.0,
+            "max_hp": 300.0,
+            "damage": 25.0,
+            "attack_cooldown": 1.0,
+            "attack_timer": 1.0, # listo para golpear
+            "state": "attacking",
+            "archetype": "colossus",
+            "role": "heavy",
+        }
+
+        # 4. Tick de combate con escudo activo (la torreta existe)
+        w_res, inv_res, events = update_combat_tick(
+            self.world, [attacker], self.iso, delta_time=0.1, factions_data=factions_data
+        )
+
+        dmg_events = [e for e in events if e.get("type") == "building_damaged"]
+        self.assertEqual(len(dmg_events), 1)
+        self.assertTrue(dmg_events[0]["shield_active"])
+        # 25.0 * 0.40 = 10.0 de daño efectivo
+        self.assertEqual(dmg_events[0]["damage"], 10.0)
+        self.assertEqual(w_res["nodes"][self.base_id]["building"]["hp"], 1490.0)
+
+        # 5. Destruir la torreta
+        w_res["nodes"][turret_node]["building"]["hp"] = 0.0
+        self.assertFalse(faction_has_active_turrets(1, w_res["nodes"]))
+
+        # 6. Siguiente golpe sin escudo perimetral
+        attacker["attack_timer"] = 1.0
+        w_res2, inv_res2, events2 = update_combat_tick(
+            w_res, [attacker], self.iso, delta_time=0.1, factions_data=factions_data
+        )
+
+        dmg_events2 = [e for e in events2 if e.get("type") == "building_damaged"]
+        self.assertEqual(len(dmg_events2), 1)
+        self.assertFalse(dmg_events2[0]["shield_active"])
+        # 25.0 * 1.00 = 25.0 de daño completo
+        self.assertEqual(dmg_events2[0]["damage"], 25.0)
+        self.assertEqual(w_res2["nodes"][self.base_id]["building"]["hp"], 1465.0)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -147,7 +147,7 @@ static func decide_ai_construction(faction_id: int, factions_data: Dictionary, w
 	return [false, null, null, null, 0.0]
 
 
-static func launch_faction_assault(faction_id: int, factions_data: Dictionary, world_nodes: Dictionary, icosphere: Dictionary, assault_cost: float = 60.0) -> Array:
+static func launch_faction_assault(faction_id: int, factions_data: Dictionary, world_nodes: Dictionary, icosphere: Dictionary, assault_cost: float = 85.0) -> Array:
 	var split = FactionsLogic._get_factions_and_matrix(factions_data)
 	var factions: Dictionary = split[0]
 	var fdata = factions.get(faction_id)
@@ -214,17 +214,17 @@ static func decide_ai_assault(faction_id: int, factions_data: Dictionary, world_
 
 	var energy: float = float(fdata.get("energy", 0.0))
 
-	# Umbral de emergencia: si la base está dañada, movilizar defensa desde 65 E
+	# Umbral de emergencia: si la base está dañada, movilizar defensa desde 85 E
 	var effective_threshold: float = assault_threshold
 	var my_base: int = fdata.get("base_node", 0)
 	var base_bld = world_nodes.get(my_base, {}).get("building")
-	if base_bld != null and float(base_bld.get("hp", 500.0)) < float(base_bld.get("max_hp", 500.0)):
-		effective_threshold = minf(assault_threshold, 65.0)
+	if base_bld != null and float(base_bld.get("hp", 1500.0)) < float(base_bld.get("max_hp", 1500.0)):
+		effective_threshold = minf(assault_threshold, 85.0)
 
 	if energy < effective_threshold:
 		return [false, [], 0.0, null]
 
-	var res = launch_faction_assault(faction_id, factions_data, world_nodes, icosphere, 65.0)
+	var res = launch_faction_assault(faction_id, factions_data, world_nodes, icosphere, 85.0)
 	if res[0]:
 		fdata["energy"] = float(fdata["energy"]) + float(res[2])
 		return [true, res[1], res[2], res[3]]

@@ -34,6 +34,15 @@ const BUILDING_CATALOG: Dictionary = {
 		"purify_range_hops": 4,
 		"purify_rate": 15.0,
 	},
+	"base": {
+		"cost": 300.0,
+		"hp": 1500.0,
+		"max_hp": 1500.0,
+		"influence_hops": 2,
+		"attack_range_hops": 1,
+		"damage": 40.0,
+		"cooldown": 0.8,
+	},
 }
 
 static func create_initial_economy(starting_energy: float = 100.0, base_income: float = 5.0) -> Dictionary:

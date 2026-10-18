@@ -181,7 +181,7 @@ def decide_ai_construction(faction_id, factions_data, world_nodes, icosphere):
     return False, None, None, None, 0.0
 
 
-def launch_faction_assault(faction_id, factions_data, world_nodes, icosphere, assault_cost=60.0):
+def launch_faction_assault(faction_id, factions_data, world_nodes, icosphere, assault_cost=85.0):
     """
     Despliega un escuadrón militar geodésico hacia la base enemiga más cercana.
     Utilizable simétricamente por el jugador (Facción 1) o la IA.
@@ -251,18 +251,18 @@ def decide_ai_assault(faction_id, factions_data, world_nodes, icosphere, assault
 
     energy = float(fdata.get("energy", 0.0))
 
-    # Umbral de emergencia: si la base de la facción está sufriendo daños, moviliza defensa desde 65 E
+    # Umbral de emergencia: si la base de la facción está sufriendo daños, moviliza defensa desde 85 E
     effective_threshold = assault_threshold
     my_base = fdata.get("base_node", 0)
     base_bld = world_nodes.get(my_base, {}).get("building")
-    if base_bld and base_bld.get("hp", 500.0) < base_bld.get("max_hp", 500.0):
-        effective_threshold = min(assault_threshold, 65.0)
+    if base_bld and base_bld.get("hp", 1500.0) < base_bld.get("max_hp", 1500.0):
+        effective_threshold = min(assault_threshold, 85.0)
 
     if energy < effective_threshold:
         return False, [], 0.0, None
 
     success, squad, cost, enemy_base, msg = launch_faction_assault(
-        faction_id, factions_data, world_nodes, icosphere, assault_cost=65.0
+        faction_id, factions_data, world_nodes, icosphere, assault_cost=85.0
     )
     if success:
         fdata["energy"] += cost
