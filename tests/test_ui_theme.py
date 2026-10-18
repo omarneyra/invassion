@@ -66,6 +66,7 @@ class TestUITheme(unittest.TestCase):
         data = format_structure_inspector_data(-1, {}, {})
         self.assertFalse(data["is_selected"])
         self.assertEqual(data["structure_tag"], "[ UNSELECTED ]")
+        self.assertEqual(data["portrait_key"], "empty")
 
     def test_format_structure_inspector_data_turret(self):
         factions = {
@@ -86,9 +87,25 @@ class TestUITheme(unittest.TestCase):
         self.assertTrue(res["is_selected"])
         self.assertEqual(res["structure_tag"], "[ TURRET ]")
         self.assertEqual(res["structure_name"], "PULSE DEFENSE CANNON")
+        self.assertEqual(res["portrait_key"], "turret")
         self.assertEqual(res["hp"], 350)
         self.assertIn("350 / 400 HP", res["hp_text"])
         self.assertIn("FIREPOWER: 35 DMG", res["stats_line_2"])
+
+    def test_format_structure_inspector_portraits_all_types(self):
+        factions = {1: {"name": "Solarian Federation", "color": "#22c55e"}}
+        # Base
+        base_res = format_structure_inspector_data(0, {"controller": 1, "building": {"type": "base", "hp": 1500, "max_hp": 1500}}, factions)
+        self.assertEqual(base_res["portrait_key"], "base")
+        # Harvester
+        harv_res = format_structure_inspector_data(1, {"controller": 1, "building": {"type": "harvester", "hp": 250, "max_hp": 250}}, factions)
+        self.assertEqual(harv_res["portrait_key"], "harvester")
+        # Wall
+        wall_res = format_structure_inspector_data(2, {"controller": 1, "building": {"type": "wall", "hp": 400, "max_hp": 400}}, factions)
+        self.assertEqual(wall_res["portrait_key"], "wall")
+        # Empty unclaimed node
+        empty_res = format_structure_inspector_data(3, {"controller": 0}, factions)
+        self.assertEqual(empty_res["portrait_key"], "empty")
 
     def test_format_command_button_data(self):
         btn = format_command_button_data("turret", 100.0, 75.0, 0.0, False)
