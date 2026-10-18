@@ -54,6 +54,7 @@ var inspector_icon: Label = null
 var inspector_title: Label = null
 var inspector_owner: Label = null
 var inspector_hp: Label = null
+var inspector_hp_bar: ProgressBar = null
 var inspector_stats: Label = null
 var selected_inspector_node: int = -1
 
@@ -162,8 +163,25 @@ func _ready() -> void:
 	inspector_icon = hud.find_child("InspectorIcon", true, false)
 	inspector_title = hud.find_child("InspectorTitle", true, false)
 	inspector_owner = hud.find_child("InspectorOwner", true, false)
+	inspector_hp_bar = hud.find_child("InspectorHpBar", true, false)
 	inspector_hp = hud.find_child("InspectorHp", true, false)
 	inspector_stats = hud.find_child("InspectorStats", true, false)
+
+	if inspector_hp_bar != null:
+		var bar_bg = StyleBoxFlat.new()
+		bar_bg.bg_color = Color("#060e1a")
+		bar_bg.set_border_width_all(1)
+		bar_bg.border_color = Color("#1e3a5f")
+		bar_bg.set_corner_radius_all(3)
+
+		var bar_fill = StyleBoxFlat.new()
+		bar_fill.bg_color = Color("#22c55e")
+		bar_fill.set_border_width_all(1)
+		bar_fill.border_color = Color("#4ade80")
+		bar_fill.set_corner_radius_all(3)
+
+		inspector_hp_bar.add_theme_stylebox_override("background", bar_bg)
+		inspector_hp_bar.add_theme_stylebox_override("fill", bar_fill)
 
 	# 4. Conectar señales de input de cámara y HUD
 	camera_orbit.clicked_screen.connect(_on_screen_clicked)
@@ -219,30 +237,32 @@ func _apply_rts_button_theme(btn: Button, accent_color: Color = Color(0.2, 0.45,
 	if btn == null:
 		return
 	var sb_normal = StyleBoxFlat.new()
-	sb_normal.bg_color = Color(0.06, 0.09, 0.14, 0.95)
+	sb_normal.bg_color = Color(0.04, 0.08, 0.15, 0.95)
 	sb_normal.set_border_width_all(1)
 	sb_normal.border_color = accent_color * 0.8
 	sb_normal.set_corner_radius_all(4)
 	sb_normal.set_content_margin_all(5)
 
 	var sb_hover = StyleBoxFlat.new()
-	sb_hover.bg_color = Color(0.09, 0.14, 0.22, 0.98)
+	sb_hover.bg_color = Color(0.08, 0.16, 0.28, 0.98)
 	sb_hover.set_border_width_all(1)
-	sb_hover.border_color = accent_color * 1.5
+	sb_hover.border_color = Color("#00e5ff")
+	sb_hover.shadow_color = Color(0.0, 0.9, 1.0, 0.35)
+	sb_hover.shadow_size = 4
 	sb_hover.set_corner_radius_all(4)
 	sb_hover.set_content_margin_all(5)
 
 	var sb_pressed = StyleBoxFlat.new()
-	sb_pressed.bg_color = Color(0.12, 0.18, 0.28, 1.0)
+	sb_pressed.bg_color = Color(0.02, 0.45, 0.72, 1.0)
 	sb_pressed.set_border_width_all(2)
-	sb_pressed.border_color = Color(0.38, 0.74, 0.98)
+	sb_pressed.border_color = Color.WHITE
 	sb_pressed.set_corner_radius_all(4)
 	sb_pressed.set_content_margin_all(5)
 
 	var sb_disabled = StyleBoxFlat.new()
-	sb_disabled.bg_color = Color(0.03, 0.05, 0.08, 0.6)
+	sb_disabled.bg_color = Color(0.02, 0.04, 0.07, 0.7)
 	sb_disabled.set_border_width_all(1)
-	sb_disabled.border_color = Color(0.12, 0.16, 0.22, 0.5)
+	sb_disabled.border_color = Color(0.1, 0.16, 0.24, 0.5)
 	sb_disabled.set_corner_radius_all(4)
 	sb_disabled.set_content_margin_all(5)
 
@@ -250,6 +270,10 @@ func _apply_rts_button_theme(btn: Button, accent_color: Color = Color(0.2, 0.45,
 	btn.add_theme_stylebox_override("hover", sb_hover)
 	btn.add_theme_stylebox_override("pressed", sb_pressed)
 	btn.add_theme_stylebox_override("disabled", sb_disabled)
+	btn.add_theme_color_override("font_color", Color("#e2e8f0"))
+	btn.add_theme_color_override("font_hover_color", Color("#00e5ff"))
+	btn.add_theme_color_override("font_pressed_color", Color.WHITE)
+	btn.add_theme_color_override("font_disabled_color", Color("#64748b"))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -583,39 +607,58 @@ func _on_screen_clicked(screen_pos: Vector2) -> void:
 		label_status.text = "Nodo #" + str(clicked_node) + " | Dominio: " + cname + " | Estructura: " + bname
 
 func _update_ui() -> void:
+	# 1. Update Energy Readout
+	var energy_val = economy_state.get("energy", 0.0)
+	var e_data = UIThemeLogic.format_energy_display(energy_val, economy_state.get("energy_rate", 5.0))
 	if label_energy != null:
-		label_energy.text = "⚡ %d E" % int(economy_state.get("energy", 0.0))
+		label_energy.text = e_data["full_text"]
+		label_energy.modulate = e_data["color"]
+
+	# 2. Update Wave Alert
+	var w_data = UIThemeLogic.format_wave_threat_alert(is_wave_active, current_wave, wave_countdown, active_invaders.size())
+	if label_wave_timer != null:
+		label_wave_timer.text = w_data["badge"] + " " + w_data["text"]
+		label_wave_timer.modulate = w_data["status_color"]
+
+	# 3. Update Command Buttons
+	var wall_data = UIThemeLogic.format_command_button_data("wall", energy_val, 25.0, 0.0, selected_building_type == "wall")
+	if btn_wall != null:
+		btn_wall.text = wall_data["full_button_text"]
+		btn_wall.disabled = not wall_data["is_enabled"]
+
+	var harv_data = UIThemeLogic.format_command_button_data("harvester", energy_val, 50.0, 0.0, selected_building_type == "harvester")
+	if btn_harvester != null:
+		btn_harvester.text = harv_data["full_button_text"]
+		btn_harvester.disabled = not harv_data["is_enabled"]
+
+	var turr_data = UIThemeLogic.format_command_button_data("turret", energy_val, 75.0, 0.0, selected_building_type == "turret")
+	if btn_turret != null:
+		btn_turret.text = turr_data["full_button_text"]
+		btn_turret.disabled = not turr_data["is_enabled"]
+
+	var aslt_data = UIThemeLogic.format_command_button_data("assault", energy_val, 85.0, assault_cooldown_timer, false)
 	if btn_assault != null:
-		var has_energy: bool = (economy_state.get("energy", 0.0) >= 85.0)
-		var on_cooldown: bool = (assault_cooldown_timer > 0.0)
-		btn_assault.disabled = (not has_energy or on_cooldown)
-		if on_cooldown:
-			btn_assault.text = "Asalto (%.0fs)" % ceil(assault_cooldown_timer)
-		else:
-			btn_assault.text = "Asalto [R] (85 E)"
+		btn_assault.text = aslt_data["full_button_text"]
+		btn_assault.disabled = not aslt_data["is_enabled"]
 
-	if is_wave_active:
-		if label_wave_timer != null:
-			label_wave_timer.text = "⚔️ ¡Asalto #%d! (%d restantes)" % [current_wave, active_invaders.size()]
-		if btn_wave != null:
+	if btn_wave != null:
+		if is_wave_active:
 			btn_wave.disabled = true
-			btn_wave.text = "Defendiendo..."
-	else:
-		if label_wave_timer != null:
-			label_wave_timer.text = "⏳ Asalto #%d en %ds" % [current_wave, maxi(0, int(wave_countdown))]
-		if btn_wave != null:
+			btn_wave.text = "[ACTIVE RAID]\nDEFENDING..."
+		else:
 			btn_wave.disabled = false
-			btn_wave.text = "💀 Iniciar (+15 E)"
+			btn_wave.text = "[SPC] FORCE WAVE\n+15 E BONUS"
 
+	# 4. Hostile Command Core Status
 	if label_crater_status != null:
 		if ai_base_node_id != -1 and factions_state.get("factions", {}).has(2):
 			var enemy_base_bld = world_state["nodes"].get(ai_base_node_id, {}).get("building")
 			if enemy_base_bld != null and enemy_base_bld.get("hp", 0.0) > 0.0:
 				var hp_pct: int = int((enemy_base_bld["hp"] / enemy_base_bld.get("max_hp", 1500.0)) * 100.0)
-				label_crater_status.text = "🏛️ Base IA: %d%% HP" % hp_pct
+				label_crater_status.text = "HOSTILE COMMAND CORE: %d / %d HP [%d%%]" % [int(enemy_base_bld["hp"]), int(enemy_base_bld.get("max_hp", 1500.0)), hp_pct]
 				label_crater_status.modulate = Color(1.0, 0.4, 0.3)
 			else:
-				label_crater_status.text = "🏛️ Base IA: Destruida"
+				label_crater_status.text = "HOSTILE COMMAND CORE: DESTROYED"
 				label_crater_status.modulate = Color.GREEN
 
 	if selected_inspector_node != -1:
@@ -625,85 +668,59 @@ func _update_inspector(node_id: int) -> void:
 	selected_inspector_node = node_id
 	if inspector_title == null:
 		return
-	if node_id == -1 or not world_state.get("nodes", {}).has(node_id):
-		if inspector_icon: inspector_icon.text = "🪐"
-		if inspector_title: inspector_title.text = "Planeta Invassion"
-		if inspector_owner:
-			inspector_owner.text = "Haz clic en cualquier nodo para inspeccionar o construir"
-			inspector_owner.modulate = Color(0.38, 0.74, 0.98)
-		if inspector_hp: inspector_hp.text = "Integridad: --"
-		if inspector_stats: inspector_stats.text = "Navegación: Arrastra para rotar"
-		return
 
-	var ndata: Dictionary = world_state["nodes"][node_id]
-	var bld = ndata.get("building")
-	var ctrl = ndata.get("controller", 0)
-	var c_str = str(ctrl)
-	var fname = "Territorio Neutral"
-	var fcolor = Color(0.55, 0.65, 0.75)
+	var ndata: Dictionary = {}
+	if node_id != -1 and world_state.get("nodes", {}).has(node_id):
+		ndata = world_state["nodes"][node_id]
 
-	if c_str == "1" or c_str == "player":
-		fname = factions_state.get("factions", {}).get(1, {}).get("name", "Imperio Solar") + " (Aliado)"
-		fcolor = Color(factions_state.get("factions", {}).get(1, {}).get("color", "#22c55e"))
-	elif factions_state.get("factions", {}).has(ctrl):
-		fname = factions_state["factions"][ctrl].get("name", "Facción #" + str(ctrl)) + " (Rival)"
-		fcolor = Color(factions_state["factions"][ctrl].get("color", "#a855f7"))
+	var info: Dictionary = UIThemeLogic.format_structure_inspector_data(
+		node_id, ndata, factions_state.get("factions", {})
+	)
 
-	if inspector_owner:
-		inspector_owner.text = "Dominio: " + fname
-		inspector_owner.modulate = fcolor
+	if inspector_icon != null:
+		inspector_icon.text = info["structure_tag"]
+		inspector_icon.modulate = info["affiliation_color"]
 
-	if bld != null:
-		var btype: String = bld.get("type", "")
-		var hp: int = int(bld.get("hp", 0))
-		var max_hp: int = int(bld.get("max_hp", 100))
-		if inspector_hp:
-			inspector_hp.text = "Integridad: %d / %d HP" % [hp, max_hp]
-		match btype:
-			"base":
-				if inspector_icon: inspector_icon.text = "🏛️"
-				if inspector_title: inspector_title.text = "PUESTO DE COMANDO"
-				if inspector_stats: inspector_stats.text = "Núcleo estratégico • Generación: +5.0 E/s"
-			"harvester":
-				if inspector_icon: inspector_icon.text = "⚡"
-				if inspector_title: inspector_title.text = "EXTRACTOR CUÁNTICO"
-				var hops_prod = 1 + int(ndata.get("neighbors", []).size() / 2)
-				if inspector_stats: inspector_stats.text = "Producción continua: +%d E/s" % hops_prod
-			"turret":
-				if inspector_icon: inspector_icon.text = "🎯"
-				if inspector_title: inspector_title.text = "TORRETA DEFENSIVA"
-				var r_hops = bld.get("attack_range_hops", 2)
-				var cd = bld.get("cooldown", 1.0)
-				if inspector_stats: inspector_stats.text = "Rango: %d saltos • Recarga: %.1fs" % [r_hops, cd]
-			"wall":
-				if inspector_icon: inspector_icon.text = "🛡️"
-				if inspector_title: inspector_title.text = "MURO DE CONTENCIÓN"
-				if inspector_stats: inspector_stats.text = "Blindaje estructural de alta absorción"
-			_:
-				if inspector_icon: inspector_icon.text = "🏗️"
-				if inspector_title: inspector_title.text = btype.to_upper()
-				if inspector_stats: inspector_stats.text = "Instalación táctica en superficie"
-	else:
-		if inspector_icon: inspector_icon.text = "📍"
-		if inspector_title: inspector_title.text = "NODO GEODÉSICO #%d" % node_id
-		if inspector_hp: inspector_hp.text = "Sector Disponible"
-		if inspector_stats: inspector_stats.text = "Listo para despliegue de instalaciones"
+	if inspector_title != null:
+		inspector_title.text = info["structure_name"]
+
+	if inspector_owner != null:
+		inspector_owner.text = "AFFILIATION: " + info["affiliation_name"]
+		inspector_owner.modulate = info["affiliation_color"]
+
+	if inspector_hp_bar != null:
+		inspector_hp_bar.visible = info["is_selected"] and (info["max_hp"] > 0)
+		inspector_hp_bar.value = info["hp_percent"]
+		var fill_sb = inspector_hp_bar.get_theme_stylebox("fill")
+		if fill_sb is StyleBoxFlat:
+			fill_sb.bg_color = info["hp_color"]
+		elif fill_sb != null:
+			var new_fill = fill_sb.duplicate()
+			new_fill.bg_color = info["hp_color"]
+			inspector_hp_bar.add_theme_stylebox_override("fill", new_fill)
+
+	if inspector_hp != null:
+		inspector_hp.text = info["hp_text"]
+		inspector_hp.modulate = info["hp_color"]
+
+	if inspector_stats != null:
+		inspector_stats.text = info["stats_line_1"] + " • " + info["stats_line_2"]
 
 func _show_game_over(is_victory: bool) -> void:
 	if banner_game_over != null:
 		banner_game_over.visible = true
 	if is_victory:
 		if label_game_over != null:
-			label_game_over.text = "¡VICTORIA PLANETARIA TOTAL!"
+			label_game_over.text = "OPERATION VICTORY // PLANETARY DOMINANCE SECURED"
 			label_game_over.modulate = Color(0.2, 0.95, 0.4)
 		if label_game_over_details != null:
-			label_game_over_details.text = "Has dominado el planeta y neutralizado el comando de la facción hostil.\nTodas sus instalaciones han colapsado."
+			label_game_over_details.text = "The hostile planetary command core has been neutralized.\nAll remaining enemy infrastructure has collapsed."
 	else:
 		if label_game_over != null:
-			label_game_over.text = "¡DERROTA!"
+			label_game_over.text = "OPERATION DEFEAT // COMMAND CORE LOST"
 			label_game_over.modulate = Color(0.95, 0.25, 0.25)
 		if label_game_over_details != null:
-			label_game_over_details.text = "Tu puesto de comando central ha sucumbido ante las fuerzas enemigas."
+			label_game_over_details.text = "Our strategic command nexus has been breached and destroyed by enemy forces."
 
 func spectate_game() -> void:
 	if banner_game_over != null:
