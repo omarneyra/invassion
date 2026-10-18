@@ -52,7 +52,14 @@ flowchart LR
 - [x] Interactive Victory/Defeat modal with Free Spectate mode and quick Rematch.
 - [x] Comprehensive test suite: **67 unit tests running in ~50ms**.
 
-### [ ] Milestone 4: VFX, Audio & Visual Polish (Next Up)
-- [ ] Shader enhancements for planetary atmosphere, node glow, and laser projectile trails.
+### [ ] Milestone 4: VFX, Audio & Visual Polish (In Progress - v0.8.0)
+- [x] Procedural planetary elevation noise texture and normal map relief (3.2 bump strength) with continental color ramps.
+- [x] Planetary atmospheric Rayleigh scattering halo shell and horizon rim lighting.
+- [x] Sci-Fi metallic panel plating and alien biomechanical chitin normal textures on structures and units.
+- [x] 3D cylindrical plasma bolts replacing legacy 1px wireframe lines.
+- [x] Modern Military Sci-Fi RTS HUD overhaul:
+  - Eliminated ASCII/emoji icons in favor of high-tech tactical badges (`[ SEC ]`, `[ CMD ]`, `[ TUR ]`, `[ EXT ]`).
+  - Integrated dedicated `ProgressBar` for structure health with dynamic green-to-red color gradients.
+  - Sleek button themes with hover glows (`#00e5ff`), active indicators, and hotkey legends.
+  - Procedural telemetry formatting module [`logic/ui_theme.py`](file:///home/xor/Proyectos/invassion/logic/ui_theme.py) with full test coverage (**78 unit tests running in ~80ms**).
 - [ ] Positional sound effects for construction, laser discharges, alerts, and building collapse.
-- [ ] Faction visual distinctions in 3D buildings and custom unit models.

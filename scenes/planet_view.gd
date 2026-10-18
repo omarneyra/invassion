@@ -40,6 +40,77 @@ func _ready() -> void:
 	generate_planet()
 
 func _setup_materials() -> void:
+	# 1. Procedural Planetary Surface & Normal Map
+	var planet_noise = FastNoiseLite.new()
+	planet_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX
+	planet_noise.frequency = 0.014
+	planet_noise.fractal_octaves = 5
+	planet_noise.fractal_lacunarity = 2.0
+	planet_noise.fractal_gain = 0.52
+
+	var planet_albedo_tex = NoiseTexture2D.new()
+	planet_albedo_tex.seamless = true
+	planet_albedo_tex.width = 1024
+	planet_albedo_tex.height = 512
+	planet_albedo_tex.noise = planet_noise
+
+	var grad = Gradient.new()
+	grad.add_point(0.00, Color("#050b18")) # Deep Ocean Trench
+	grad.add_point(0.35, Color("#0d223f")) # Continental Shelf
+	grad.add_point(0.42, Color("#0284c7")) # Cyan Bioluminescent Coast
+	grad.add_point(0.48, Color("#1e293b")) # Coastal Lowlands
+	grad.add_point(0.68, Color("#334155")) # Continental Plateaus
+	grad.add_point(0.85, Color("#475569")) # Mountain Ridges
+	grad.add_point(1.00, Color("#38bdf8")) # Energy Fissures / Mineral Peaks
+	planet_albedo_tex.color_ramp = grad
+
+	var planet_normal_tex = NoiseTexture2D.new()
+	planet_normal_tex.seamless = true
+	planet_normal_tex.as_normal_map = true
+	planet_normal_tex.bump_strength = 3.2
+	planet_normal_tex.width = 1024
+	planet_normal_tex.height = 512
+	planet_normal_tex.noise = planet_noise
+
+	mat_planet_core = StandardMaterial3D.new()
+	mat_planet_core.albedo_texture = planet_albedo_tex
+	mat_planet_core.normal_enabled = true
+	mat_planet_core.normal_texture = planet_normal_tex
+	mat_planet_core.normal_scale = 1.6
+	mat_planet_core.roughness = 0.72
+	mat_planet_core.rim_enabled = true
+	mat_planet_core.rim = 0.85
+	mat_planet_core.rim_tint = 0.5
+	mat_planet_core.rim_color = Color("#38bdf8")
+
+	# 2. Textura de Blindaje Metálico Sci-Fi (Paneles y Remaches)
+	var panel_noise = FastNoiseLite.new()
+	panel_noise.noise_type = FastNoiseLite.TYPE_CELLULAR
+	panel_noise.cellular_return_type = FastNoiseLite.RETURN_CELL_VALUE
+	panel_noise.frequency = 0.08
+
+	var panel_normal = NoiseTexture2D.new()
+	panel_normal.seamless = true
+	panel_normal.as_normal_map = true
+	panel_normal.bump_strength = 2.2
+	panel_normal.width = 256
+	panel_normal.height = 256
+	panel_normal.noise = panel_noise
+
+	# 3. Textura Quitino-Biológica Alienígena
+	var bio_noise = FastNoiseLite.new()
+	bio_noise.noise_type = FastNoiseLite.TYPE_CELLULAR
+	bio_noise.cellular_distance_function = FastNoiseLite.DISTANCE_MANHATTAN
+	bio_noise.frequency = 0.05
+
+	var bio_normal = NoiseTexture2D.new()
+	bio_normal.seamless = true
+	bio_normal.as_normal_map = true
+	bio_normal.bump_strength = 3.0
+	bio_normal.width = 256
+	bio_normal.height = 256
+	bio_normal.noise = bio_noise
+
 	mat_neutral = StandardMaterial3D.new()
 	mat_neutral.albedo_color = Color("#475569")
 	mat_neutral.roughness = 0.7
@@ -66,39 +137,47 @@ func _setup_materials() -> void:
 	mat_lines.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
 	mat_lines.albedo_color = Color(0.2, 0.35, 0.5, 0.45)
 
-	mat_planet_core = StandardMaterial3D.new()
-	mat_planet_core.albedo_color = Color("#0a0f1d") # Superficie oceánica / volcánica profunda
-	mat_planet_core.roughness = 0.85
-
-	# Materiales de entidades
+	# Materiales de entidades con texturas
 	mat_base_glow = StandardMaterial3D.new()
 	mat_base_glow.albedo_color = Color("#38bdf8")
 	mat_base_glow.emission_enabled = true
 	mat_base_glow.emission = Color("#0284c7")
 	mat_base_glow.emission_energy_multiplier = 1.2
+	mat_base_glow.normal_enabled = true
+	mat_base_glow.normal_texture = panel_normal
 
 	mat_turret = StandardMaterial3D.new()
 	mat_turret.albedo_color = Color("#e2e8f0")
-	mat_turret.metallic = 0.8
-	mat_turret.roughness = 0.3
+	mat_turret.metallic = 0.85
+	mat_turret.roughness = 0.28
+	mat_turret.normal_enabled = true
+	mat_turret.normal_texture = panel_normal
 
 	mat_harvester = StandardMaterial3D.new()
 	mat_harvester.albedo_color = Color("#f59e0b")
 	mat_harvester.emission_enabled = true
 	mat_harvester.emission = Color("#b45309")
 	mat_harvester.emission_energy_multiplier = 0.6
+	mat_harvester.metallic = 0.6
+	mat_harvester.roughness = 0.35
+	mat_harvester.normal_enabled = true
+	mat_harvester.normal_texture = panel_normal
 
 	mat_alien_hive = StandardMaterial3D.new()
 	mat_alien_hive.albedo_color = Color("#7f1d1d")
 	mat_alien_hive.emission_enabled = true
 	mat_alien_hive.emission = Color("#dc2626")
 	mat_alien_hive.emission_energy_multiplier = 1.0
+	mat_alien_hive.normal_enabled = true
+	mat_alien_hive.normal_texture = bio_normal
 
 	mat_invader = StandardMaterial3D.new()
 	mat_invader.albedo_color = Color("#ff2222")
 	mat_invader.emission_enabled = true
 	mat_invader.emission = Color("#ff0000")
 	mat_invader.emission_energy_multiplier = 1.2
+	mat_invader.normal_enabled = true
+	mat_invader.normal_texture = bio_normal
 
 	mat_wall = StandardMaterial3D.new()
 	mat_wall.albedo_color = Color("#38bdf8")
@@ -106,22 +185,28 @@ func _setup_materials() -> void:
 	mat_wall.emission = Color("#0284c7")
 	mat_wall.emission_energy_multiplier = 0.9
 	mat_wall.roughness = 0.2
+	mat_wall.normal_enabled = true
+	mat_wall.normal_texture = panel_normal
 
 	mat_invader_scout = StandardMaterial3D.new()
 	mat_invader_scout.albedo_color = Color("#f97316")
 	mat_invader_scout.emission_enabled = true
 	mat_invader_scout.emission = Color("#ea580c")
 	mat_invader_scout.emission_energy_multiplier = 1.2
+	mat_invader_scout.normal_enabled = true
+	mat_invader_scout.normal_texture = bio_normal
 
 	mat_invader_brute = StandardMaterial3D.new()
 	mat_invader_brute.albedo_color = Color("#7e22ce")
 	mat_invader_brute.emission_enabled = true
 	mat_invader_brute.emission = Color("#581c87")
 	mat_invader_brute.emission_energy_multiplier = 1.0
+	mat_invader_brute.normal_enabled = true
+	mat_invader_brute.normal_texture = bio_normal
 
 	mat_laser = StandardMaterial3D.new()
 	mat_laser.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
-	mat_laser.albedo_color = Color(0.2, 1.0, 0.4, 0.9)
+	mat_laser.albedo_color = Color(0.2, 1.0, 0.4, 0.95)
 
 	mat_purifier = StandardMaterial3D.new()
 	mat_purifier.albedo_color = Color("#06b6d4")
@@ -136,8 +221,10 @@ func _setup_materials() -> void:
 func generate_planet() -> void:
 	icosphere_data = IcosphereLogic.create_icosphere(subdivisions, planet_radius)
 
-	# 1. Esfera central del planeta
+	# 1. Esfera central del planeta con textura procedural y normal map
 	var core_mesh = SphereMesh.new()
+	core_mesh.radial_segments = 64
+	core_mesh.rings = 32
 	core_mesh.radius = planet_radius * 0.985
 	core_mesh.height = planet_radius * 1.97
 	core_mesh.material = mat_planet_core
@@ -146,6 +233,24 @@ func generate_planet() -> void:
 	core_instance.mesh = core_mesh
 	core_instance.name = "PlanetCore"
 	add_child(core_instance)
+
+	# 2. Velo Atmosférico / Halo orbital
+	var atmo_mesh = SphereMesh.new()
+	atmo_mesh.radial_segments = 48
+	atmo_mesh.rings = 24
+	atmo_mesh.radius = planet_radius * 1.035
+	atmo_mesh.height = planet_radius * 2.07
+	var atmo_mat = StandardMaterial3D.new()
+	atmo_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	atmo_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	atmo_mat.cull_mode = BaseMaterial3D.CULL_FRONT
+	atmo_mat.albedo_color = Color(0.12, 0.45, 0.95, 0.14)
+	atmo_mesh.material = atmo_mat
+
+	var atmo_inst = MeshInstance3D.new()
+	atmo_inst.mesh = atmo_mesh
+	atmo_inst.name = "AtmosphereShell"
+	add_child(atmo_inst)
 
 	# 2. Aristas de la cuadrícula geodésica
 	_build_wireframe_mesh()
@@ -720,7 +825,41 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 	root.scale = Vector3.ONE * scale_val
 	return root
 
-# --- PROYECTILES LÁSER DE TORRETAS ---
+func _create_laser_bolt(start_pos: Vector3, end_pos: Vector3, source_node: int) -> void:
+	var delta_vec: Vector3 = end_pos - start_pos
+	var dist: float = delta_vec.length()
+	if dist <= 0.05:
+		return
+
+	var l_mat = mat_laser
+	if current_world_state != null and current_world_state.get("nodes", {}).has(source_node):
+		var bld = current_world_state["nodes"][source_node].get("building")
+		if bld != null:
+			var b_fid: int = bld.get("faction_id", 1)
+			l_mat = get_faction_material(b_fid)
+
+	var bolt = MeshInstance3D.new()
+	var cyl = CylinderMesh.new()
+	cyl.top_radius = 0.04
+	cyl.bottom_radius = 0.04
+	cyl.height = dist
+	bolt.mesh = cyl
+	bolt.material_override = l_mat
+	bolt.position = start_pos + delta_vec * 0.5
+
+	var up: Vector3 = delta_vec.normalized()
+	var forward: Vector3 = Vector3.FORWARD
+	if absf(up.dot(forward)) > 0.9:
+		forward = Vector3.RIGHT
+	var right: Vector3 = up.cross(forward).normalized()
+	forward = right.cross(up).normalized()
+	bolt.basis = Basis(right, up, forward)
+
+	add_child(bolt)
+
+	var tween = create_tween()
+	tween.tween_property(bolt, "scale", Vector3(0.01, 1.0, 0.01), 0.16)
+	tween.tween_callback(bolt.queue_free)
 
 func fire_laser(turret_node_id: int, target_invader_id: Variant) -> void:
 	if not icosphere_data["nodes"].has(turret_node_id):
@@ -731,28 +870,7 @@ func fire_laser(turret_node_id: int, target_invader_id: Variant) -> void:
 
 	var start_pos = icosphere_data["nodes"][turret_node_id]["pos"] + (icosphere_data["nodes"][turret_node_id]["pos"].normalized() * 0.35)
 	var end_pos = inv_node.position
-
-	var l_mat = mat_laser
-	if current_world_state != null and current_world_state.get("nodes", {}).has(turret_node_id):
-		var bld = current_world_state["nodes"][turret_node_id].get("building")
-		if bld != null:
-			var b_fid: int = bld.get("faction_id", 1)
-			l_mat = get_faction_material(b_fid)
-
-	# Crear haz láser efímero
-	var beam = MeshInstance3D.new()
-	var imm_mesh = ImmediateMesh.new()
-	imm_mesh.surface_begin(Mesh.PRIMITIVE_LINES, l_mat)
-	imm_mesh.surface_add_vertex(start_pos)
-	imm_mesh.surface_add_vertex(end_pos)
-	imm_mesh.surface_end()
-	beam.mesh = imm_mesh
-	add_child(beam)
-
-	# Desvanecer y eliminar en 0.15 segundos
-	var tween = create_tween()
-	tween.tween_property(beam, "scale", Vector3.ZERO, 0.15)
-	tween.tween_callback(beam.queue_free)
+	_create_laser_bolt(start_pos, end_pos, turret_node_id)
 
 func fire_laser_to_node(from_node: int, to_node: int) -> void:
 	if not icosphere_data["nodes"].has(from_node) or not icosphere_data["nodes"].has(to_node):
@@ -760,26 +878,7 @@ func fire_laser_to_node(from_node: int, to_node: int) -> void:
 
 	var start_pos = icosphere_data["nodes"][from_node]["pos"] + (icosphere_data["nodes"][from_node]["pos"].normalized() * 0.35)
 	var end_pos = icosphere_data["nodes"][to_node]["pos"] + (icosphere_data["nodes"][to_node]["pos"].normalized() * 0.35)
-
-	var l_mat = mat_laser
-	if current_world_state != null and current_world_state.get("nodes", {}).has(from_node):
-		var bld = current_world_state["nodes"][from_node].get("building")
-		if bld != null:
-			var b_fid: int = bld.get("faction_id", 1)
-			l_mat = get_faction_material(b_fid)
-
-	var beam = MeshInstance3D.new()
-	var imm_mesh = ImmediateMesh.new()
-	imm_mesh.surface_begin(Mesh.PRIMITIVE_LINES, l_mat)
-	imm_mesh.surface_add_vertex(start_pos)
-	imm_mesh.surface_add_vertex(end_pos)
-	imm_mesh.surface_end()
-	beam.mesh = imm_mesh
-	add_child(beam)
-
-	var tween = create_tween()
-	tween.tween_property(beam, "scale", Vector3.ZERO, 0.18)
-	tween.tween_callback(beam.queue_free)
+	_create_laser_bolt(start_pos, end_pos, from_node)
 
 func fire_purification_beam(purifier_node_id: int, crater_node_id: int) -> void:
 	if not icosphere_data["nodes"].has(purifier_node_id) or not icosphere_data["nodes"].has(crater_node_id):

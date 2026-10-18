@@ -28,6 +28,13 @@ func _init() -> void:
 	assert(lane[0] == 85 and lane[-1] == 0)
 	print("✓ Carril geodésico de invasión verificado: " + str(lane.size()) + " nodos de longitud.")
 
+	# 5. Probar UI Theme Logic
+	var colors = UIThemeLogic.get_scifi_hud_colors()
+	assert(colors.has("border_button_hover"), "Debe contener colores sci-fi")
+	var energy_txt = UIThemeLogic.format_energy_display(100.0, 5.0)
+	assert(energy_txt["full_text"] == "ENERGY: 100 E  (+5.0/s)", "Formato de energía correcto")
+	print("✓ Lógica de interfaz Sci-Fi y paleta táctica verificada.")
+
 	print("==========================================")
 	print(" TODOS LOS MÓDULOS DE GDSCRIPT FUNCIONAN.")
 	print("==========================================")
