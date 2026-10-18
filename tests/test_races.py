@@ -120,6 +120,43 @@ class TestRacesCatalog(unittest.TestCase):
         vorash_vs_titan_struct = calculate_incoming_damage(raw_damage, is_target_structure=True, attacker_race_id="vorash", defender_race_id="titanforge")
         self.assertAlmostEqual(vorash_vs_titan_struct, 80.0)
 
+    def test_structural_armor_damage_reduction_for_light_units(self):
+        raw_damage = 40.0
+        # Unidad ligera atacando estructura recibe 50% de reducción de daño (blindaje estructural)
+        dmg_struct = calculate_incoming_damage(raw_damage, is_target_structure=True, attacker_role="light")
+        self.assertAlmostEqual(dmg_struct, 20.0)
+
+        # Unidad pesada atacando estructura no recibe reducción
+        dmg_heavy_struct = calculate_incoming_damage(raw_damage, is_target_structure=True, attacker_role="heavy")
+        self.assertAlmostEqual(dmg_heavy_struct, 40.0)
+
+        # Unidad ligera atacando a otra unidad (no estructura) inflige daño completo
+        dmg_unit = calculate_incoming_damage(raw_damage, is_target_structure=False, attacker_role="light")
+        self.assertAlmostEqual(dmg_unit, 40.0)
+
+    def test_squad_doctrines_for_all_eight_races(self):
+        from logic.races import get_race_squad_composition
+        expected_counts = {
+            "krynn": 5,        # Brood Swarm
+            "titanforge": 1,   # Monolithic Colossus
+            "umbral": 2,       # Void Incursion
+            "solarian": 3,     # Armored Spearhead
+            "nexus": 3,        # Quantum Battery
+            "vorash": 3,       # Scavenger Raiding Party
+            "zephyrian": 3,    # Sky Wing
+            "aethelian": 3,    # Psionic Phalanx
+        }
+        for rid, count in expected_counts.items():
+            squad = get_race_squad_composition(rid)
+            self.assertEqual(len(squad), count, f"La raza {rid} debe desplegar {count} unidades según su doctrina")
+            for u in squad:
+                self.assertIn("archetype", u)
+                self.assertIn("role", u)
+                self.assertTrue(u["hp"] > 0)
+                self.assertTrue(u["damage"] > 0)
+                self.assertTrue(u["speed"] > 0)
+
 
 if __name__ == "__main__":
     unittest.main()
+

@@ -8,6 +8,7 @@ from logic.races import (
     get_race_data,
     calculate_building_cost,
     apply_building_combat_stats,
+    get_race_squad_composition,
 )
 from logic.factions import (
     get_enemy_factions,
@@ -199,51 +200,34 @@ def launch_faction_assault(faction_id, factions_data, world_nodes, icosphere, as
     if not enemy_fid or not path or len(path) <= 1:
         return False, [], 0.0, None, "No se encontró base enemiga alcanzable"
 
-    race_data = get_race_data(fdata.get("race", "solarian"))
-    unique = race_data.get("unique_unit", {})
+    race_id = fdata.get("race", "solarian")
+    race_data = get_race_data(race_id)
+    doctrine_units = get_race_squad_composition(race_id)
 
     squad = []
     base_node = fdata.get("base_node", 0)
 
-    # Unidad líder de raza
-    squad.append({
-        "id": f"{faction_id}_{base_node}_lead_{int(energy)}",
-        "faction_id": faction_id,
-        "target_faction": enemy_fid,
-        "archetype": unique.get("type", "vanguard"),
-        "hp": float(unique.get("hp", 100.0)),
-        "max_hp": float(unique.get("max_hp", 100.0)),
-        "speed": float(unique.get("speed", 0.5)),
-        "damage": float(unique.get("damage", 20.0)),
-        "progress": 0.0,
-        "current_node": path[0],
-        "path": list(path),
-        "path_index": 0,
-        "attack_cooldown": 1.0,
-        "attack_timer": 0.0,
-        "state": "marching",
-        "color": race_data.get("color", "#22c55e"),
-    })
-
-    # Escoltas
-    for idx in range(1, 3):
+    for idx, u in enumerate(doctrine_units):
+        sdelay = float(u.get("spawn_delay", 0.0))
         squad.append({
-            "id": f"{faction_id}_{base_node}_escort_{idx}_{int(energy)}",
+            "id": f"{faction_id}_{base_node}_{u.get('archetype', 'unit')}_{idx}_{int(energy)}",
             "faction_id": faction_id,
             "target_faction": enemy_fid,
-            "archetype": "scout",
-            "hp": 40.0,
-            "max_hp": 40.0,
-            "speed": 0.8,
-            "damage": 10.0,
+            "archetype": u.get("archetype", "scout"),
+            "role": u.get("role", "heavy"),
+            "hp": float(u.get("hp", 40.0)),
+            "max_hp": float(u.get("max_hp", 40.0)),
+            "speed": float(u.get("speed", 0.7)),
+            "damage": float(u.get("damage", 10.0)),
             "progress": 0.0,
             "current_node": path[0],
             "path": list(path),
             "path_index": 0,
             "attack_cooldown": 1.0,
             "attack_timer": 0.0,
-            "state": "marching",
-            "spawn_delay": float(idx * 0.8),
+            "state": "spawning" if sdelay > 0.0 else "marching",
+            "spawn_delay": sdelay,
+            "scale": float(u.get("scale", 1.0)),
             "color": race_data.get("color", "#22c55e"),
         })
 

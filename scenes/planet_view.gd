@@ -585,8 +585,8 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		custom_mat.emission = col.darkened(0.15)
 		custom_mat.emission_energy_multiplier = 1.3
 
-	if archetype == "scout":
-		# Scout veloz (aerodinámico)
+	if archetype == "scout" or archetype == "marine" or archetype == "psionic_disciple":
+		# Infantería / Scout veloz (cono aerodinámico)
 		var body = MeshInstance3D.new()
 		var cone = CylinderMesh.new()
 		cone.top_radius = 0.04
@@ -597,27 +597,79 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		body.position = Vector3(0, 0.12, 0)
 		root.add_child(body)
 
-	elif archetype == "brute":
-		# Brute acorazado (pesado)
+	elif archetype == "broodling":
+		# Enjambre insectoide: cuerpo aplanado con púas dorsales
+		var body = MeshInstance3D.new()
+		var s_mesh = SphereMesh.new()
+		s_mesh.radius = 0.14
+		s_mesh.height = 0.16
+		body.mesh = s_mesh
+		body.material_override = custom_mat if custom_mat != null else mat_invader
+		body.position = Vector3(0, 0.08, 0)
+		root.add_child(body)
+
+		var horn = MeshInstance3D.new()
+		var c_mesh = CylinderMesh.new()
+		c_mesh.top_radius = 0.01
+		c_mesh.bottom_radius = 0.08
+		c_mesh.height = 0.22
+		horn.mesh = c_mesh
+		horn.material_override = custom_mat if custom_mat != null else mat_invader
+		horn.position = Vector3(0, 0.16, 0.08)
+		horn.rotation_degrees = Vector3(30, 0, 0)
+		root.add_child(horn)
+
+	elif archetype == "juggernaut" or archetype == "brute":
+		# Coloso / Brute acorazado monolítico
 		var body = MeshInstance3D.new()
 		var b_mesh = BoxMesh.new()
-		b_mesh.size = Vector3(0.35, 0.28, 0.35)
+		b_mesh.size = Vector3(0.38, 0.32, 0.38)
 		body.mesh = b_mesh
 		body.material_override = custom_mat if custom_mat != null else mat_invader_brute
+		body.position = Vector3(0, 0.16, 0)
+		root.add_child(body)
+
+		var armor = MeshInstance3D.new()
+		var armor_box = BoxMesh.new()
+		armor_box.size = Vector3(0.46, 0.12, 0.46)
+		armor.mesh = armor_box
+		armor.material_override = mat_turret
+		armor.position = Vector3(0, 0.26, 0)
+		root.add_child(armor)
+
+	elif archetype == "railgun_mech":
+		# Artillería electromagnética con cañón largo
+		var body = MeshInstance3D.new()
+		var b_mesh = BoxMesh.new()
+		b_mesh.size = Vector3(0.28, 0.22, 0.28)
+		body.mesh = b_mesh
+		body.material_override = custom_mat if custom_mat != null else mat_invader
+		body.position = Vector3(0, 0.12, 0)
+		root.add_child(body)
+
+		var barrel = MeshInstance3D.new()
+		var cyl = CylinderMesh.new()
+		cyl.top_radius = 0.03
+		cyl.bottom_radius = 0.05
+		cyl.height = 0.45
+		barrel.mesh = cyl
+		barrel.material_override = custom_mat if custom_mat != null else mat_turret
+		barrel.position = Vector3(0, 0.22, 0.18)
+		barrel.rotation_degrees = Vector3(70, 0, 0)
+		root.add_child(barrel)
+
+	elif archetype == "storm_skimmer":
+		# Deslizador aéreo / ala en delta
+		var body = MeshInstance3D.new()
+		var prism = PrismMesh.new()
+		prism.size = Vector3(0.38, 0.08, 0.32)
+		body.mesh = prism
+		body.material_override = custom_mat if custom_mat != null else mat_invader_scout
 		body.position = Vector3(0, 0.15, 0)
 		root.add_child(body)
 
-		# Placas de blindaje
-		var armor = MeshInstance3D.new()
-		var armor_box = BoxMesh.new()
-		armor_box.size = Vector3(0.42, 0.1, 0.42)
-		armor.mesh = armor_box
-		armor.material_override = mat_turret
-		armor.position = Vector3(0, 0.24, 0)
-		root.add_child(armor)
-
 	else:
-		# Vanguard / Crawler estándar
+		# Vanguard / Crawler / Void Infestor estándar
 		var body = MeshInstance3D.new()
 		var s_mesh = SphereMesh.new()
 		s_mesh.radius = 0.2
