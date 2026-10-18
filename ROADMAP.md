@@ -62,4 +62,6 @@ flowchart LR
   - Integrated dedicated `ProgressBar` for structure health with dynamic green-to-red color gradients.
   - Sleek button themes with hover glows (`#00e5ff`), active indicators, and hotkey legends.
   - Procedural telemetry formatting module [`logic/ui_theme.py`](file:///home/xor/Proyectos/invassion/logic/ui_theme.py) with full test coverage (**78 unit tests running in ~80ms**).
+- [ ] Import and integrate true 3D textured `.glb` models for planetary structures (Turret, Base, Harvester, Wall) matching AI concept renders.
+- [ ] Complete overhaul of command action buttons into high-end StarCraft II-style visual slots (beveled metallic frames, full-size graphic icons, clean overlaid hotkeys and cost badges).
 - [ ] Positional sound effects for construction, laser discharges, alerts, and building collapse.
