@@ -899,7 +899,7 @@ func _update_threat_radar() -> void:
 			btn.size = btn.get_combined_minimum_size()
 			var target_pos: Vector2 = ind["screen_pos"] - btn.size * 0.5
 			target_pos.x = clampf(target_pos.x, 15.0, screen_size.x - btn.size.x - 15.0)
-			target_pos.y = clampf(target_pos.y, 65.0, screen_size.y - btn.size.y - 75.0)
+			target_pos.y = clampf(target_pos.y, 65.0, screen_size.y - btn.size.y - 140.0)
 			btn.position = target_pos
 
 			btn.set_meta("world_pos", ind["world_pos"])
