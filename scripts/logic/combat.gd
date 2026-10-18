@@ -203,6 +203,16 @@ static func find_turret_building_target(turret_node_id: int, turret_data: Dictio
 	return candidates[0]["node_id"]
 
 
+static func faction_has_active_turrets(faction_id: int, world_nodes: Dictionary) -> bool:
+	if faction_id <= 0:
+		return false
+	for ndata in world_nodes.values():
+		var b = ndata.get("building")
+		if b != null and b.get("faction_id", 0) == faction_id and b.get("type") == "turret" and b.get("hp", 0.0) > 0.0:
+			return true
+	return false
+
+
 static func update_combat_tick(world_state: Dictionary, invaders: Array, icosphere: Dictionary, delta_time: float, factions_data: Variant = null) -> Array:
 	if delta_time <= 0.0:
 		return [world_state, invaders, []]
@@ -248,12 +258,12 @@ static func update_combat_tick(world_state: Dictionary, invaders: Array, icosphe
 		if building == null or (building.get("type") != "turret" and building.get("type") != "base") or building.get("hp", 0.0) <= 0.0:
 			continue
 
-		var cooldown: float = building.get("cooldown", 0.8 if building.get("type") == "turret" else 1.0)
+		var cooldown: float = building.get("cooldown", 0.8)
 		var timer: float = building.get("shoot_timer", 0.0) + delta_time
 
 		var target = find_turret_target(nid, building, updated_invaders, icosphere, factions_data)
 		if target != null and timer >= cooldown:
-			var raw_damage: float = building.get("damage", 35.0 if building.get("type") == "turret" else 20.0)
+			var raw_damage: float = building.get("damage", 35.0 if building.get("type") == "turret" else 40.0)
 			var target_fid: int = target.get("faction_id", 0)
 			var target_race: String = ""
 			if factions_data != null and (factions_data is Dictionary) and factions_data.has("factions"):
@@ -296,6 +306,9 @@ static func update_combat_tick(world_state: Dictionary, invaders: Array, icosphe
 				var damage: float = RacesLogic.calculate_incoming_damage(
 					raw_damage, true, turret_race, target_race, "heavy"
 				)
+				if target_bld.get("type") == "base" and faction_has_active_turrets(target_bld_fid, new_world["nodes"]):
+					damage *= 0.40
+
 				target_bld["hp"] -= damage
 				timer = 0.0
 				events.append({
@@ -352,6 +365,12 @@ static func update_combat_tick(world_state: Dictionary, invaders: Array, icosphe
 					var effective_damage: float = RacesLogic.calculate_incoming_damage(
 						float(inv["damage"]), true, attacker_race, defender_race, attacker_role
 					)
+
+					var has_shield: bool = false
+					if target_bld.get("type") == "base" and faction_has_active_turrets(bld_fid, new_world["nodes"]):
+						has_shield = true
+						effective_damage *= 0.40
+
 					target_bld["hp"] -= effective_damage
 					events.append({
 						"type": "building_damaged",
@@ -360,6 +379,7 @@ static func update_combat_tick(world_state: Dictionary, invaders: Array, icosphe
 						"remaining_hp": target_bld["hp"],
 						"target_faction": bld_fid,
 						"attacker_faction": inv_fid,
+						"shield_active": has_shield,
 					})
 					if target_bld["hp"] <= 0.0:
 						buildings_destroyed.append(curr_node)

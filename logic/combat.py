@@ -238,6 +238,19 @@ def find_turret_building_target(turret_node_id, turret_data, world_nodes, icosph
 
 
 
+def faction_has_active_turrets(faction_id, world_nodes):
+    """
+    Retorna True si la facción posee al menos una torreta activa con HP > 0.
+    """
+    if not faction_id or faction_id <= 0:
+        return False
+    for ndata in world_nodes.values():
+        b = ndata.get("building")
+        if b and b.get("faction_id") == faction_id and b.get("type") == "turret" and b.get("hp", 0) > 0:
+            return True
+    return False
+
+
 def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_data=None):
     """
     Ejecuta un paso de simulación de combate:
@@ -285,12 +298,12 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
         if not building or building.get("type") not in ("turret", "base") or building["hp"] <= 0:
             continue
 
-        cooldown = building.get("cooldown", 0.8 if building.get("type") == "turret" else 1.0)
+        cooldown = building.get("cooldown", 0.8)
         timer = building.get("shoot_timer", 0.0) + delta_time
 
         target = find_turret_target(nid, building, updated_invaders, icosphere, factions_data)
         if target and timer >= cooldown:
-            raw_damage = building.get("damage", 35.0 if building.get("type") == "turret" else 20.0)
+            raw_damage = building.get("damage", 35.0 if building.get("type") == "turret" else 40.0)
             from logic.races import calculate_incoming_damage
             target_fid = target.get("faction_id", 0)
             target_race = None
@@ -335,6 +348,9 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
                     defender_race_id=target_race,
                     attacker_role="heavy",
                 )
+                if target_bld.get("type") == "base" and faction_has_active_turrets(target_bld_fid, new_world["nodes"]):
+                    damage *= 0.40
+
                 target_bld["hp"] -= damage
                 timer = 0.0
                 events.append({
@@ -392,6 +408,12 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
                         defender_race_id=defender_race,
                         attacker_role=attacker_role,
                     )
+
+                    has_shield = False
+                    if target_bld.get("type") == "base" and faction_has_active_turrets(bld_fid, new_world["nodes"]):
+                        has_shield = True
+                        effective_damage *= 0.40
+
                     target_bld["hp"] -= effective_damage
                     events.append({
                         "type": "building_damaged",
@@ -400,6 +422,7 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
                         "remaining_hp": target_bld["hp"],
                         "target_faction": bld_fid,
                         "attacker_faction": inv_fid,
+                        "shield_active": has_shield,
                     })
                     if target_bld["hp"] <= 0:
                         buildings_destroyed.append(curr_node)

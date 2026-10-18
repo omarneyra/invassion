@@ -26,8 +26,8 @@ static func initialize_world_state(icosphere: Dictionary, base_node_id: int, cra
 
 	world["nodes"][base_node_id]["building"] = {
 		"type": "base",
-		"hp": 500.0,
-		"max_hp": 500.0,
+		"hp": 1500.0,
+		"max_hp": 1500.0,
 		"influence_hops": 3,
 	}
 

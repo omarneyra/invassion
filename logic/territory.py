@@ -34,8 +34,8 @@ def initialize_world_state(icosphere, base_node_id, crater_node_ids):
     # Asignar la base inicial
     world["nodes"][base_node_id]["building"] = {
         "type": "base",
-        "hp": 500.0,
-        "max_hp": 500.0,
+        "hp": 1500.0,
+        "max_hp": 1500.0,
         "influence_hops": 2,
     }
 

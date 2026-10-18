@@ -134,13 +134,15 @@ class TestAICommander(unittest.TestCase):
         self.assertLess(updated_state["factions"][2]["energy"], 160.0)
 
     def test_launch_faction_assault_player(self):
-        # Facción 1 (Jugador Solarian) lanza asalto militar con 100 de energía
+        # Facción 1 (Jugador Solarian) lanza asalto militar con 100 de energía (coste 85 E)
         self.game_state["factions"][1]["energy"] = 100.0
         success, squad, cost, enemy_base, msg = launch_faction_assault(
-            1, self.game_state, self.world_nodes, self.icosphere, assault_cost=60.0
+            1, self.game_state, self.world_nodes, self.icosphere, assault_cost=85.0
         )
         self.assertTrue(success)
-        self.assertEqual(len(squad), 3) # 1 Vanguard + 2 Scouts
+        self.assertEqual(cost, 85.0)
+        self.assertEqual(self.game_state["factions"][1]["energy"], 15.0)
+        self.assertEqual(len(squad), 3) # 1 Vanguard + 2 Marines
         self.assertEqual(squad[0]["faction_id"], 1)
         self.assertEqual(squad[0]["archetype"], "vanguard")
         self.assertEqual(squad[0]["color"], "#22c55e")
