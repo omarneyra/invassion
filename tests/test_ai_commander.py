@@ -69,7 +69,7 @@ class TestAICommander(unittest.TestCase):
             2, self.game_state, self.world_nodes, self.icosphere, assault_threshold=110.0
         )
         self.assertTrue(can_assault)
-        self.assertEqual(len(squad), 3)  # 1 líder + 2 escoltas
+        self.assertEqual(len(squad), 5)  # Enjambre de 5 Broodlings
         self.assertEqual(target_base, self.base_1)
         self.assertEqual(squad[0]["archetype"], "broodling")  # Unidad única de Krynn
 

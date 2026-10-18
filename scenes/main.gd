@@ -486,7 +486,7 @@ func _launch_wave(early_bonus: bool) -> void:
 		invader_counter += 1
 		var arch = composition[i]
 		var target_lane = lanes[i % lanes.size()]
-		var delay = i * 2.0
+		var delay = i * 0.4
 		var new_inv = CombatLogic.spawn_invader(invader_counter, target_lane, arch, delay)
 		new_inv["faction_id"] = 2
 		active_invaders.append(new_inv)

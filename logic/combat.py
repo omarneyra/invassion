@@ -290,7 +290,19 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
 
         target = find_turret_target(nid, building, updated_invaders, icosphere, factions_data)
         if target and timer >= cooldown:
-            damage = building.get("damage", 35.0 if building.get("type") == "turret" else 20.0)
+            raw_damage = building.get("damage", 35.0 if building.get("type") == "turret" else 20.0)
+            from logic.races import calculate_incoming_damage
+            target_fid = target.get("faction_id", 0)
+            target_race = None
+            if factions_data and isinstance(factions_data, dict) and "factions" in factions_data:
+                target_race = factions_data["factions"].get(target_fid, {}).get("race")
+
+            damage = calculate_incoming_damage(
+                raw_damage=raw_damage,
+                is_target_structure=False,
+                attacker_race_id=None,
+                defender_race_id=target_race,
+            )
             target["hp"] -= damage
             timer = 0.0
             events.append({
@@ -309,8 +321,20 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
         elif not target and factions_data and timer >= cooldown and building.get("type") == "turret":
             target_bld_node = find_turret_building_target(nid, building, new_world["nodes"], icosphere, factions_data)
             if target_bld_node is not None:
-                damage = building.get("damage", 35.0)
+                raw_damage = building.get("damage", 35.0)
+                from logic.races import calculate_incoming_damage
+                turret_race = factions_data["factions"].get(building.get("faction_id", 1), {}).get("race")
                 target_bld = new_world["nodes"][target_bld_node]["building"]
+                target_bld_fid = target_bld.get("faction_id", 0)
+                target_race = factions_data["factions"].get(target_bld_fid, {}).get("race")
+
+                damage = calculate_incoming_damage(
+                    raw_damage=raw_damage,
+                    is_target_structure=True,
+                    attacker_race_id=turret_race,
+                    defender_race_id=target_race,
+                    attacker_role="heavy",
+                )
                 target_bld["hp"] -= damage
                 timer = 0.0
                 events.append({
@@ -353,11 +377,26 @@ def update_combat_tick(world_state, invaders, icosphere, delta_time, factions_da
                 inv["attack_timer"] += delta_time
                 if inv["attack_timer"] >= inv["attack_cooldown"]:
                     inv["attack_timer"] = 0.0
-                    target_bld["hp"] -= inv["damage"]
+                    from logic.races import calculate_incoming_damage
+                    attacker_role = inv.get("role", "light" if inv.get("archetype") in ("scout", "broodling", "pulse_drone", "marine", "psionic_disciple", "crawler") else "heavy")
+                    attacker_race = None
+                    defender_race = None
+                    if factions_data and isinstance(factions_data, dict) and "factions" in factions_data:
+                        attacker_race = factions_data["factions"].get(inv_fid, {}).get("race")
+                        defender_race = factions_data["factions"].get(bld_fid, {}).get("race")
+
+                    effective_damage = calculate_incoming_damage(
+                        raw_damage=inv["damage"],
+                        is_target_structure=True,
+                        attacker_race_id=attacker_race,
+                        defender_race_id=defender_race,
+                        attacker_role=attacker_role,
+                    )
+                    target_bld["hp"] -= effective_damage
                     events.append({
                         "type": "building_damaged",
                         "node_id": curr_node,
-                        "damage": inv["damage"],
+                        "damage": effective_damage,
                         "remaining_hp": target_bld["hp"],
                         "target_faction": bld_fid,
                         "attacker_faction": inv_fid,

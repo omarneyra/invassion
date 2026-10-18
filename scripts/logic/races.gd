@@ -35,11 +35,19 @@ const RACES_CATALOG: Dictionary = {
 		"unique_unit": {
 			"type": "vanguard",
 			"name": "Vanguard Mech",
-			"hp": 140.0,
-			"max_hp": 140.0,
+			"hp": 120.0,
+			"max_hp": 120.0,
 			"speed": 0.50,
-			"damage": 22.0,
+			"damage": 20.0,
 			"trait": "Infantería mecanizada pesada con blindaje reforzado.",
+		},
+		"squad_doctrine": {
+			"name": "Armored Spearhead",
+			"units": [
+				{"archetype": "vanguard", "name": "Vanguard Mech", "hp": 120.0, "max_hp": 120.0, "speed": 0.50, "damage": 20.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.2},
+				{"archetype": "marine", "name": "Infantry Marine", "hp": 40.0, "max_hp": 40.0, "speed": 0.70, "damage": 10.0, "role": "light", "spawn_delay": 0.3, "scale": 0.8},
+				{"archetype": "marine", "name": "Infantry Marine", "hp": 40.0, "max_hp": 40.0, "speed": 0.70, "damage": 10.0, "role": "light", "spawn_delay": 0.6, "scale": 0.8},
+			],
 		},
 		"team_bonus": {
 			"type": "passive_income_bonus",
@@ -81,8 +89,18 @@ const RACES_CATALOG: Dictionary = {
 			"hp": 45.0,
 			"max_hp": 45.0,
 			"speed": 1.10,
-			"damage": 12.0,
+			"damage": 10.0,
 			"trait": "Avanza a gran velocidad y regenera tejido biológico.",
+		},
+		"squad_doctrine": {
+			"name": "Brood Swarm",
+			"units": [
+				{"archetype": "broodling", "name": "Broodling", "hp": 45.0, "max_hp": 45.0, "speed": 1.10, "damage": 10.0, "role": "light", "spawn_delay": 0.0, "scale": 0.7},
+				{"archetype": "broodling", "name": "Broodling", "hp": 45.0, "max_hp": 45.0, "speed": 1.10, "damage": 10.0, "role": "light", "spawn_delay": 0.2, "scale": 0.7},
+				{"archetype": "broodling", "name": "Broodling", "hp": 45.0, "max_hp": 45.0, "speed": 1.10, "damage": 10.0, "role": "light", "spawn_delay": 0.4, "scale": 0.7},
+				{"archetype": "broodling", "name": "Broodling", "hp": 45.0, "max_hp": 45.0, "speed": 1.10, "damage": 10.0, "role": "light", "spawn_delay": 0.6, "scale": 0.7},
+				{"archetype": "broodling", "name": "Broodling", "hp": 45.0, "max_hp": 45.0, "speed": 1.10, "damage": 10.0, "role": "light", "spawn_delay": 0.8, "scale": 0.7},
+			],
 		},
 		"team_bonus": {
 			"type": "spawn_delay_reduction",
@@ -123,9 +141,17 @@ const RACES_CATALOG: Dictionary = {
 			"name": "Railgun Automaton",
 			"hp": 90.0,
 			"max_hp": 90.0,
-			"speed": 0.40,
-			"damage": 40.0,
+			"speed": 0.45,
+			"damage": 35.0,
 			"trait": "Artillería electromagnética con impacto a distancia.",
+		},
+		"squad_doctrine": {
+			"name": "Quantum Battery",
+			"units": [
+				{"archetype": "railgun_mech", "name": "Railgun Automaton", "hp": 90.0, "max_hp": 90.0, "speed": 0.45, "damage": 35.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.1},
+				{"archetype": "pulse_drone", "name": "Pulse Drone", "hp": 40.0, "max_hp": 40.0, "speed": 0.75, "damage": 8.0, "role": "light", "spawn_delay": 0.35, "scale": 0.75},
+				{"archetype": "pulse_drone", "name": "Pulse Drone", "hp": 40.0, "max_hp": 40.0, "speed": 0.75, "damage": 8.0, "role": "light", "spawn_delay": 0.70, "scale": 0.75},
+			],
 		},
 		"team_bonus": {
 			"type": "turret_damage_bonus",
@@ -164,11 +190,19 @@ const RACES_CATALOG: Dictionary = {
 		"unique_unit": {
 			"type": "archon_strider",
 			"name": "Archon Strider",
-			"hp": 160.0,
-			"max_hp": 160.0,
-			"speed": 0.45,
-			"damage": 28.0,
+			"hp": 130.0,
+			"max_hp": 130.0,
+			"speed": 0.50,
+			"damage": 24.0,
 			"trait": "Emite campos de energía psiónica al avanzar.",
+		},
+		"squad_doctrine": {
+			"name": "Psionic Phalanx",
+			"units": [
+				{"archetype": "archon_strider", "name": "Archon Strider", "hp": 130.0, "max_hp": 130.0, "speed": 0.50, "damage": 24.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.2},
+				{"archetype": "psionic_disciple", "name": "Psionic Disciple", "hp": 40.0, "max_hp": 40.0, "speed": 0.65, "damage": 10.0, "role": "light", "spawn_delay": 0.35, "scale": 0.8},
+				{"archetype": "psionic_disciple", "name": "Psionic Disciple", "hp": 40.0, "max_hp": 40.0, "speed": 0.65, "damage": 10.0, "role": "light", "spawn_delay": 0.70, "scale": 0.8},
+			],
 		},
 		"team_bonus": {
 			"type": "purification_range_bonus",
@@ -207,11 +241,19 @@ const RACES_CATALOG: Dictionary = {
 		"unique_unit": {
 			"type": "raider_scout",
 			"name": "Raider Scout",
-			"hp": 50.0,
-			"max_hp": 50.0,
-			"speed": 0.95,
-			"damage": 18.0,
+			"hp": 55.0,
+			"max_hp": 55.0,
+			"speed": 0.90,
+			"damage": 14.0,
 			"trait": "Infiltrador táctico con bonificación extrema de demolición.",
+		},
+		"squad_doctrine": {
+			"name": "Scavenger Raiding Party",
+			"units": [
+				{"archetype": "raider_scout", "name": "Raider Scout", "hp": 55.0, "max_hp": 55.0, "speed": 0.90, "damage": 14.0, "role": "siege", "spawn_delay": 0.0, "scale": 0.85},
+				{"archetype": "raider_scout", "name": "Raider Scout", "hp": 55.0, "max_hp": 55.0, "speed": 0.90, "damage": 14.0, "role": "siege", "spawn_delay": 0.30, "scale": 0.85},
+				{"archetype": "raider_scout", "name": "Raider Scout", "hp": 55.0, "max_hp": 55.0, "speed": 0.90, "damage": 14.0, "role": "siege", "spawn_delay": 0.60, "scale": 0.85},
+			],
 		},
 		"team_bonus": {
 			"type": "salvage_share",
@@ -250,11 +292,17 @@ const RACES_CATALOG: Dictionary = {
 		"unique_unit": {
 			"type": "juggernaut",
 			"name": "Juggernaut Colossus",
-			"hp": 300.0,
-			"max_hp": 300.0,
-			"speed": 0.20,
-			"damage": 45.0,
+			"hp": 240.0,
+			"max_hp": 240.0,
+			"speed": 0.25,
+			"damage": 36.0,
 			"trait": "Armadura monolítica masiva resistente a fuego cruzado.",
+		},
+		"squad_doctrine": {
+			"name": "Monolithic Colossus",
+			"units": [
+				{"archetype": "juggernaut", "name": "Juggernaut Colossus", "hp": 240.0, "max_hp": 240.0, "speed": 0.25, "damage": 36.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.5},
+			],
 		},
 		"team_bonus": {
 			"type": "ally_building_hp_bonus",
@@ -293,11 +341,19 @@ const RACES_CATALOG: Dictionary = {
 		"unique_unit": {
 			"type": "storm_skimmer",
 			"name": "Storm Skimmer",
-			"hp": 65.0,
-			"max_hp": 65.0,
+			"hp": 60.0,
+			"max_hp": 60.0,
 			"speed": 0.90,
-			"damage": 20.0,
+			"damage": 14.0,
 			"trait": "Deslizador atmosférico que puede volar sobre obstáculos.",
+		},
+		"squad_doctrine": {
+			"name": "Sky Wing",
+			"units": [
+				{"archetype": "storm_skimmer", "name": "Storm Skimmer", "hp": 60.0, "max_hp": 60.0, "speed": 0.90, "damage": 14.0, "role": "light", "spawn_delay": 0.0, "scale": 0.85},
+				{"archetype": "storm_skimmer", "name": "Storm Skimmer", "hp": 60.0, "max_hp": 60.0, "speed": 0.90, "damage": 14.0, "role": "light", "spawn_delay": 0.30, "scale": 0.85},
+				{"archetype": "storm_skimmer", "name": "Storm Skimmer", "hp": 60.0, "max_hp": 60.0, "speed": 0.90, "damage": 14.0, "role": "light", "spawn_delay": 0.60, "scale": 0.85},
+			],
 		},
 		"team_bonus": {
 			"type": "ally_speed_bonus",
@@ -336,11 +392,18 @@ const RACES_CATALOG: Dictionary = {
 		"unique_unit": {
 			"type": "void_infestor",
 			"name": "Void Infestor",
-			"hp": 110.0,
-			"max_hp": 110.0,
-			"speed": 0.45,
-			"damage": 24.0,
+			"hp": 100.0,
+			"max_hp": 100.0,
+			"speed": 0.50,
+			"damage": 20.0,
 			"trait": "Corrompe nodos terrestres al desplazarse.",
+		},
+		"squad_doctrine": {
+			"name": "Void Incursion",
+			"units": [
+				{"archetype": "void_infestor", "name": "Void Infestor", "hp": 100.0, "max_hp": 100.0, "speed": 0.50, "damage": 20.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.1},
+				{"archetype": "void_infestor", "name": "Void Infestor", "hp": 100.0, "max_hp": 100.0, "speed": 0.50, "damage": 20.0, "role": "heavy", "spawn_delay": 0.40, "scale": 1.1},
+			],
 		},
 		"team_bonus": {
 			"type": "corruption_immunity",
@@ -402,14 +465,63 @@ static func apply_building_combat_stats(building_data: Dictionary, race_id: Stri
 
 	return modified
 
-static func calculate_incoming_damage(raw_damage: float, is_target_structure: bool, attacker_race_id: String, defender_race_id: String) -> float:
+static func calculate_incoming_damage(raw_damage: float, is_target_structure: bool, attacker_race_id: String = "", defender_race_id: String = "", attacker_role: String = "heavy") -> float:
 	var damage: float = raw_damage
-	if attacker_race_id != "":
-		var att_race = get_race_data(attacker_race_id)
-		if is_target_structure:
+	if is_target_structure:
+		if attacker_role == "light":
+			damage *= 0.5
+		if attacker_race_id != "":
+			var att_race = get_race_data(attacker_race_id)
 			damage *= float(att_race.get("combat_modifiers", {}).get("structure_damage_mult", 1.0))
 	if defender_race_id != "":
 		var def_race = get_race_data(defender_race_id)
 		var reduction: float = float(def_race.get("combat_modifiers", {}).get("damage_reduction", 0.0))
 		damage *= (1.0 - reduction)
 	return maxf(0.0, damage)
+
+static func get_race_squad_composition(race_id: String) -> Array:
+	var race = get_race_data(race_id)
+	var doctrine = race.get("squad_doctrine")
+	if doctrine != null and (doctrine is Dictionary) and doctrine.has("units"):
+		var res: Array = []
+		for u in doctrine["units"]:
+			res.append(u.duplicate(true))
+		return res
+
+	var unique: Dictionary = race.get("unique_unit", {})
+	return [
+		{
+			"archetype": unique.get("type", "vanguard"),
+			"name": unique.get("name", "Vanguard Mech"),
+			"hp": float(unique.get("hp", 120.0)),
+			"max_hp": float(unique.get("max_hp", 120.0)),
+			"speed": float(unique.get("speed", 0.5)),
+			"damage": float(unique.get("damage", 20.0)),
+			"role": "heavy",
+			"spawn_delay": 0.0,
+			"scale": 1.2,
+		},
+		{
+			"archetype": "scout",
+			"name": "Scout",
+			"hp": 40.0,
+			"max_hp": 40.0,
+			"speed": 0.8,
+			"damage": 10.0,
+			"role": "light",
+			"spawn_delay": 0.35,
+			"scale": 0.75,
+		},
+		{
+			"archetype": "scout",
+			"name": "Scout",
+			"hp": 40.0,
+			"max_hp": 40.0,
+			"speed": 0.8,
+			"damage": 10.0,
+			"role": "light",
+			"spawn_delay": 0.70,
+			"scale": 0.75,
+		},
+	]
+

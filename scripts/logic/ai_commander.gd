@@ -166,51 +166,35 @@ static func launch_faction_assault(faction_id: int, factions_data: Dictionary, w
 	if enemy_fid == null or path.is_empty() or path.size() <= 1:
 		return [false, [], 0.0, null, "No se encontró base enemiga alcanzable"]
 
-	var race_data: Dictionary = RacesLogic.get_race_data(fdata.get("race", "solarian"))
-	var unique: Dictionary = race_data.get("unique_unit", {})
+	var race_id: String = fdata.get("race", "solarian")
+	var race_data: Dictionary = RacesLogic.get_race_data(race_id)
+	var doctrine_units: Array = RacesLogic.get_race_squad_composition(race_id)
 
 	var squad: Array = []
 	var base_node = fdata.get("base_node", 0)
 
-	# Unidad líder de raza
-	squad.append({
-		"id": "%d_%d_lead_%d" % [faction_id, base_node, int(energy)],
-		"faction_id": faction_id,
-		"target_faction": enemy_fid,
-		"archetype": unique.get("type", "vanguard"),
-		"hp": float(unique.get("hp", 100.0)),
-		"max_hp": float(unique.get("max_hp", 100.0)),
-		"speed": float(unique.get("speed", 0.5)),
-		"damage": float(unique.get("damage", 20.0)),
-		"progress": 0.0,
-		"current_node": path[0],
-		"path": path.duplicate(),
-		"path_index": 0,
-		"attack_cooldown": 1.0,
-		"attack_timer": 0.0,
-		"state": "marching",
-		"color": race_data.get("color", "#22c55e"),
-	})
-
-	# Escoltas
-	for idx in range(1, 3):
+	for idx in range(doctrine_units.size()):
+		var u: Dictionary = doctrine_units[idx]
+		var sdelay: float = float(u.get("spawn_delay", 0.0))
 		squad.append({
-			"id": "%d_%d_escort_%d_%d" % [faction_id, base_node, idx, int(energy)],
+			"id": "%d_%d_%s_%d_%d" % [faction_id, base_node, u.get("archetype", "unit"), idx, int(energy)],
 			"faction_id": faction_id,
 			"target_faction": enemy_fid,
-			"archetype": "scout",
-			"hp": 40.0,
-			"max_hp": 40.0,
-			"speed": 0.8,
-			"damage": 10.0,
+			"archetype": u.get("archetype", "scout"),
+			"role": u.get("role", "heavy"),
+			"hp": float(u.get("hp", 40.0)),
+			"max_hp": float(u.get("max_hp", 40.0)),
+			"speed": float(u.get("speed", 0.7)),
+			"damage": float(u.get("damage", 10.0)),
 			"progress": 0.0,
 			"current_node": path[0],
 			"path": path.duplicate(),
 			"path_index": 0,
 			"attack_cooldown": 1.0,
 			"attack_timer": 0.0,
-			"state": "marching",
-			"spawn_delay": float(idx * 0.8),
+			"state": "spawning" if sdelay > 0.0 else "marching",
+			"spawn_delay": sdelay,
+			"scale": float(u.get("scale", 1.0)),
 			"color": race_data.get("color", "#22c55e"),
 		})
 
