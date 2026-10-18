@@ -1,74 +1,81 @@
-# GDD & Especificación Técnica: invassion (Defensa Planetaria 3D)
+# Game Design Document & Technical Specification: invassion
 
-## 1. Visión General del Juego
-* **Género:** Estrategia / Defensa de Territorio en Tiempo Real sobre superficie esférica (Fusión de colocación táctica estilo *Plants vs. Zombies* y progresión de instalaciones estilo *Age of Empires*).
-* **Plataforma Objetivo:** Navegador Web (WebAssembly + WebGPU/WebGL 2) vía Godot Engine.
-* **Cámara & Navegación:** Vista orbital superior en 3D. Control mediante arrastre con umbral de filtrado (drag threshold) para rotar la esfera planetaria en cualquier eje y rueda del ratón/gesto táctil para zoom in/out.
-* **Manejo de Hemisferio Ciego:** Indicadores visuales de amenaza en la periferia de pantalla (flechas de alerta) cuando hay invasores activos en el lado no visible del planeta.
-
----
-
-## 2. El Tablero: Malla Geodésica (Icosfera)
-
-### 2.1 Estructura Matemática del Grafo
-* **Resolución Estándar:** Icosfera con **Subdivisión 2** (162 nodos / vértices uniformemente distribuidos).
-* Cada nodo $v \in V$ posee:
-  * Coordenada tridimensional normalizada en la esfera: $\vec{p} = (x, y, z)$ donde $|\vec{p}| = R$.
-  * Lista de nodos vecinos adyacentes conectados por aristas $E$ (5 o 6 vecinos por nodo).
-  * Estado de ocupación: `vacio`, `edificio_id`, `invasor_id`.
-  * Bando controlador actual: `neutro`, `jugador`, `corrupto_enemigo`.
-  * Tipo de terreno especial: `normal`, `crater_spawn`, `base_jugador`.
-
-### 2.2 Sistema de Influencia Territorial y Conquista
-* **Instalaciones del Jugador:** Cada edificio proyecta un radio de influencia ($R$ saltos de arista):
-  * **Base:** Radio 2 saltos (~19 nodos iniciales).
-  * **Torreta / Recolector:** Radio 1 salto (~5 a 6 nodos contiguos).
-* **Zonas de Infección / Corrupción (Cráteres de Invasión):**
-  * Los cráteres enemigos proyectan una zona corrupta donde el jugador no puede construir de forma directa.
-  * Para conquistar el planeta, el jugador debe expandir su perímetro hasta rodear o neutralizar el cráter.
-* **Condición de Victoria:** Controlar el 100% de los nodos libres de corrupción y erradicar las fuentes de invasión.
-* **Condición de Derrota:** Destrucción de la Base del jugador o reducción del territorio a cero nodos.
+## 1. Game Overview
+* **Genre:** Real-Time Geodetic Planetary Strategy & Territory Defense (Hybrid combining tactical lane placement from *Plants vs. Zombies* with base expansion and macro-economy from *Age of Empires* / *StarCraft*).
+* **Target Platform:** Native Godot 4 Desktop Execution.
+* **Camera & Navigation:** Full 3D trackball orbital camera with momentum/inertia, drag threshold filtering, smooth zoom, and tactical auto-focus shortcuts (`Base [Space]`, `Threat [F]`, `Enemy Base [C]`).
+* **Blind Hemisphere Radar:** Screen-edge dynamic indicator badges projecting threats advancing on the occluded side of the planet.
 
 ---
 
-## 3. Economía e Instalaciones (Estilo Age of Empires)
+## 2. The Board: Geodetic Icosphere Grid
 
-| Instalación | Costo | Radio Influencia | Salud | Función Principal |
+### 2.1 Mathematical Topology
+* **Standard Resolution:** Dual-subdivision icosahedron (162 vertices / nodes) scalable to 642 vertices.
+* Each node $v \in V$ contains:
+  * 3D Cartesian position on the sphere: $\vec{p} = (x, y, z)$ where $|\vec{p}| = R$.
+  * Adjacency list of topological neighbors (valence 5 or 6).
+  * Structure status: `building` (or `null`).
+  * Faction controller: `controller` (Faction ID or `neutral`).
+  * Special flags: `is_base`, `is_crater`.
+
+### 2.2 Multi-Faction Territorial Influence
+* **Structures project influence hops ($R$):**
+  * **Command Base:** 2 to 3 influence hops depending on faction race.
+  * **Extractor / Quantum Harvester:** 1 to 2 influence hops.
+  * **Defensive Turret:** 1 to 2 influence hops.
+  * **Containment Wall:** 0 influence hops (pure barrier).
+* **Contested Nodes:** When influence zones overlap, ownership resolves in favor of existing structures or remains disputed neutral.
+* **Victory Condition:** Eradicate hostile faction command bases across the globe.
+* **Defeat Condition:** Total collapse of the player's primary Command Base.
+
+---
+
+## 3. Economy & Installations (Age of Empires Style)
+
+| Installation | Cost | Influence | Integrity | Primary Function |
 | :--- | :--- | :--- | :--- | :--- |
-| **Puesto de Comando (Base)** | Inicial | 2 saltos | 500 HP | Genera +5 energía/seg. Si cae, derrota. |
-| **Extractor / Recolector** | 50 E | 1 salto | 100 HP | Genera +2 energía/seg por cada nodo dominado en su radio. |
-| **Torreta Defensiva** | 75 E | 1 salto | 150 HP | Ataca enemigos a 2 saltos de distancia. Cadencia: 1 disparo/seg. Daño: 25. |
-| **Muro Defensivo** | 25 E | 0 saltos | 300 HP | Bloquea el avance físico de invasores en el nodo. |
+| **Command Base** | Initial | 2-3 hops | 500 HP | Generates +5.0 E/s base energy. Armed with active 20 DMG perimeter defense battery. |
+| **Quantum Harvester** | 50 E | 1-2 hops | 100 HP | Generates +1.0 E/s to +1.5 E/s per controlled node in radius. |
+| **Defensive Turret** | 75 E | 1-2 hops | 280 HP | Heavy defensive fortification. 35 DMG, 0.8s cooldown, 2-3 hops range. Smart focus-fire on lowest HP threats. |
+| **Containment Wall** | 25 E | 0 hops | 350 HP | High-durability structural barrier blocking physical invader transit. |
+| **Atmospheric Purifier**| 120 E | 1-2 hops | 200 HP | Radiates cleansing field (4 hops) sealing alien spawn craters. |
 
 ---
 
-## 4. Dinámica de Invasión (Carriles Geodésicos estilo PvZ)
+## 4. Combat Dynamics & Invasion Mechanics
 
-* **Rutas Geodésicas de Invasión:** En lugar de dispersarse al azar por el grafo, cada cráter genera **carriles geodésicos principales** hacia el territorio del jugador.
-* **Avance de la Horda:** Los invasores marchan por las aristas de estos carriles predefinidos.
-* **Combate en Ruta:**
-  * Si la torreta detecta un invasor dentro de su radio de alcance angular, dispara un proyectil balístico.
-  * Si un invasor llega a un nodo ocupado por un edificio, se detiene y ataca hasta demolerlo, reduciendo el territorio del jugador si el edificio cae.
+* **Geodesic Lanes:** Invaders navigate along shortest geodesic paths (BFS) from alien craters or rival bases toward target objectives.
+* **Flank & Pincer Attacks:** Wave progression introduces divergent flank lanes circumventing player fortifications.
+* **Tactical Prioritization (RTS Focus Fire):**
+  * Defensive turrets evaluate all hostile targets in range and prioritize direct attackers first, followed by lowest HP units to eliminate enemy damage output rapidly.
+* **Symmetrical Planetary AI:** Procedural AI commanders manage macro-economies, expand territory, reinforce borders with turrets and walls, research technologies, and launch military assault squads.
+* **Emergency Defense:** When bases or defensive perimeters take damage, AI commanders scramble emergency counter-assault units immediately.
 
 ---
 
-## 5. Arquitectura de Código & Desacoplamiento (Reglas del Proyecto)
+## 5. Architecture & Code Structure
 
-* **Estilo:** Procedimental puro, funciones simples sin OOP, datos planos (diccionarios y listas).
-* **Estructura del Proyecto:**
+* **Style:** Pure procedural programming, simple standalone functions, flat dictionaries and arrays. No object-oriented class hierarchies or mutable stateful models.
+* **Codebase Directory Layout:**
   ```
   invassion/
-  ├── logic/                # Módulos de funciones puras (Python y GDScript)
-  │   ├── icosphere.py      # Generación del grafo geodésico de 162 nodos y distancias
-  │   ├── territory.py      # Radios de influencia, conquista y zonas de corrupción
-  │   ├── economy.py        # Generación de energía, validación y costos de edificios
-  │   └── combat.py         # Detección de rango, disparo, rutas de invasión y daño
-  ├── tests/                # Suite de Unit Tests inmediatos (ejecución < 50ms)
-  │   ├── test_icosphere.py
-  │   ├── test_territory.py
-  │   ├── test_economy.py
-  │   └── test_combat.py
-  ├── scenes/               # Capa visual pasiva de Godot
-  ├── GDD.md
-  └── FRAMEWORK.md
+  ├── logic/                # Pure algorithmic Python modules (shared logic specification)
+  │   ├── icosphere.py      # Geodetic mesh generation and BFS graph traversal
+  │   ├── territory.py      # Influence projection and conquest algorithms
+  │   ├── economy.py        # Income calculations and purchase validation
+  │   ├── combat.py         # Range detection, turret targeting, focus-fire, damage ticks
+  │   ├── factions.py       # Multi-faction diplomacy, teams, and victory evaluation
+  │   ├── ai_commander.py   # Procedural AI decision tree and assault logic
+  │   ├── races.py          # 8 distinct galactic factions with economic/combat traits
+  │   ├── tech_tree.py      # Tech research tree and stat modifiers
+  │   ├── threat_radar.py   # Blind hemisphere screen projection and clamping
+  │   └── save_system.py    # Serialization and state persistence
+  ├── scripts/logic/        # Identical GDScript procedural equivalents for Godot 4
+  ├── scenes/               # Passive visual Godot 4 scenes (StarCraft RTS HUD, 3D Planet)
+  ├── tests/                # Comprehensive unit test suite (execution < 60ms)
+  ├── VERSION               # Single source of truth for SemVer
+  ├── GIT_WORKFLOW.md       # Git Flow, commit conventions, and release policies
+  ├── GDD.md                # Game Design Document
+  └── FRAMEWORK.md          # Technical framework and architectural guidelines
   ```
