@@ -23,6 +23,7 @@ var mat_planet_core: StandardMaterial3D
 # Materiales de estructuras y unidades
 var mat_base_glow: StandardMaterial3D
 var mat_turret: StandardMaterial3D
+var mat_railgun_glow: StandardMaterial3D
 var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
 var mat_alien_hive: StandardMaterial3D
@@ -152,6 +153,12 @@ func _setup_materials() -> void:
 	mat_turret.roughness = 0.28
 	mat_turret.normal_enabled = true
 	mat_turret.normal_texture = panel_normal
+
+	mat_railgun_glow = StandardMaterial3D.new()
+	mat_railgun_glow.albedo_color = Color("#00e5ff")
+	mat_railgun_glow.emission_enabled = true
+	mat_railgun_glow.emission = Color("#00e5ff")
+	mat_railgun_glow.emission_energy_multiplier = 2.5
 
 	mat_harvester = StandardMaterial3D.new()
 	mat_harvester.albedo_color = Color("#f59e0b")
@@ -454,53 +461,87 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 		root.add_child(beacon)
 
 	elif btype == "turret":
-		# 1. Base cilíndrica blindada metálica
+		# 1. Base octogonal blindada con anillo de rotación
 		var base = MeshInstance3D.new()
 		var base_mesh = CylinderMesh.new()
-		base_mesh.top_radius = 0.24
-		base_mesh.bottom_radius = 0.32
-		base_mesh.height = 0.16
+		base_mesh.top_radius = 0.28
+		base_mesh.bottom_radius = 0.38
+		base_mesh.height = 0.12
+		base_mesh.radial_segments = 8
 		base.mesh = base_mesh
 		base.material_override = mat_turret
-		base.position = Vector3(0, 0.08, 0)
+		base.position = Vector3(0, 0.06, 0)
 		root.add_child(base)
 
-		# 2. ANILLO Y CAPUCHÓN LUMINOSO DE FACCIÓN (distinción visual total entre equipos)
-		var collar = MeshInstance3D.new()
-		var collar_mesh = CylinderMesh.new()
-		collar_mesh.top_radius = 0.26
-		collar_mesh.bottom_radius = 0.26
-		collar_mesh.height = 0.07
-		collar.mesh = collar_mesh
-		collar.material_override = fact_mat
-		collar.position = Vector3(0, 0.17, 0)
-		root.add_child(collar)
+		# 4 Patas / Zapatas de Anclaje Geodésico
+		for i in range(4):
+			var angle = i * (PI / 2.0) + (PI / 4.0)
+			var outrigger = MeshInstance3D.new()
+			var leg_mesh = BoxMesh.new()
+			leg_mesh.size = Vector3(0.09, 0.08, 0.18)
+			outrigger.mesh = leg_mesh
+			outrigger.material_override = mat_turret
+			outrigger.position = Vector3(cos(angle) * 0.34, 0.04, sin(angle) * 0.34)
+			outrigger.rotation.y = -angle + PI/2.0
+			root.add_child(outrigger)
 
-		var cap = MeshInstance3D.new()
-		var cap_mesh = SphereMesh.new()
-		cap_mesh.radius = 0.18
-		cap_mesh.height = 0.22
-		cap.mesh = cap_mesh
-		cap.material_override = fact_mat
-		cap.position = Vector3(0, 0.24, 0)
-		root.add_child(cap)
+		# Anillo de rotación de facción
+		var ring = MeshInstance3D.new()
+		var r_mesh = CylinderMesh.new()
+		r_mesh.top_radius = 0.24
+		r_mesh.bottom_radius = 0.24
+		r_mesh.height = 0.05
+		ring.mesh = r_mesh
+		ring.material_override = fact_mat
+		ring.position = Vector3(0, 0.13, 0)
+		root.add_child(ring)
 
-		# 3. Cañón gemelo con bocas de fuego del color de la facción
-		var gun = MeshInstance3D.new()
-		var box_mesh = BoxMesh.new()
-		box_mesh.size = Vector3(0.12, 0.10, 0.40)
-		gun.mesh = box_mesh
-		gun.material_override = mat_turret
-		gun.position = Vector3(0, 0.23, 0.14)
-		root.add_child(gun)
+		# 2. Cabina Blindada de Mando y Sensor Óptico
+		var cabin = MeshInstance3D.new()
+		var cabin_mesh = BoxMesh.new()
+		cabin_mesh.size = Vector3(0.24, 0.18, 0.26)
+		cabin.mesh = cabin_mesh
+		cabin.material_override = mat_turret
+		cabin.position = Vector3(0, 0.22, -0.04)
+		root.add_child(cabin)
 
-		var muzzle = MeshInstance3D.new()
-		var muzzle_box = BoxMesh.new()
-		muzzle_box.size = Vector3(0.14, 0.12, 0.08)
-		muzzle.mesh = muzzle_box
-		muzzle.material_override = fact_mat
-		muzzle.position = Vector3(0, 0.23, 0.34)
-		root.add_child(muzzle)
+		var sensor_pod = MeshInstance3D.new()
+		var sensor_mesh = BoxMesh.new()
+		sensor_mesh.size = Vector3(0.10, 0.08, 0.12)
+		sensor_pod.mesh = sensor_mesh
+		sensor_pod.material_override = fact_mat
+		sensor_pod.position = Vector3(-0.06, 0.33, -0.02)
+		root.add_child(sensor_pod)
+
+		# 3. Cañones Gemelos de Riel (Twin Pulse Railguns)
+		var barrel_offsets = [-0.08, 0.08]
+		for bx in barrel_offsets:
+			# Tubo del cañón exterior
+			var barrel = MeshInstance3D.new()
+			var b_mesh = BoxMesh.new()
+			b_mesh.size = Vector3(0.06, 0.06, 0.46)
+			barrel.mesh = b_mesh
+			barrel.material_override = mat_turret
+			barrel.position = Vector3(bx, 0.22, 0.20)
+			root.add_child(barrel)
+
+			# Riel de plasma luminoso interno
+			var rail = MeshInstance3D.new()
+			var rail_mesh = BoxMesh.new()
+			rail_mesh.size = Vector3(0.03, 0.04, 0.40)
+			rail.mesh = rail_mesh
+			rail.material_override = mat_railgun_glow
+			rail.position = Vector3(bx, 0.22, 0.20)
+			root.add_child(rail)
+
+			# Boca del cañón (Muzzle)
+			var muzzle = MeshInstance3D.new()
+			var m_mesh = BoxMesh.new()
+			m_mesh.size = Vector3(0.08, 0.08, 0.05)
+			muzzle.mesh = m_mesh
+			muzzle.material_override = fact_mat
+			muzzle.position = Vector3(bx, 0.22, 0.44)
+			root.add_child(muzzle)
 
 	elif btype == "harvester":
 		# Extractor minero con núcleo y aros del color de la facción

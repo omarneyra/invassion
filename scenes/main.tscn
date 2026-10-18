@@ -284,7 +284,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 12
 
 [node name="InspectorPortrait" type="TextureRect" parent="HUD/BottomConsole/HBox/InspectorBay/VBox/Content"]
-custom_minimum_size = Vector2(56, 56)
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 size_flags_vertical = 4
 expand_mode = 1
