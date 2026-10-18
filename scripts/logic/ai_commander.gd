@@ -112,7 +112,8 @@ static func decide_ai_construction(faction_id: int, factions_data: Dictionary, w
 	var harv_base_cost: float = EconomyLogic.BUILDING_CATALOG["harvester"]["cost"]
 	var harv_cost: float = RacesLogic.calculate_building_cost(harv_base_cost, "harvester", race_id)
 
-	if analysis["harvester_count"] < 2 and not analysis["interior_empty"].is_empty() and energy >= harv_cost:
+	# 1. Prioridad: Economía básica (primer extractor)
+	if analysis["harvester_count"] < 1 and not analysis["interior_empty"].is_empty() and energy >= harv_cost:
 		var target_node: int = analysis["interior_empty"][0]
 		var template: Dictionary = EconomyLogic.BUILDING_CATALOG["harvester"].duplicate(true)
 		template["faction_id"] = faction_id
@@ -124,9 +125,35 @@ static func decide_ai_construction(faction_id: int, factions_data: Dictionary, w
 	var wall_base_cost: float = EconomyLogic.BUILDING_CATALOG["wall"]["cost"]
 	var wall_cost: float = RacesLogic.calculate_building_cost(wall_base_cost, "wall", race_id)
 
+	# 2. Prioridad Crítica: Fortificación perimetral obligatoria (al menos 2 torretas)
+	if analysis["turret_count"] < 2 and energy >= turret_cost:
+		var available_nodes: Array = []
+		if not analysis["enemy_adjacent_empty"].is_empty():
+			available_nodes = analysis["enemy_adjacent_empty"]
+		elif not analysis["frontier_empty"].is_empty():
+			available_nodes = analysis["frontier_empty"]
+		elif not analysis["interior_empty"].is_empty():
+			available_nodes = analysis["interior_empty"]
+
+		if not available_nodes.is_empty():
+			var target_node: int = available_nodes[0]
+			var template: Dictionary = EconomyLogic.BUILDING_CATALOG["turret"].duplicate(true)
+			template["faction_id"] = faction_id
+			template = RacesLogic.apply_building_combat_stats(template, race_id)
+			return [true, target_node, "turret", template, turret_cost]
+
+	# 3. Prioridad: Segundo extractor si la defensa está asegurada
+	if analysis["harvester_count"] < 2 and not analysis["interior_empty"].is_empty() and energy >= harv_cost:
+		var target_node: int = analysis["interior_empty"][0]
+		var template: Dictionary = EconomyLogic.BUILDING_CATALOG["harvester"].duplicate(true)
+		template["faction_id"] = faction_id
+		template = RacesLogic.apply_building_combat_stats(template, race_id)
+		return [true, target_node, "harvester", template, harv_cost]
+
+	# 4. Prioridad: Contacto directo con el enemigo (muros / torretas adicionales)
 	if not analysis["enemy_adjacent_empty"].is_empty():
 		var target_node: int = analysis["enemy_adjacent_empty"][0]
-		if energy >= turret_cost and analysis["turret_count"] <= analysis["wall_count"]:
+		if energy >= turret_cost and analysis["turret_count"] <= analysis["wall_count"] + 1:
 			var template: Dictionary = EconomyLogic.BUILDING_CATALOG["turret"].duplicate(true)
 			template["faction_id"] = faction_id
 			template = RacesLogic.apply_building_combat_stats(template, race_id)
@@ -137,7 +164,8 @@ static func decide_ai_construction(faction_id: int, factions_data: Dictionary, w
 			template = RacesLogic.apply_building_combat_stats(template, race_id)
 			return [true, target_node, "wall", template, wall_cost]
 
-	if not analysis["frontier_empty"].is_empty() and energy >= (turret_cost + 40.0):
+	# 5. Expansión perimetral moderada
+	if not analysis["frontier_empty"].is_empty() and energy >= turret_cost:
 		var target_node: int = analysis["frontier_empty"][0]
 		var template: Dictionary = EconomyLogic.BUILDING_CATALOG["turret"].duplicate(true)
 		template["faction_id"] = faction_id
@@ -218,8 +246,14 @@ static func decide_ai_assault(faction_id: int, factions_data: Dictionary, world_
 	var effective_threshold: float = assault_threshold
 	var my_base: int = fdata.get("base_node", 0)
 	var base_bld = world_nodes.get(my_base, {}).get("building")
-	if base_bld != null and float(base_bld.get("hp", 1500.0)) < float(base_bld.get("max_hp", 1500.0)):
+	var is_base_under_attack: bool = (base_bld != null and float(base_bld.get("hp", 1500.0)) < float(base_bld.get("max_hp", 1500.0)))
+	if is_base_under_attack:
 		effective_threshold = minf(assault_threshold, 85.0)
+
+	# Regla defensiva: la IA no debe lanzarse al ataque suicida sin tener al menos 2 torretas de defensa perimetral
+	var analysis = analyze_faction_territory(faction_id, world_nodes, icosphere, factions_data)
+	if analysis["turret_count"] < 2 and not is_base_under_attack:
+		return [false, [], 0.0, null]
 
 	if energy < effective_threshold:
 		return [false, [], 0.0, null]

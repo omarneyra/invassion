@@ -24,8 +24,8 @@ class TestAICommander(unittest.TestCase):
         self.base_2 = self.game_state["factions"][2]["base_node"]
 
         self.world_nodes = {nid: {"controller": 0, "building": None} for nid in self.icosphere["nodes"]}
-        self.world_nodes[self.base_1] = {"controller": 1, "building": {"type": "base", "faction_id": 1, "hp": 500.0}}
-        self.world_nodes[self.base_2] = {"controller": 2, "building": {"type": "base", "faction_id": 2, "hp": 500.0}}
+        self.world_nodes[self.base_1] = {"controller": 1, "building": {"type": "base", "faction_id": 1, "hp": 1500.0, "max_hp": 1500.0}}
+        self.world_nodes[self.base_2] = {"controller": 2, "building": {"type": "base", "faction_id": 2, "hp": 1500.0, "max_hp": 1500.0}}
 
     def test_analyze_faction_territory(self):
         # Asignar nodos alrededor de base 2 a la facción 2
@@ -63,15 +63,28 @@ class TestAICommander(unittest.TestCase):
         self.assertTrue(cost > 0.0)
 
     def test_decide_ai_assault(self):
-        # Con 150 de energía (> 110 threshold), la IA Krynn lanza asalto
+        # Con 150 de energía pero sin torretas defensivas, la IA debe priorizar defenderse antes de atacar
         self.game_state["factions"][2]["energy"] = 150.0
+        can_assault_no_turrets, squad_no_turrets, _, _ = decide_ai_assault(
+            2, self.game_state, self.world_nodes, self.icosphere, assault_threshold=110.0
+        )
+        self.assertFalse(can_assault_no_turrets, "La IA no debe lanzar asalto si tiene menos de 2 torretas perimetrales")
+
+        # Plantar 2 torretas aliadas para la facción 2
+        neighs = self.icosphere["nodes"][self.base_2]["neighbors"]
+        self.world_nodes[neighs[0]]["controller"] = 2
+        self.world_nodes[neighs[0]]["building"] = {"type": "turret", "faction_id": 2, "hp": 400.0}
+        self.world_nodes[neighs[1]]["controller"] = 2
+        self.world_nodes[neighs[1]]["building"] = {"type": "turret", "faction_id": 2, "hp": 400.0}
+
+        # Ahora con 2 torretas y 150 E (> 110 threshold), la IA Krynn lanza asalto
         can_assault, squad, cost, target_base = decide_ai_assault(
             2, self.game_state, self.world_nodes, self.icosphere, assault_threshold=110.0
         )
         self.assertTrue(can_assault)
-        self.assertEqual(len(squad), 5)  # Enjambre de 5 Broodlings
+        self.assertEqual(len(squad), 5)  # 1 Ravager + 4 Broodlings
         self.assertEqual(target_base, self.base_1)
-        self.assertEqual(squad[0]["archetype"], "broodling")  # Unidad única de Krynn
+        self.assertEqual(squad[0]["archetype"], "ravager")  # Unidad de choque Krynn
 
         # Con poca energía (< 110), no debe lanzar asalto
         self.game_state["factions"][2]["energy"] = 40.0

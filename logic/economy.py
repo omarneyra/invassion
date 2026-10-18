@@ -15,8 +15,8 @@ BUILDING_CATALOG = {
     },
     "turret": {
         "cost": 75.0,
-        "hp": 280.0,
-        "max_hp": 280.0,
+        "hp": 400.0,
+        "max_hp": 400.0,
         "influence_hops": 1,
         "attack_range_hops": 2,
         "damage": 35.0,
