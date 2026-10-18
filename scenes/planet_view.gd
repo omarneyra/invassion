@@ -619,6 +619,44 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		horn.rotation_degrees = Vector3(30, 0, 0)
 		root.add_child(horn)
 
+	elif archetype == "ravager":
+		# Bestia insectoide de asalto: cabeza con mandíbulas y caparazón
+		var body = MeshInstance3D.new()
+		var s_mesh = SphereMesh.new()
+		s_mesh.radius = 0.22
+		s_mesh.height = 0.28
+		body.mesh = s_mesh
+		body.material_override = custom_mat if custom_mat != null else mat_invader
+		body.position = Vector3(0, 0.14, 0)
+		root.add_child(body)
+
+		var jaw = MeshInstance3D.new()
+		var pmesh = PrismMesh.new()
+		pmesh.size = Vector3(0.24, 0.16, 0.24)
+		jaw.mesh = pmesh
+		jaw.material_override = mat_alien_hive
+		jaw.position = Vector3(0, 0.18, 0.16)
+		jaw.rotation_degrees = Vector3(60, 0, 0)
+		root.add_child(jaw)
+
+	elif archetype == "scrap_tank":
+		# Tanque blindado de chatarra reciclada
+		var body = MeshInstance3D.new()
+		var b_mesh = BoxMesh.new()
+		b_mesh.size = Vector3(0.34, 0.24, 0.36)
+		body.mesh = b_mesh
+		body.material_override = custom_mat if custom_mat != null else mat_turret
+		body.position = Vector3(0, 0.12, 0)
+		root.add_child(body)
+
+		var plow = MeshInstance3D.new()
+		var p_mesh = BoxMesh.new()
+		p_mesh.size = Vector3(0.42, 0.16, 0.08)
+		plow.mesh = p_mesh
+		plow.material_override = custom_mat if custom_mat != null else mat_turret
+		plow.position = Vector3(0, 0.08, 0.20)
+		root.add_child(plow)
+
 	elif archetype == "juggernaut" or archetype == "brute":
 		# Coloso / Brute acorazado monolítico
 		var body = MeshInstance3D.new()

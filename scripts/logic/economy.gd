@@ -13,8 +13,8 @@ const BUILDING_CATALOG: Dictionary = {
 	},
 	"turret": {
 		"cost": 75.0,
-		"hp": 280.0,
-		"max_hp": 280.0,
+		"hp": 400.0,
+		"max_hp": 400.0,
 		"influence_hops": 2,
 		"attack_range_hops": 3,
 		"damage": 35.0,
