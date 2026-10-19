@@ -357,56 +357,221 @@ columns = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-text = "[1] WALL
-25 E"
 expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="BadgeHotkey" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnWall"]
+layout_mode = 1
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 32.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "[1]"
+
+[node name="BadgeCost" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnWall"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -16.0
+offset_right = -4.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 0.45, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "25 E"
+horizontal_alignment = 2
 
 [node name="BtnHarvester" type="Button" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-text = "[2] EXTRACTOR
-50 E"
 expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="BadgeHotkey" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnHarvester"]
+layout_mode = 1
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 32.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "[2]"
+
+[node name="BadgeCost" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnHarvester"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -16.0
+offset_right = -4.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 0.45, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "50 E"
+horizontal_alignment = 2
 
 [node name="BtnTurret" type="Button" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-text = "[3] TURRET
-75 E"
 expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="BadgeHotkey" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnTurret"]
+layout_mode = 1
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 32.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "[3]"
+
+[node name="BadgeCost" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnTurret"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -16.0
+offset_right = -4.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 0.45, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "75 E"
+horizontal_alignment = 2
 
 [node name="BtnAssault" type="Button" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-text = "[R] ASSAULT
-85 E"
 expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
+
+[node name="BadgeHotkey" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnAssault"]
+layout_mode = 1
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 32.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "[R]"
+
+[node name="BadgeCost" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnAssault"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -48.0
+offset_top = -16.0
+offset_right = -4.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.2, 0.95, 0.45, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "85 E"
+horizontal_alignment = 2
 
 [node name="BtnWave" type="Button" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-text = "[SPC] FORCE
-+15 E"
 expand_icon = true
+icon_alignment = 1
+vertical_icon_alignment = 1
 
-[node name="BtnPurifier" type="Button" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_font_sizes/font_size = 11
-text = "[4] PURIFIER
-120 E"
-expand_icon = true
+[node name="BadgeHotkey" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnWave"]
+layout_mode = 1
+offset_left = 4.0
+offset_top = 2.0
+offset_right = 36.0
+offset_bottom = 16.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.35, 0.85, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "[SPC]"
+
+[node name="BadgeCost" type="Label" parent="HUD/BottomConsole/HBox/CommandBay/VBox/CommandGrid/BtnWave"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -54.0
+offset_top = -16.0
+offset_right = -4.0
+offset_bottom = -2.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.85, 0.5, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.95)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 10
+text = "+15 E"
+horizontal_alignment = 2
 
 [node name="RadarOverlay" type="Control" parent="HUD"]
 layout_mode = 3

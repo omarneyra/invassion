@@ -648,34 +648,29 @@ func _update_ui() -> void:
 		label_wave_timer.text = w_data["badge"] + " " + w_data["text"]
 		label_wave_timer.modulate = w_data["status_color"]
 
-	# 3. Update Command Buttons
+	# 3. Update Tactical Command Action Slots (StarCraft-style badged slots)
 	var wall_data = UIThemeLogic.format_command_button_data("wall", energy_val, 25.0, 0.0, selected_building_type == "wall")
-	if btn_wall != null:
-		btn_wall.text = wall_data["full_button_text"]
-		btn_wall.disabled = not wall_data["is_enabled"]
+	_update_command_slot(btn_wall, wall_data)
 
 	var harv_data = UIThemeLogic.format_command_button_data("harvester", energy_val, 50.0, 0.0, selected_building_type == "harvester")
-	if btn_harvester != null:
-		btn_harvester.text = harv_data["full_button_text"]
-		btn_harvester.disabled = not harv_data["is_enabled"]
+	_update_command_slot(btn_harvester, harv_data)
 
 	var turr_data = UIThemeLogic.format_command_button_data("turret", energy_val, 75.0, 0.0, selected_building_type == "turret")
-	if btn_turret != null:
-		btn_turret.text = turr_data["full_button_text"]
-		btn_turret.disabled = not turr_data["is_enabled"]
+	_update_command_slot(btn_turret, turr_data)
 
 	var aslt_data = UIThemeLogic.format_command_button_data("assault", energy_val, 85.0, assault_cooldown_timer, false)
-	if btn_assault != null:
-		btn_assault.text = aslt_data["full_button_text"]
-		btn_assault.disabled = not aslt_data["is_enabled"]
+	_update_command_slot(btn_assault, aslt_data)
 
-	if btn_wave != null:
-		if is_wave_active:
-			btn_wave.disabled = true
-			btn_wave.text = "[ACTIVE RAID]\nDEFENDING..."
-		else:
-			btn_wave.disabled = false
-			btn_wave.text = "[SPC] FORCE WAVE\n+15 E BONUS"
+	var wave_cost_label = "DEFENDING..." if is_wave_active else "+15 E"
+	var wave_data = {
+		"hotkey": "[SPC]",
+		"cost_label": wave_cost_label,
+		"is_enabled": not is_wave_active,
+		"is_active": false,
+		"is_affordable": true,
+		"is_on_cooldown": is_wave_active
+	}
+	_update_command_slot(btn_wave, wave_data)
 
 	# 4. Hostile Command Core Status
 	if label_crater_status != null:
@@ -691,6 +686,28 @@ func _update_ui() -> void:
 
 	if selected_inspector_node != -1:
 		_update_inspector(selected_inspector_node)
+
+func _update_command_slot(btn: Button, data: Dictionary) -> void:
+	if btn == null:
+		return
+	btn.text = ""
+	var hotkey_lbl: Label = btn.find_child("BadgeHotkey", false, false)
+	var cost_lbl: Label = btn.find_child("BadgeCost", false, false)
+	if hotkey_lbl != null:
+		hotkey_lbl.text = data.get("hotkey", "")
+	if cost_lbl != null:
+		cost_lbl.text = data.get("cost_label", "")
+		if not data.get("is_affordable", true) or data.get("is_on_cooldown", false):
+			cost_lbl.add_theme_color_override("font_color", Color("#ef4444"))
+		else:
+			cost_lbl.add_theme_color_override("font_color", Color("#22c55e"))
+	btn.disabled = not data.get("is_enabled", true)
+	if data.get("is_active", false):
+		btn.modulate = Color(1.3, 1.3, 1.3, 1.0)
+	elif not data.get("is_enabled", true):
+		btn.modulate = Color(0.55, 0.55, 0.55, 0.65)
+	else:
+		btn.modulate = Color(1.0, 1.0, 1.0, 1.0)
 
 func _update_inspector(node_id: int) -> void:
 	selected_inspector_node = node_id

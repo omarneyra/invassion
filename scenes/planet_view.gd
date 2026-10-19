@@ -24,8 +24,11 @@ var mat_planet_core: StandardMaterial3D
 var mat_base_glow: StandardMaterial3D
 var mat_turret: StandardMaterial3D
 var mat_railgun_glow: StandardMaterial3D
+var mat_optics: StandardMaterial3D
 var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
+
+const MESH_TURRET = preload("res://assets/models/turret.obj")
 var mat_alien_hive: StandardMaterial3D
 var mat_invader: StandardMaterial3D
 var mat_invader_scout: StandardMaterial3D
@@ -148,17 +151,26 @@ func _setup_materials() -> void:
 	mat_base_glow.normal_texture = panel_normal
 
 	mat_turret = StandardMaterial3D.new()
-	mat_turret.albedo_color = Color("#e2e8f0")
-	mat_turret.metallic = 0.85
-	mat_turret.roughness = 0.28
+	mat_turret.albedo_color = Color("#1e2530")
+	mat_turret.metallic = 0.88
+	mat_turret.roughness = 0.32
+	mat_turret.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat_turret.normal_enabled = true
 	mat_turret.normal_texture = panel_normal
 
 	mat_railgun_glow = StandardMaterial3D.new()
+	mat_railgun_glow.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
 	mat_railgun_glow.albedo_color = Color("#00e5ff")
-	mat_railgun_glow.emission_enabled = true
-	mat_railgun_glow.emission = Color("#00e5ff")
-	mat_railgun_glow.emission_energy_multiplier = 2.5
+	mat_railgun_glow.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	mat_optics = StandardMaterial3D.new()
+	mat_optics.albedo_color = Color("#061325")
+	mat_optics.metallic = 0.95
+	mat_optics.roughness = 0.08
+	mat_optics.emission_enabled = true
+	mat_optics.emission = Color("#00b4d8")
+	mat_optics.emission_energy_multiplier = 1.2
+	mat_optics.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_harvester = StandardMaterial3D.new()
 	mat_harvester.albedo_color = Color("#f59e0b")
@@ -340,6 +352,7 @@ func get_faction_material(faction_id: int, color_hex: String = "") -> StandardMa
 		mat.emission = col.darkened(0.15)
 		mat.emission_energy_multiplier = 1.3
 		mat.roughness = 0.25
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		_faction_materials[faction_id] = mat
 	elif color_hex != "":
 		var mat = _faction_materials[faction_id]
@@ -461,87 +474,13 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 		root.add_child(beacon)
 
 	elif btype == "turret":
-		# 1. Base octogonal blindada con anillo de rotación
-		var base = MeshInstance3D.new()
-		var base_mesh = CylinderMesh.new()
-		base_mesh.top_radius = 0.28
-		base_mesh.bottom_radius = 0.38
-		base_mesh.height = 0.12
-		base_mesh.radial_segments = 8
-		base.mesh = base_mesh
-		base.material_override = mat_turret
-		base.position = Vector3(0, 0.06, 0)
-		root.add_child(base)
-
-		# 4 Patas / Zapatas de Anclaje Geodésico
-		for i in range(4):
-			var angle = i * (PI / 2.0) + (PI / 4.0)
-			var outrigger = MeshInstance3D.new()
-			var leg_mesh = BoxMesh.new()
-			leg_mesh.size = Vector3(0.09, 0.08, 0.18)
-			outrigger.mesh = leg_mesh
-			outrigger.material_override = mat_turret
-			outrigger.position = Vector3(cos(angle) * 0.34, 0.04, sin(angle) * 0.34)
-			outrigger.rotation.y = -angle + PI/2.0
-			root.add_child(outrigger)
-
-		# Anillo de rotación de facción
-		var ring = MeshInstance3D.new()
-		var r_mesh = CylinderMesh.new()
-		r_mesh.top_radius = 0.24
-		r_mesh.bottom_radius = 0.24
-		r_mesh.height = 0.05
-		ring.mesh = r_mesh
-		ring.material_override = fact_mat
-		ring.position = Vector3(0, 0.13, 0)
-		root.add_child(ring)
-
-		# 2. Cabina Blindada de Mando y Sensor Óptico
-		var cabin = MeshInstance3D.new()
-		var cabin_mesh = BoxMesh.new()
-		cabin_mesh.size = Vector3(0.24, 0.18, 0.26)
-		cabin.mesh = cabin_mesh
-		cabin.material_override = mat_turret
-		cabin.position = Vector3(0, 0.22, -0.04)
-		root.add_child(cabin)
-
-		var sensor_pod = MeshInstance3D.new()
-		var sensor_mesh = BoxMesh.new()
-		sensor_mesh.size = Vector3(0.10, 0.08, 0.12)
-		sensor_pod.mesh = sensor_mesh
-		sensor_pod.material_override = fact_mat
-		sensor_pod.position = Vector3(-0.06, 0.33, -0.02)
-		root.add_child(sensor_pod)
-
-		# 3. Cañones Gemelos de Riel (Twin Pulse Railguns)
-		var barrel_offsets = [-0.08, 0.08]
-		for bx in barrel_offsets:
-			# Tubo del cañón exterior
-			var barrel = MeshInstance3D.new()
-			var b_mesh = BoxMesh.new()
-			b_mesh.size = Vector3(0.06, 0.06, 0.46)
-			barrel.mesh = b_mesh
-			barrel.material_override = mat_turret
-			barrel.position = Vector3(bx, 0.22, 0.20)
-			root.add_child(barrel)
-
-			# Riel de plasma luminoso interno
-			var rail = MeshInstance3D.new()
-			var rail_mesh = BoxMesh.new()
-			rail_mesh.size = Vector3(0.03, 0.04, 0.40)
-			rail.mesh = rail_mesh
-			rail.material_override = mat_railgun_glow
-			rail.position = Vector3(bx, 0.22, 0.20)
-			root.add_child(rail)
-
-			# Boca del cañón (Muzzle)
-			var muzzle = MeshInstance3D.new()
-			var m_mesh = BoxMesh.new()
-			m_mesh.size = Vector3(0.08, 0.08, 0.05)
-			muzzle.mesh = m_mesh
-			muzzle.material_override = fact_mat
-			muzzle.position = Vector3(bx, 0.22, 0.44)
-			root.add_child(muzzle)
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_TURRET
+		mi.set_surface_override_material(0, mat_turret)
+		mi.set_surface_override_material(1, fact_mat)
+		mi.set_surface_override_material(2, mat_railgun_glow)
+		mi.set_surface_override_material(3, mat_optics)
+		root.add_child(mi)
 
 	elif btype == "harvester":
 		# Extractor minero con núcleo y aros del color de la facción
