@@ -7,6 +7,8 @@ extends Node3D
 @export var subdivisions: int = 3
 @export var node_marker_radius: float = 0.10
 
+@export var use_tactical_tokens: bool = true
+
 var icosphere_data: Dictionary = {}
 var node_instances: Dictionary = {}     # {node_id: MeshInstance3D}
 var building_instances: Dictionary = {} # {node_id: Node3D}
@@ -29,6 +31,7 @@ var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
 
 const MESH_TURRET = preload("res://assets/models/turret.obj")
+const TEX_TURRET_TOKEN = preload("res://assets/models/turret_token.png")
 const TEX_TURRET_ALBEDO = preload("res://assets/models/turret_titanium_albedo.png")
 const TEX_TURRET_NORMAL = preload("res://assets/models/turret_titanium_normal.png")
 const TEX_TURRET_ROUGH = preload("res://assets/models/turret_titanium_rough.png")
@@ -511,23 +514,64 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 		root.add_child(beacon)
 
 	elif btype == "turret":
-		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_TURRET
-		mi.scale = Vector3(1.35, 1.35, 1.35)
-		var fact_armor = get_faction_armor_material(faction_id, color_hex)
-		mi.set_surface_override_material(0, mat_turret)
-		mi.set_surface_override_material(1, fact_armor)
-		mi.set_surface_override_material(2, mat_railgun_glow)
-		mi.set_surface_override_material(3, mat_optics)
-		root.add_child(mi)
+		if use_tactical_tokens:
+			# Pedestal 3D cilíndrico metálico con anillo de facción en la superficie del nodo
+			var base = MeshInstance3D.new()
+			var cyl = CylinderMesh.new()
+			cyl.top_radius = 0.44
+			cyl.bottom_radius = 0.50
+			cyl.height = 0.08
+			cyl.radial_segments = 16
+			base.mesh = cyl
+			base.material_override = mat_turret
+			base.position = Vector3(0, 0.04, 0)
+			root.add_child(base)
 
-		# Resplandor dinámico de plasma cian que baña la torreta y el suelo geodésico
-		var light = OmniLight3D.new()
-		light.light_color = Color("#00f5ff")
-		light.light_energy = 1.2
-		light.omni_range = 2.2
-		light.position = Vector3(0, 0.45, 0.25)
-		root.add_child(light)
+			var ring = MeshInstance3D.new()
+			var r_mesh = CylinderMesh.new()
+			r_mesh.top_radius = 0.46
+			r_mesh.bottom_radius = 0.46
+			r_mesh.height = 0.02
+			r_mesh.radial_segments = 16
+			ring.mesh = r_mesh
+			ring.material_override = get_faction_armor_material(faction_id, color_hex)
+			ring.position = Vector3(0, 0.08, 0)
+			root.add_child(ring)
+
+			# Ficha táctica 3D que proyecta el render de estudio exacto del Pulse Defense Cannon
+			var sprite = Sprite3D.new()
+			sprite.texture = TEX_TURRET_TOKEN
+			sprite.pixel_size = 0.0028
+			sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
+			sprite.shaded = true
+			sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+			sprite.position = Vector3(0, 0.65, 0)
+			root.add_child(sprite)
+
+			# Resplandor dinámico de plasma cian
+			var light = OmniLight3D.new()
+			light.light_color = Color("#00f5ff")
+			light.light_energy = 1.4
+			light.omni_range = 2.4
+			light.position = Vector3(0, 0.55, 0.15)
+			root.add_child(light)
+		else:
+			var mi = MeshInstance3D.new()
+			mi.mesh = MESH_TURRET
+			mi.scale = Vector3(1.35, 1.35, 1.35)
+			var fact_armor = get_faction_armor_material(faction_id, color_hex)
+			mi.set_surface_override_material(0, mat_turret)
+			mi.set_surface_override_material(1, fact_armor)
+			mi.set_surface_override_material(2, mat_railgun_glow)
+			mi.set_surface_override_material(3, mat_optics)
+			root.add_child(mi)
+
+			var light = OmniLight3D.new()
+			light.light_color = Color("#00f5ff")
+			light.light_energy = 1.2
+			light.omni_range = 2.2
+			light.position = Vector3(0, 0.45, 0.25)
+			root.add_child(light)
 
 	elif btype == "harvester":
 		# Extractor minero con núcleo y aros del color de la facción
