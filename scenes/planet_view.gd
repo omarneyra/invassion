@@ -32,6 +32,10 @@ var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
 
 const MESH_TURRET = preload("res://assets/models/turret.obj")
+const MESH_BASE = preload("res://assets/models/base.obj")
+const MESH_HARVESTER = preload("res://assets/models/harvester.obj")
+const MESH_WALL = preload("res://assets/models/wall.obj")
+const MESH_PURIFIER = preload("res://assets/models/purifier.obj")
 const TEX_TURRET_TOKEN = preload("res://assets/models/turret_token.png")
 const TEX_TURRET_ALBEDO = preload("res://assets/models/turret_titanium_albedo.png")
 const TEX_TURRET_NORMAL = preload("res://assets/models/turret_titanium_normal.png")
@@ -486,55 +490,33 @@ func update_visuals(world_state: Dictionary, factions_state: Variant = null) -> 
 			building_instances[nid].queue_free()
 			building_instances.erase(nid)
 
+func _apply_building_materials(mi: MeshInstance3D, fact_armor: StandardMaterial3D) -> void:
+	mi.set_surface_override_material(0, mat_turret)
+	mi.set_surface_override_material(1, fact_armor)
+	mi.set_surface_override_material(2, mat_railgun_glow)
+	mi.set_surface_override_material(3, mat_optics)
+	mi.set_surface_override_material(4, mat_copper)
+
 func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String = "") -> Node3D:
 	var root = Node3D.new()
-	var fact_mat: StandardMaterial3D = get_faction_material(faction_id, color_hex)
+	var fact_armor: StandardMaterial3D = get_faction_armor_material(faction_id, color_hex)
 
 	if btype == "base":
-		# Domo central de comando iluminado con el color de la facción
-		var dome = MeshInstance3D.new()
-		var s_mesh = SphereMesh.new()
-		s_mesh.radius = 0.45
-		s_mesh.height = 0.5
-		dome.mesh = s_mesh
-		dome.material_override = fact_mat
-		dome.position = Vector3(0, 0.15, 0)
-		root.add_child(dome)
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_BASE
+		mi.scale = Vector3(1.10, 1.10, 1.10)
+		_apply_building_materials(mi, fact_armor)
+		root.add_child(mi)
 
-		# Anillo exterior de cimiento
-		var ring = MeshInstance3D.new()
-		var torus = TorusMesh.new()
-		torus.inner_radius = 0.42
-		torus.outer_radius = 0.55
-		ring.mesh = torus
-		ring.material_override = mat_turret
-		ring.position = Vector3(0, 0.05, 0)
-		root.add_child(ring)
-
-		# Antena de energía
-		var pylon = MeshInstance3D.new()
-		var c_mesh = CylinderMesh.new()
-		c_mesh.top_radius = 0.06
-		c_mesh.bottom_radius = 0.15
-		c_mesh.height = 0.6
-		pylon.mesh = c_mesh
-		pylon.material_override = mat_turret
-		pylon.position = Vector3(0, 0.35, 0)
-		root.add_child(pylon)
-
-		# Faro orbital superior (esfera brillante de facción)
-		var beacon = MeshInstance3D.new()
-		var s_beacon = SphereMesh.new()
-		s_beacon.radius = 0.12
-		s_beacon.height = 0.24
-		beacon.mesh = s_beacon
-		beacon.material_override = fact_mat
-		beacon.position = Vector3(0, 0.68, 0)
-		root.add_child(beacon)
+		var light = OmniLight3D.new()
+		light.light_color = Color("#00f5ff")
+		light.light_energy = 0.6
+		light.omni_range = 1.8
+		light.position = Vector3(0, 0.40, 0)
+		root.add_child(light)
 
 	elif btype == "turret":
 		if use_tactical_tokens:
-			# Pedestal 3D cilíndrico metálico con anillo de facción en la superficie del nodo
 			var base = MeshInstance3D.new()
 			var cyl = CylinderMesh.new()
 			cyl.top_radius = 0.44
@@ -553,11 +535,10 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 			r_mesh.height = 0.02
 			r_mesh.radial_segments = 16
 			ring.mesh = r_mesh
-			ring.material_override = get_faction_armor_material(faction_id, color_hex)
+			ring.material_override = fact_armor
 			ring.position = Vector3(0, 0.08, 0)
 			root.add_child(ring)
 
-			# Ficha táctica 3D que proyecta el render de estudio exacto del Pulse Defense Cannon
 			var sprite = Sprite3D.new()
 			sprite.texture = TEX_TURRET_TOKEN
 			sprite.pixel_size = 0.0028
@@ -567,7 +548,6 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 			sprite.position = Vector3(0, 0.65, 0)
 			root.add_child(sprite)
 
-			# Resplandor dinámico de plasma cian
 			var light = OmniLight3D.new()
 			light.light_color = Color("#00f5ff")
 			light.light_energy = 1.4
@@ -578,12 +558,7 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 			var mi = MeshInstance3D.new()
 			mi.mesh = MESH_TURRET
 			mi.scale = Vector3(1.10, 1.10, 1.10)
-			var fact_armor = get_faction_armor_material(faction_id, color_hex)
-			mi.set_surface_override_material(0, mat_turret)
-			mi.set_surface_override_material(1, fact_armor)
-			mi.set_surface_override_material(2, mat_railgun_glow)
-			mi.set_surface_override_material(3, mat_optics)
-			mi.set_surface_override_material(4, mat_copper)
+			_apply_building_materials(mi, fact_armor)
 			root.add_child(mi)
 
 			var light = OmniLight3D.new()
@@ -594,80 +569,46 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 			root.add_child(light)
 
 	elif btype == "harvester":
-		# Extractor minero con núcleo y aros del color de la facción
-		var tower = MeshInstance3D.new()
-		var cyl = CylinderMesh.new()
-		cyl.top_radius = 0.25
-		cyl.bottom_radius = 0.18
-		cyl.height = 0.4
-		tower.mesh = cyl
-		tower.material_override = mat_harvester
-		tower.position = Vector3(0, 0.2, 0)
-		root.add_child(tower)
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_HARVESTER
+		mi.scale = Vector3(1.10, 1.10, 1.10)
+		_apply_building_materials(mi, fact_armor)
+		root.add_child(mi)
 
-		var ring = MeshInstance3D.new()
-		var r_mesh = CylinderMesh.new()
-		r_mesh.top_radius = 0.28
-		r_mesh.bottom_radius = 0.28
-		r_mesh.height = 0.06
-		ring.mesh = r_mesh
-		ring.material_override = fact_mat
-		ring.position = Vector3(0, 0.20, 0)
-		root.add_child(ring)
-
-		var core = MeshInstance3D.new()
-		var s_core = SphereMesh.new()
-		s_core.radius = 0.16
-		s_core.height = 0.32
-		core.mesh = s_core
-		core.material_override = fact_mat
-		core.position = Vector3(0, 0.42, 0)
-		root.add_child(core)
+		var light = OmniLight3D.new()
+		light.light_color = Color("#00f5ff")
+		light.light_energy = 0.5
+		light.omni_range = 1.6
+		light.position = Vector3(0, 0.32, 0)
+		root.add_child(light)
 
 	elif btype == "wall":
-		# Muro de Plasma / Barricada con escudo de energía de la facción
-		var shield = MeshInstance3D.new()
-		var box = BoxMesh.new()
-		box.size = Vector3(0.5, 0.35, 0.12)
-		shield.mesh = box
-		shield.material_override = fact_mat
-		shield.position = Vector3(0, 0.18, 0)
-		root.add_child(shield)
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_WALL
+		mi.scale = Vector3(1.10, 1.10, 1.10)
+		_apply_building_materials(mi, fact_armor)
+		root.add_child(mi)
 
-		var pylon_left = MeshInstance3D.new()
-		var cyl_p = CylinderMesh.new()
-		cyl_p.top_radius = 0.08
-		cyl_p.bottom_radius = 0.1
-		cyl_p.height = 0.4
-		pylon_left.mesh = cyl_p
-		pylon_left.material_override = mat_turret
-		pylon_left.position = Vector3(-0.25, 0.2, 0)
-		root.add_child(pylon_left)
-
-		var pylon_right = MeshInstance3D.new()
-		pylon_right.mesh = cyl_p
-		pylon_right.material_override = mat_turret
-		pylon_right.position = Vector3(0.25, 0.2, 0)
-		root.add_child(pylon_right)
+		var light = OmniLight3D.new()
+		light.light_color = Color("#00f5ff")
+		light.light_energy = 0.4
+		light.omni_range = 1.2
+		light.position = Vector3(0, 0.25, 0)
+		root.add_child(light)
 
 	elif btype == "purifier":
-		# Aguja de Purificación
-		var spire = MeshInstance3D.new()
-		var prism = PrismMesh.new()
-		prism.size = Vector3(0.32, 0.65, 0.32)
-		spire.mesh = prism
-		spire.material_override = mat_purifier
-		spire.position = Vector3(0, 0.32, 0)
-		root.add_child(spire)
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_PURIFIER
+		mi.scale = Vector3(1.10, 1.10, 1.10)
+		_apply_building_materials(mi, fact_armor)
+		root.add_child(mi)
 
-		var orb = MeshInstance3D.new()
-		var orb_mesh = SphereMesh.new()
-		orb_mesh.radius = 0.12
-		orb_mesh.height = 0.24
-		orb.mesh = orb_mesh
-		orb.material_override = fact_mat
-		orb.position = Vector3(0, 0.72, 0)
-		root.add_child(orb)
+		var light = OmniLight3D.new()
+		light.light_color = Color("#00f5ff")
+		light.light_energy = 0.6
+		light.omni_range = 2.0
+		light.position = Vector3(0, 0.50, 0)
+		root.add_child(light)
 
 	return root
 
