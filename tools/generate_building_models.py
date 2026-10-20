@@ -609,6 +609,104 @@ def build_purifier_mesh():
 
     return b
 
+def build_vanguard_mesh():
+    """Builds the 3D mesh for the Solarian Vanguard Assault Mech.
+    Matches the official concept art: reverse-joint digitigrade bipedal legs with hydraulic pistons,
+    heavy armored torso with horizontal cyan visor slit, right-arm linear railgun with copper coils,
+    left-arm rotary Gatling autocannon, and rear power reactor backpack with copper heatsink fins.
+    """
+    b = make_builder()
+
+    # 1. Pelvis & Hip Chassis (Center of mass at y = 0.22)
+    add_box(b, 0, 0.22, 0, 0.14, 0.08, 0.12, "Mat_DarkTitanium")
+    add_box(b, 0, 0.22, 0.05, 0.10, 0.06, 0.03, "Mat_FactionArmor")
+
+    # 2. Left & Right Bipedal Digitigrade Legs
+    for lx in [-0.10, 0.10]:
+        # Hip Ball Joint
+        add_cylinder_y(b, lx, 0.22, 0, 0.035, 0.035, 0.04, 8, "Mat_DarkTitanium")
+
+        # Upper Thigh (angled forward from hip to knee)
+        add_cylinder_between(b, (lx, 0.21, 0), (lx, 0.14, 0.06), 0.024, 6, "Mat_DarkTitanium")
+        add_cylinder_between(b, (lx, 0.21, 0), (lx, 0.17, 0.03), 0.028, 6, "Mat_FactionArmor")
+
+        # Knee Joint Cap
+        add_cylinder_y(b, lx, 0.14, 0.06, 0.028, 0.028, 0.03, 8, "Mat_FactionArmor")
+
+        # Lower Shin / Calf (angled backward from knee to ankle)
+        add_cylinder_between(b, (lx, 0.14, 0.06), (lx, 0.04, -0.02), 0.022, 6, "Mat_DarkTitanium")
+        # Hydraulic Shin Piston (running parallel behind the leg)
+        add_cylinder_between(b, (lx, 0.17, -0.01), (lx, 0.06, -0.04), 0.012, 6, "Mat_CopperCoil")
+
+        # Ankle & Heavy 2-Toed Armored Foot Pad (resting flat on ground y=0)
+        add_box(b, lx, 0.02, 0.01, 0.07, 0.04, 0.12, "Mat_DarkTitanium")
+        # Toe claws / stabilizers
+        add_box(b, lx, 0.015, 0.06, 0.06, 0.03, 0.04, "Mat_FactionArmor")
+        add_box(b, lx, 0.015, -0.04, 0.05, 0.03, 0.03, "Mat_FactionArmor")
+
+    # 3. Main Armored Torso / Cabin (y = 0.32 to y = 0.44)
+    add_box(b, 0, 0.33, 0, 0.22, 0.16, 0.18, "Mat_DarkTitanium")
+    # Sloped Chest Glacis Plate & Faction Armor Chevron
+    add_box(b, 0, 0.34, 0.09, 0.18, 0.12, 0.03, "Mat_FactionArmor")
+    # Yellow hazard trim marking on torso shoulder
+    add_box(b, 0, 0.41, 0.08, 0.16, 0.02, 0.02, "Mat_FactionArmor")
+
+    # Horizontal Cyan Optical Visor Slit
+    add_box(b, 0, 0.36, 0.105, 0.12, 0.022, 0.01, "Mat_PlasmaCyan")
+    add_box(b, 0, 0.36, 0.10, 0.14, 0.035, 0.01, "Mat_Optics")
+
+    # Top Command Sensor & Antenna Needles
+    add_cylinder_y(b, 0.05, 0.43, -0.02, 0.025, 0.025, 0.03, 8, "Mat_DarkTitanium")
+    add_cylinder_between(b, (-0.05, 0.42, -0.05), (-0.05, 0.52, -0.05), 0.004, 4, "Mat_DarkTitanium")
+
+    # 4. Right Arm — Twin Linear Railgun (mounted at x = +0.16, y = 0.32)
+    rx = 0.16
+    # Shoulder Pauldron
+    add_box(b, rx, 0.38, 0, 0.06, 0.07, 0.10, "Mat_FactionArmor")
+    # Upper Arm Actuator
+    add_cylinder_between(b, (rx, 0.35, 0), (rx, 0.29, 0.06), 0.022, 6, "Mat_DarkTitanium")
+    # Railgun Housing & Receiver
+    add_box(b, rx, 0.28, 0.12, 0.06, 0.07, 0.12, "Mat_DarkTitanium")
+    # Twin Rail Beams extending forward
+    add_box(b, rx, 0.295, 0.26, 0.045, 0.018, 0.18, "Mat_DarkTitanium")
+    add_box(b, rx, 0.265, 0.26, 0.045, 0.018, 0.18, "Mat_DarkTitanium")
+    # Copper Induction Solenoid Coils
+    add_cylinder_z(b, rx, 0.28, 0.20, 0.032, 0.032, 0.04, 8, "Mat_CopperCoil")
+    # Cyan Plasma Accelerator Core between rails
+    add_box(b, rx, 0.28, 0.25, 0.025, 0.025, 0.15, "Mat_PlasmaCyan")
+
+    # 5. Left Arm — Rotary Gatling Autocannon (mounted at x = -0.16, y = 0.32)
+    lx = -0.16
+    # Shoulder Pauldron
+    add_box(b, lx, 0.38, 0, 0.06, 0.07, 0.10, "Mat_FactionArmor")
+    # Upper Arm Actuator
+    add_cylinder_between(b, (lx, 0.35, 0), (lx, 0.29, 0.06), 0.022, 6, "Mat_DarkTitanium")
+    # Ammo Feed Drum
+    add_cylinder_y(b, lx - 0.02, 0.27, 0.08, 0.04, 0.04, 0.06, 8, "Mat_DarkTitanium")
+    # Gatling Rotor Hub
+    add_cylinder_z(b, lx, 0.28, 0.15, 0.032, 0.032, 0.04, 8, "Mat_DarkTitanium")
+    # 6 Rotary Barrels
+    for i in range(6):
+        ang = i * (math.pi / 3.0)
+        bx = lx + math.cos(ang) * 0.018
+        by = 0.28 + math.sin(ang) * 0.018
+        add_cylinder_between(b, (bx, by, 0.17), (bx, by, 0.32), 0.005, 4, "Mat_DarkTitanium")
+    # Muzzle Clamp Ring
+    add_cylinder_z(b, lx, 0.28, 0.30, 0.026, 0.026, 0.01, 8, "Mat_DarkTitanium")
+
+    # 6. Rear Power Reactor Backpack with Copper Radiator Fins
+    add_box(b, 0, 0.35, -0.11, 0.16, 0.14, 0.07, "Mat_DarkTitanium")
+    # 4 Vertical Copper Radiator Fins
+    for fx in [-0.05, -0.02, 0.02, 0.05]:
+        add_box(b, fx, 0.40, -0.12, 0.01, 0.08, 0.05, "Mat_CopperCoil")
+    # Exhaust Vent Ports
+    add_cylinder_y(b, -0.06, 0.44, -0.12, 0.015, 0.018, 0.04, 6, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0.06, 0.44, -0.12, 0.015, 0.018, 0.04, 6, "Mat_DarkTitanium")
+    # Reactor glow vent
+    add_box(b, 0, 0.32, -0.145, 0.08, 0.03, 0.01, "Mat_PlasmaCyan")
+
+    return b
+
 
 # ==============================================================================
 # 4. EXPORT ENGINE (OBJ & MTL WRITER)
@@ -668,6 +766,7 @@ def export_all_models(models_dir="assets/models"):
         "harvester": build_harvester_mesh,
         "wall": build_wall_mesh,
         "purifier": build_purifier_mesh,
+        "vanguard": build_vanguard_mesh,
     }
     results = {}
     for name, gen_fn in generators.items():

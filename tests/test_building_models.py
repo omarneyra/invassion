@@ -24,6 +24,7 @@ from tools.generate_building_models import (
     build_harvester_mesh,
     build_wall_mesh,
     build_purifier_mesh,
+    build_vanguard_mesh,
     write_obj_mtl,
     export_all_models
 )
@@ -130,11 +131,27 @@ class TestBuildingModelsGenerator(unittest.TestCase):
         if os.path.exists(f"{self.output_dir}/test_purifier.mtl"):
             os.remove(f"{self.output_dir}/test_purifier.mtl")
 
+    def test_vanguard_mesh_spec(self):
+        b = build_vanguard_mesh()
+        res = write_obj_mtl(b, f"{self.output_dir}/test_vanguard.obj", f"{self.output_dir}/test_vanguard.mtl")
+        self.assertGreaterEqual(res["verts_count"], 400)
+        self.assertGreaterEqual(res["faces_count"], 600)
+        self.assertIn("Mat_DarkTitanium", res["materials"])
+        self.assertIn("Mat_FactionArmor", res["materials"])
+        self.assertIn("Mat_CopperCoil", res["materials"])
+        self.assertIn("Mat_PlasmaCyan", res["materials"])
+        self.assertIn("Mat_Optics", res["materials"])
+
+        if os.path.exists(f"{self.output_dir}/test_vanguard.obj"):
+            os.remove(f"{self.output_dir}/test_vanguard.obj")
+        if os.path.exists(f"{self.output_dir}/test_vanguard.mtl"):
+            os.remove(f"{self.output_dir}/test_vanguard.mtl")
+
     def test_all_models_scale_fit_geodesic_nodes(self):
         results = export_all_models(self.output_dir)
-        self.assertEqual(len(results), 5)
+        self.assertEqual(len(results), 6)
 
-        for name in ["turret", "base", "harvester", "wall", "purifier"]:
+        for name in ["turret", "base", "harvester", "wall", "purifier", "vanguard"]:
             obj_path = f"{self.output_dir}/{name}.obj"
             self.assertTrue(os.path.exists(obj_path))
 
