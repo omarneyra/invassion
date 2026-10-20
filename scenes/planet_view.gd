@@ -7,7 +7,7 @@ extends Node3D
 @export var subdivisions: int = 3
 @export var node_marker_radius: float = 0.10
 
-@export var use_tactical_tokens: bool = true
+@export var use_tactical_tokens: bool = false
 
 var icosphere_data: Dictionary = {}
 var node_instances: Dictionary = {}     # {node_id: MeshInstance3D}
@@ -158,30 +158,33 @@ func _setup_materials() -> void:
 
 	mat_turret = StandardMaterial3D.new()
 	mat_turret.albedo_texture = TEX_TURRET_ALBEDO
-	mat_turret.albedo_color = Color("#8a99ad")
+	mat_turret.albedo_color = Color(1.0, 1.0, 1.0)
 	mat_turret.metallic = 0.88
 	mat_turret.roughness_texture = TEX_TURRET_ROUGH
 	mat_turret.normal_enabled = true
 	mat_turret.normal_texture = TEX_TURRET_NORMAL
-	mat_turret.normal_scale = 1.8
+	mat_turret.normal_scale = 1.6
 	mat_turret.rim_enabled = true
-	mat_turret.rim = 0.55
-	mat_turret.rim_tint = 0.4
-	mat_turret.rim_color = Color("#cbd5e1")
+	mat_turret.rim = 0.60
+	mat_turret.rim_tint = 0.3
+	mat_turret.rim_color = Color("#e2e8f0")
 	mat_turret.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_railgun_glow = StandardMaterial3D.new()
 	mat_railgun_glow.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
 	mat_railgun_glow.albedo_color = Color("#00f5ff")
+	mat_railgun_glow.emission_enabled = true
+	mat_railgun_glow.emission = Color("#00f5ff")
+	mat_railgun_glow.emission_energy_multiplier = 3.0
 	mat_railgun_glow.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_optics = StandardMaterial3D.new()
-	mat_optics.albedo_color = Color("#081528")
+	mat_optics.albedo_color = Color("#0a1525")
 	mat_optics.metallic = 0.95
 	mat_optics.roughness = 0.05
 	mat_optics.emission_enabled = true
-	mat_optics.emission = Color("#00b4d8")
-	mat_optics.emission_energy_multiplier = 1.0
+	mat_optics.emission = Color("#00e5ff")
+	mat_optics.emission_energy_multiplier = 2.2
 	mat_optics.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_harvester = StandardMaterial3D.new()
@@ -558,7 +561,7 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 		else:
 			var mi = MeshInstance3D.new()
 			mi.mesh = MESH_TURRET
-			mi.scale = Vector3(1.35, 1.35, 1.35)
+			mi.scale = Vector3(1.10, 1.10, 1.10)
 			var fact_armor = get_faction_armor_material(faction_id, color_hex)
 			mi.set_surface_override_material(0, mat_turret)
 			mi.set_surface_override_material(1, fact_armor)
@@ -568,9 +571,9 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 
 			var light = OmniLight3D.new()
 			light.light_color = Color("#00f5ff")
-			light.light_energy = 1.2
-			light.omni_range = 2.2
-			light.position = Vector3(0, 0.45, 0.25)
+			light.light_energy = 1.6
+			light.omni_range = 2.5
+			light.position = Vector3(0, 0.40, 0.35)
 			root.add_child(light)
 
 	elif btype == "harvester":
