@@ -151,25 +151,29 @@ func _setup_materials() -> void:
 	mat_base_glow.normal_texture = panel_normal
 
 	mat_turret = StandardMaterial3D.new()
-	mat_turret.albedo_color = Color("#1e2530")
-	mat_turret.metallic = 0.88
-	mat_turret.roughness = 0.32
+	mat_turret.albedo_color = Color("#384252")
+	mat_turret.metallic = 0.85
+	mat_turret.roughness = 0.28
 	mat_turret.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mat_turret.normal_enabled = true
 	mat_turret.normal_texture = panel_normal
+	mat_turret.rim_enabled = true
+	mat_turret.rim = 0.45
+	mat_turret.rim_tint = 0.5
+	mat_turret.rim_color = Color("#94a3b8")
 
 	mat_railgun_glow = StandardMaterial3D.new()
 	mat_railgun_glow.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
-	mat_railgun_glow.albedo_color = Color("#00e5ff")
+	mat_railgun_glow.albedo_color = Color("#00f5ff")
 	mat_railgun_glow.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_optics = StandardMaterial3D.new()
-	mat_optics.albedo_color = Color("#061325")
+	mat_optics.albedo_color = Color("#081528")
 	mat_optics.metallic = 0.95
-	mat_optics.roughness = 0.08
+	mat_optics.roughness = 0.05
 	mat_optics.emission_enabled = true
 	mat_optics.emission = Color("#00b4d8")
-	mat_optics.emission_energy_multiplier = 1.2
+	mat_optics.emission_energy_multiplier = 1.0
 	mat_optics.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_harvester = StandardMaterial3D.new()
@@ -362,6 +366,30 @@ func get_faction_material(faction_id: int, color_hex: String = "") -> StandardMa
 
 	return _faction_materials[faction_id]
 
+func get_faction_armor_material(faction_id: int, color_hex: String = "") -> StandardMaterial3D:
+	var def_color = "#15803d" if faction_id == 1 else "#6b21a8"
+	var col_str = color_hex if color_hex != "" else def_color
+	var col = Color(col_str)
+	var key = "armor_" + str(faction_id)
+
+	if not _faction_materials.has(key):
+		var mat = StandardMaterial3D.new()
+		mat.albedo_color = col
+		mat.metallic = 0.75
+		mat.roughness = 0.35
+		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mat.rim_enabled = true
+		mat.rim = 0.4
+		mat.rim_tint = 0.5
+		mat.rim_color = col.lightened(0.25)
+		_faction_materials[key] = mat
+	elif color_hex != "":
+		var mat = _faction_materials[key]
+		if mat.albedo_color != col:
+			mat.albedo_color = col
+
+	return _faction_materials[key]
+
 func update_visuals(world_state: Dictionary, factions_state: Variant = null) -> void:
 	current_world_state = world_state
 	if factions_state != null:
@@ -476,8 +504,9 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 	elif btype == "turret":
 		var mi = MeshInstance3D.new()
 		mi.mesh = MESH_TURRET
+		var fact_armor = get_faction_armor_material(faction_id, color_hex)
 		mi.set_surface_override_material(0, mat_turret)
-		mi.set_surface_override_material(1, fact_mat)
+		mi.set_surface_override_material(1, fact_armor)
 		mi.set_surface_override_material(2, mat_railgun_glow)
 		mi.set_surface_override_material(3, mat_optics)
 		root.add_child(mi)
