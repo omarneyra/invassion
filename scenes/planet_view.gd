@@ -37,6 +37,7 @@ const MESH_HARVESTER = preload("res://assets/models/harvester.obj")
 const MESH_WALL = preload("res://assets/models/wall.obj")
 const MESH_PURIFIER = preload("res://assets/models/purifier.obj")
 const MESH_VANGUARD = preload("res://assets/models/vanguard.obj")
+const MESH_MARINE = preload("res://assets/models/marine.obj")
 const TEX_TURRET_TOKEN = preload("res://assets/models/turret_token.png")
 const TEX_TURRET_ALBEDO = preload("res://assets/models/turret_titanium_albedo.png")
 const TEX_TURRET_NORMAL = preload("res://assets/models/turret_titanium_normal.png")
@@ -731,7 +732,15 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		root.add_child(mi)
 		return root
 
-	elif archetype == "scout" or archetype == "marine" or archetype == "psionic_disciple":
+	elif archetype == "marine":
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_MARINE
+		mi.scale = Vector3(scale_val, scale_val, scale_val)
+		_apply_building_materials(mi, custom_mat if custom_mat != null else mat_turret)
+		root.add_child(mi)
+		return root
+
+	elif archetype == "scout" or archetype == "psionic_disciple":
 		# Infantería / Scout veloz (cono aerodinámico)
 		var body = MeshInstance3D.new()
 		var cone = CylinderMesh.new()

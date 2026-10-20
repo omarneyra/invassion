@@ -707,6 +707,70 @@ def build_vanguard_mesh():
 
     return b
 
+def build_marine_mesh():
+    """Builds the 3D mesh for the Solarian Heavy Exosuit Infantry Marine.
+    Eliminates primitive cones with an armored combat infantry model:
+    dual armored boots/legs, chestplate with faction armor, helmet with cyan visor,
+    jump-pack thruster backpack with copper coils, and forward-aimed Gauss assault rifle.
+    """
+    b = make_builder()
+
+    # 1. Armored Combat Boots & Legs (Standing / advancing pose)
+    for lx in [-0.045, 0.045]:
+        # Heavy combat boot
+        add_box(b, lx, 0.02, 0.01, 0.04, 0.04, 0.07, "Mat_DarkTitanium")
+        add_box(b, lx, 0.035, 0.03, 0.035, 0.015, 0.03, "Mat_FactionArmor")
+        # Lower leg shin guard
+        add_cylinder_y(b, lx, 0.07, 0, 0.020, 0.020, 0.06, 6, "Mat_DarkTitanium")
+        add_box(b, lx, 0.08, 0.015, 0.030, 0.04, 0.015, "Mat_FactionArmor")
+        # Knee armor pad
+        add_box(b, lx, 0.11, 0.02, 0.025, 0.02, 0.02, "Mat_FactionArmor")
+        # Upper thigh
+        add_cylinder_y(b, lx, 0.15, 0, 0.022, 0.022, 0.06, 6, "Mat_DarkTitanium")
+
+    # 2. Pelvis / Utility Belt
+    add_box(b, 0, 0.18, 0, 0.11, 0.04, 0.07, "Mat_DarkTitanium")
+    add_box(b, 0, 0.18, 0.038, 0.08, 0.03, 0.015, "Mat_FactionArmor")
+
+    # 3. Armored Exosuit Torso (Chestplate)
+    add_box(b, 0, 0.24, 0, 0.13, 0.09, 0.08, "Mat_DarkTitanium")
+    # Ballistic chest chevron plate
+    add_box(b, 0, 0.25, 0.042, 0.11, 0.07, 0.02, "Mat_FactionArmor")
+
+    # 4. Enclosed Combat Helmet
+    add_box(b, 0, 0.31, 0.01, 0.07, 0.065, 0.07, "Mat_DarkTitanium")
+    add_box(b, 0, 0.325, 0.01, 0.06, 0.025, 0.065, "Mat_FactionArmor")
+    # Horizontal Cyan Optical Visor Slit
+    add_box(b, 0, 0.305, 0.046, 0.055, 0.015, 0.01, "Mat_PlasmaCyan")
+    add_box(b, 0, 0.305, 0.044, 0.065, 0.020, 0.01, "Mat_Optics")
+
+    # 5. Jump-Pack / Life Support Backpack
+    add_box(b, 0, 0.25, -0.055, 0.09, 0.09, 0.04, "Mat_DarkTitanium")
+    # Twin thruster vents with copper heat bands
+    for tx in [-0.03, 0.03]:
+        add_cylinder_y(b, tx, 0.21, -0.055, 0.014, 0.018, 0.04, 6, "Mat_DarkTitanium")
+        add_cylinder_y(b, tx, 0.27, -0.055, 0.012, 0.012, 0.02, 6, "Mat_CopperCoil")
+
+    # 6. Right Arm & Gauss Assault Rifle (held forward at high-ready)
+    # Right shoulder pauldron
+    add_box(b, 0.08, 0.27, 0, 0.04, 0.04, 0.06, "Mat_FactionArmor")
+    # Arm reaching forward to rifle
+    add_cylinder_between(b, (0.08, 0.26, 0), (0.05, 0.22, 0.08), 0.016, 6, "Mat_DarkTitanium")
+    # Left arm supporting rifle
+    add_box(b, -0.08, 0.27, 0, 0.04, 0.04, 0.06, "Mat_FactionArmor")
+    add_cylinder_between(b, (-0.08, 0.26, 0), (-0.02, 0.22, 0.09), 0.016, 6, "Mat_DarkTitanium")
+
+    # Gauss Rifle body
+    add_box(b, 0.03, 0.22, 0.12, 0.035, 0.05, 0.16, "Mat_DarkTitanium")
+    # Rifle barrel
+    add_cylinder_z(b, 0.03, 0.23, 0.22, 0.008, 0.008, 0.08, 6, "Mat_DarkTitanium")
+    # Copper accelerator coil on rifle
+    add_cylinder_z(b, 0.03, 0.23, 0.16, 0.014, 0.014, 0.03, 6, "Mat_CopperCoil")
+    # Cyan emitter tip
+    add_cylinder_z(b, 0.03, 0.23, 0.26, 0.006, 0.006, 0.01, 6, "Mat_PlasmaCyan")
+
+    return b
+
 
 # ==============================================================================
 # 4. EXPORT ENGINE (OBJ & MTL WRITER)
@@ -767,6 +831,7 @@ def export_all_models(models_dir="assets/models"):
         "wall": build_wall_mesh,
         "purifier": build_purifier_mesh,
         "vanguard": build_vanguard_mesh,
+        "marine": build_marine_mesh,
     }
     results = {}
     for name, gen_fn in generators.items():
