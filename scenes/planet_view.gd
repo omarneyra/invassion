@@ -357,13 +357,13 @@ func _align_with_surface(node_3d: Node3D, pos: Vector3) -> void:
 	node_3d.position = pos
 
 	var up = normal
-	var forward = Vector3.FORWARD
-	if absf(up.dot(forward)) > 0.9:
-		forward = Vector3.RIGHT
-	var right = up.cross(forward).normalized()
-	forward = right.cross(up).normalized()
+	var pole = Vector3.UP
+	if absf(normal.dot(pole)) > 0.92:
+		pole = Vector3.FORWARD
+	var north_tangent = (pole - normal * normal.dot(pole)).normalized()
+	var east_tangent = normal.cross(north_tangent).normalized()
 
-	node_3d.basis = Basis(right, up, forward)
+	node_3d.basis = Basis(east_tangent, up, north_tangent)
 
 var _faction_materials: Dictionary = {}
 var current_world_state: Dictionary = {}
@@ -588,9 +588,9 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 
 			var light = OmniLight3D.new()
 			light.light_color = Color("#00f5ff")
-			light.light_energy = 1.6
-			light.omni_range = 2.5
-			light.position = Vector3(0, 0.40, 0.35)
+			light.light_energy = 0.45
+			light.omni_range = 1.4
+			light.position = Vector3(0, 0.32, 0.22)
 			root.add_child(light)
 
 	elif btype == "harvester":
