@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c8wxbq3wfm0up"
+path="res://.godot/imported/harvester.obj-6afdfa467c21d425889ca7c6927f6dc8.mesh"
+
+[deps]
+
+files=["res://.godot/imported/harvester.obj-6afdfa467c21d425889ca7c6927f6dc8.mesh"]
+
+source_file="res://assets/models/harvester.obj"
+dest_files=["res://.godot/imported/harvester.obj-6afdfa467c21d425889ca7c6927f6dc8.mesh", "res://.godot/imported/harvester.obj-6afdfa467c21d425889ca7c6927f6dc8.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

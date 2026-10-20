@@ -458,74 +458,155 @@ def build_base_mesh():
     return b
 
 def build_harvester_mesh():
-    """Builds the 3D mesh for the Industrial Mining Rig / Energy Extractor."""
+    """Builds the 3D mesh for the Vertical Mining Laser Drill Extractor.
+    Matches the official concept art: heavy 4-legged industrial gantry arch,
+    central suspended downward laser emitter head, concentric copper focusing rings,
+    vertical cyan mining laser beam drilling down into the rock, lateral filter boxes,
+    and heavy flexible power conduits.
+    """
     b = make_builder()
-    # 1. Industrial Anchor Foundation
-    add_bunker_plinth(b, 0, 0.03, 0, 0.82, 0.82, 0.06)
-    add_outriggers(b, 0.30, 4)
 
-    # 2. Central Rotary Bore Housing
-    add_cylinder_y(b, 0, 0.14, 0, 0.30, 0.34, 0.12, 12, "Mat_DarkTitanium")
-    add_cylinder_y(b, 0, 0.21, 0, 0.26, 0.28, 0.04, 12, "Mat_FactionArmor")
+    # 1. Fragmented Rock Rim & Anchor Foundation
+    add_bunker_plinth(b, 0, 0.03, 0, 0.96, 0.96, 0.06)
 
-    # 3. Glowing Geothermal Separation Chamber
-    add_cylinder_y(b, 0, 0.29, 0, 0.22, 0.22, 0.12, 12, "Mat_PlasmaCyan")
-    # Copper heat exchange coils wrapped around chamber
-    for cy in [0.25, 0.29, 0.33]:
-        add_cylinder_y(b, 0, cy, 0, 0.24, 0.24, 0.02, 12, "Mat_CopperCoil")
+    # 4 Heavy Outrigger Gantry Legs (angled struts forming the gantry arch)
+    for i in range(4):
+        angle = (i + 0.5) * (math.pi * 0.5)
+        ca, sa = math.cos(angle), math.sin(angle)
 
-    # 4. Dual Industrial Transfer Conduits
-    for sx in [-0.22, 0.22]:
-        add_cylinder_between(b, (sx, 0.08, -0.10), (sx, 0.32, 0.05), 0.030, 8, "Mat_DarkTitanium")
-        add_cylinder_between(b, (sx, 0.32, 0.05), (sx * 0.5, 0.38, 0.0), 0.022, 8, "Mat_CopperCoil")
+        # Ground foot pad
+        fx, fz = ca * 0.44, sa * 0.44
+        add_box(b, fx, 0.04, fz, 0.12, 0.06, 0.12, "Mat_DarkTitanium")
+        add_box(b, fx, 0.08, fz, 0.10, 0.02, 0.10, "Mat_FactionArmor")
 
-    # 5. Top Exhaust Smokestack & Pressure Relief Valves
-    add_cylinder_y(b, 0, 0.40, 0, 0.12, 0.16, 0.10, 8, "Mat_DarkTitanium")
-    add_cylinder_y(b, 0, 0.46, 0, 0.08, 0.08, 0.04, 8, "Mat_Optics")
+        # Angled heavy structural leg pylon reaching up to top gantry collar (y=0.42, r=0.18)
+        tx, tz = ca * 0.18, sa * 0.18
+        add_cylinder_between(b, (fx, 0.08, fz), (tx, 0.42, tz), 0.032, 6, "Mat_DarkTitanium")
+        # Secondary hydraulic bracing strut
+        add_cylinder_between(b, (ca * 0.36, 0.04, sa * 0.36), (tx, 0.36, tz), 0.018, 6, "Mat_FactionArmor")
+
+    # 2. Top Gantry Platform & Heavy Generator Collar
+    add_cylinder_y(b, 0, 0.44, 0, 0.22, 0.24, 0.06, 8, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0, 0.48, 0, 0.18, 0.20, 0.04, 8, "Mat_FactionArmor")
+    # Top service cupola / vent cap
+    add_cylinder_y(b, 0, 0.52, 0, 0.12, 0.14, 0.04, 8, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0, 0.55, 0, 0.07, 0.07, 0.02, 8, "Mat_Optics")
+
+    # 3. Suspended Downward Laser Emitter Assembly
+    add_cylinder_y(b, 0, 0.36, 0, 0.14, 0.16, 0.10, 8, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0, 0.29, 0, 0.11, 0.13, 0.05, 8, "Mat_FactionArmor")
+
+    # 3 Concentric Copper Electromagnetic Focusing Rings
+    for cy in [0.26, 0.21, 0.16]:
+        add_cylinder_y(b, 0, cy, 0, 0.10, 0.10, 0.022, 12, "Mat_CopperCoil")
+        add_cylinder_y(b, 0, cy, 0, 0.065, 0.065, 0.020, 10, "Mat_PlasmaCyan")
+
+    # Lower laser nozzle cone
+    add_cylinder_y(b, 0, 0.12, 0, 0.055, 0.08, 0.05, 8, "Mat_DarkTitanium")
+
+    # 4. The Vertical Mining Laser Beam (pointing straight DOWN into the planetary crust)
+    add_cylinder_between(b, (0, 0.11, 0), (0, -0.02, 0), 0.028, 8, "Mat_PlasmaCyan")
+    add_cylinder_y(b, 0, 0.01, 0, 0.08, 0.10, 0.02, 8, "Mat_PlasmaCyan")
+
+    # 5. Lateral Slurry Filters & Power Generator Boxes
+    for sx in [-0.36, 0.36]:
+        add_box(b, sx, 0.12, 0, 0.14, 0.16, 0.14, "Mat_DarkTitanium")
+        add_box(b, sx, 0.21, 0, 0.11, 0.03, 0.11, "Mat_FactionArmor")
+        add_cylinder_between(b, (sx * 0.5, 0.44, 0), (sx, 0.22, 0), 0.025, 6, "Mat_DarkTitanium")
+        add_cylinder_between(b, (sx * 0.5, 0.42, 0.05), (sx, 0.18, 0.05), 0.016, 6, "Mat_CopperCoil")
+
     return b
 
 def build_wall_mesh():
-    """Builds the 3D mesh for the Heavy Perimeter Defense Barrier."""
+    """Builds the 3D mesh for the Heavy Perimeter Defense Barrier.
+    Matches the official concept art: twin flanking defense bastions with copper induction coils,
+    optical scanners, chevron armor plates, and a glowing cyan force-field curtain between them.
+    """
     b = make_builder()
-    # 1. Foundation Slab
-    add_box(b, 0, 0.03, 0, 0.88, 0.06, 0.42, "Mat_DarkTitanium")
-    for sx in [-0.36, 0.36]:
-        add_box(b, sx, 0.05, 0, 0.14, 0.08, 0.46, "Mat_DarkTitanium")
 
-    # 2. Interlocking Armored Chevron Bastions
-    add_box(b, 0, 0.18, 0, 0.74, 0.24, 0.24, "Mat_DarkTitanium")
-    add_box(b, 0, 0.22, 0.08, 0.64, 0.16, 0.10, "Mat_FactionArmor")
+    # 1. Foundation Slab & Ground Clamps
+    add_box(b, 0, 0.03, 0, 0.94, 0.06, 0.44, "Mat_DarkTitanium")
+    for sx in [-0.40, 0.40]:
+        add_box(b, sx, 0.05, 0, 0.16, 0.08, 0.48, "Mat_DarkTitanium")
+        add_box(b, sx, 0.09, 0, 0.12, 0.02, 0.44, "Mat_FactionArmor")
 
-    # 3. Dual Force-Field Projector Pylons
-    for sx in [-0.32, 0.32]:
-        add_box(b, sx, 0.28, 0, 0.10, 0.32, 0.16, "Mat_DarkTitanium")
-        add_cylinder_between(b, (sx, 0.36, 0), (sx, 0.46, 0), 0.024, 8, "Mat_CopperCoil")
-        add_box(b, sx, 0.48, 0, 0.04, 0.04, 0.04, "Mat_PlasmaCyan")
+    # 2. Interlocking Armored Chevron Barrier (Center)
+    add_box(b, 0, 0.14, 0, 0.62, 0.16, 0.22, "Mat_DarkTitanium")
+    add_box(b, 0, 0.23, 0, 0.56, 0.04, 0.16, "Mat_FactionArmor")
+    # Warning hazard chevron accents along wall base
+    for x_off in [-0.18, 0.0, 0.18]:
+        add_box(b, x_off, 0.15, 0.115, 0.08, 0.08, 0.01, "Mat_FactionArmor")
+        add_box(b, x_off, 0.15, -0.115, 0.08, 0.08, 0.01, "Mat_FactionArmor")
 
-    # 4. Central Energy Barrier Emitter Window
-    add_box(b, 0, 0.22, 0, 0.38, 0.08, 0.26, "Mat_PlasmaCyan")
+    # 3. Dual Force-Field Projector Bastions (Flanks)
+    for sx in [-0.38, 0.38]:
+        # Tower Bastion Body
+        add_box(b, sx, 0.20, 0, 0.16, 0.26, 0.28, "Mat_DarkTitanium")
+        add_box(b, sx, 0.34, 0, 0.14, 0.04, 0.24, "Mat_FactionArmor")
+
+        # Copper Field Induction Solenoids on Tower
+        add_cylinder_y(b, sx, 0.38, 0, 0.055, 0.055, 0.035, 8, "Mat_CopperCoil")
+        add_cylinder_y(b, sx, 0.43, 0, 0.055, 0.055, 0.035, 8, "Mat_CopperCoil")
+
+        # Force-Field Emitter Head
+        add_box(b, sx, 0.48, 0, 0.07, 0.06, 0.07, "Mat_PlasmaCyan")
+        # Optical Targeting & Scanner Pod
+        add_box(b, sx, 0.52, 0, 0.05, 0.03, 0.05, "Mat_Optics")
+
+    # 4. Central Ion Force-Field Curtain (Between the bastions)
+    add_box(b, 0, 0.34, 0, 0.58, 0.22, 0.028, "Mat_PlasmaCyan")
+
+    # Reinforcing horizontal copper energy busbar at barrier top
+    add_cylinder_between(b, (-0.30, 0.24, 0), (0.30, 0.24, 0), 0.014, 6, "Mat_CopperCoil")
+
     return b
 
 def build_purifier_mesh():
-    """Builds the 3D mesh for the Orbital Void Purification Array."""
+    """Builds the 3D mesh for the Orbital Void Purification Array.
+    Matches the official concept art: octagonal heavy bunker plinth, stepped circular accelerator housing,
+    vertical column with tiered copper induction rings, and a high-collimation atmospheric beam emitter.
+    """
     b = make_builder()
-    # 1. Quad Stabilizing Anchor Base
-    add_bunker_plinth(b, 0, 0.03, 0, 0.86, 0.86, 0.06)
-    add_outriggers(b, 0.32, 4)
 
-    # 2. Concentric Accelerator Housing
-    add_cylinder_y(b, 0, 0.14, 0, 0.32, 0.36, 0.12, 16, "Mat_DarkTitanium")
-    add_cylinder_y(b, 0, 0.22, 0, 0.26, 0.28, 0.04, 16, "Mat_FactionArmor")
+    # 1. Octagonal Citadel Foundation Plinth & Stabilizers
+    add_bunker_plinth(b, 0, 0.04, 0, 1.05, 1.05, 0.08)
+    add_outriggers(b, 0.42, 4)
 
-    # 3. High-Energy Beam Spire with Copper Induction Rings
-    add_cylinder_y(b, 0, 0.34, 0, 0.14, 0.20, 0.20, 12, "Mat_DarkTitanium")
-    for cy in [0.28, 0.34, 0.40]:
-        add_cylinder_y(b, 0, cy, 0, 0.18, 0.18, 0.02, 12, "Mat_CopperCoil")
+    # 4 Corner Hydraulic Ground Anchors
+    for i in range(4):
+        angle = (i + 0.5) * (math.pi * 0.5)
+        ca, sa = math.cos(angle), math.sin(angle)
+        add_cylinder_between(b, (ca * 0.36, 0.10, sa * 0.36), (ca * 0.52, 0.02, sa * 0.52), 0.020, 6, "Mat_DarkTitanium")
 
-    # 4. Focusing Plasma Core & Emitter Nozzle
-    add_cylinder_y(b, 0, 0.48, 0, 0.10, 0.12, 0.08, 12, "Mat_PlasmaCyan")
-    add_cylinder_y(b, 0, 0.54, 0, 0.06, 0.09, 0.04, 12, "Mat_Optics")
-    add_box(b, 0, 0.57, 0, 0.04, 0.03, 0.04, "Mat_PlasmaCyan")
+    # 2. Stepped Circular Accelerator Housing
+    add_cylinder_y(b, 0, 0.15, 0, 0.38, 0.44, 0.14, 12, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0, 0.23, 0, 0.32, 0.36, 0.04, 12, "Mat_FactionArmor")
+
+    # 4 Lateral Transformer & Capacitor Banks with cooling fins
+    for i in range(4):
+        ang = i * (math.pi * 0.5)
+        ca, sa = math.cos(ang), math.sin(ang)
+        bx, bz = ca * 0.34, sa * 0.34
+        add_box(b, bx, 0.16, bz, 0.12, 0.12, 0.12, "Mat_DarkTitanium")
+        add_box(b, bx, 0.23, bz, 0.10, 0.02, 0.10, "Mat_FactionArmor")
+        add_cylinder_y(b, bx, 0.16, bz, 0.03, 0.03, 0.06, 6, "Mat_CopperCoil")
+
+    # 3. High-Energy Vertical Particle Accelerator Column
+    add_cylinder_y(b, 0, 0.33, 0, 0.16, 0.22, 0.20, 12, "Mat_DarkTitanium")
+
+    # Tiered Copper Acceleration Rings (Stacked vertically like synchrotron solenoids)
+    for cy in [0.26, 0.32, 0.38, 0.44]:
+        add_cylinder_y(b, 0, cy, 0, 0.20, 0.20, 0.022, 12, "Mat_CopperCoil")
+        add_cylinder_y(b, 0, cy + 0.03, 0, 0.17, 0.17, 0.014, 10, "Mat_PlasmaCyan")
+
+    # 4. Focusing Plasma Collimator & Emitter Nozzle
+    add_cylinder_y(b, 0, 0.50, 0, 0.11, 0.14, 0.08, 12, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0, 0.55, 0, 0.08, 0.10, 0.03, 12, "Mat_Optics")
+
+    # 5. Upward Atmospheric Purification Laser Beam
+    add_cylinder_between(b, (0, 0.56, 0), (0, 0.76, 0), 0.038, 8, "Mat_PlasmaCyan")
+    add_box(b, 0, 0.57, 0, 0.06, 0.06, 0.06, "Mat_PlasmaCyan")
+
     return b
 
 
