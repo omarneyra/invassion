@@ -367,34 +367,94 @@ def build_turret_mesh():
     return b
 
 def build_base_mesh():
-    """Builds the 3D mesh for the Planetary Command Core (Fortress HQ)."""
+    """Builds the 3D mesh for the Planetary Command Core (Fortress HQ).
+    Matches the official concept art with stepped citadel pyramids, 4 corner communications bastions,
+    central glowing shield generator dome with copper containment coils, armored blast doors, and hydraulic anchors.
+    """
     b = make_builder()
-    # 1. Octagonal Citadel Foundation Plinth
-    add_bunker_plinth(b, 0, 0.04, 0, 1.05, 1.05, 0.08)
-    add_outriggers(b, 0.40, 4)
 
-    # 2. Stepped Fortress Hull
-    add_cylinder_y(b, 0, 0.15, 0, 0.42, 0.48, 0.14, 8, "Mat_DarkTitanium")
-    add_cylinder_y(b, 0, 0.24, 0, 0.36, 0.40, 0.06, 8, "Mat_FactionArmor")
-    add_cylinder_y(b, 0, 0.30, 0, 0.28, 0.32, 0.06, 8, "Mat_DarkTitanium")
+    # 1. Octagonal Citadel Foundation Plinth & Heavy Outriggers
+    add_bunker_plinth(b, 0, 0.04, 0, 1.15, 1.15, 0.08)
+    add_outriggers(b, 0.46, 4)
 
-    # 3. Glowing Planetary Shield Reactor Core
-    add_cylinder_y(b, 0, 0.38, 0, 0.18, 0.18, 0.10, 12, "Mat_PlasmaCyan")
-    # Reactor Containment Rings with Copper Conduits
-    add_cylinder_y(b, 0, 0.35, 0, 0.21, 0.21, 0.02, 12, "Mat_CopperCoil")
-    add_cylinder_y(b, 0, 0.41, 0, 0.21, 0.21, 0.02, 12, "Mat_CopperCoil")
-
-    # 4. Four Orbital Relay Comms Pylons
+    # 4 Corner Hydraulic Ground Anchors (pinning plinth corners)
     for i in range(4):
-        angle = i * (math.pi * 0.5)
+        angle = (i + 0.5) * (math.pi * 0.5)
         ca, sa = math.cos(angle), math.sin(angle)
-        px, pz = ca * 0.32, sa * 0.32
-        add_box(b, px, 0.34, pz, 0.08, 0.18, 0.08, "Mat_DarkTitanium")
-        add_cylinder_between(b, (px, 0.43, pz), (px, 0.58, pz), 0.008, 4, "Mat_CopperCoil")
-        add_box(b, px, 0.59, pz, 0.025, 0.025, 0.025, "Mat_PlasmaCyan")
+        p_in = (ca * 0.40, 0.12, sa * 0.40)
+        p_out = (ca * 0.58, 0.02, sa * 0.58)
+        add_cylinder_between(b, p_in, p_out, 0.022, 6, "Mat_DarkTitanium")
+        add_cylinder_between(b, (ca * 0.40, 0.12, sa * 0.40), (ca * 0.49, 0.07, sa * 0.49), 0.028, 6, "Mat_FactionArmor")
 
-    # 5. Commander Observation Cupola on Top
-    add_commander_cupola(b, 0, 0.46, 0)
+    # 2. Stepped Fortress Hull (Tier 1: Octagonal Lower Bastion)
+    add_cylinder_y(b, 0, 0.15, 0, 0.44, 0.50, 0.14, 8, "Mat_DarkTitanium")
+    # Ballistic Chevron Armor Skirts around Lower Tier
+    add_cylinder_y(b, 0, 0.22, 0, 0.40, 0.44, 0.04, 8, "Mat_FactionArmor")
+
+    # Armored Front & Rear Ingress Gates / Blast Doors
+    for gz in [-0.49, 0.49]:
+        add_box(b, 0, 0.12, gz, 0.18, 0.10, 0.03, "Mat_FactionArmor")
+        add_box(b, 0, 0.12, gz + (0.015 if gz < 0 else -0.015), 0.14, 0.07, 0.01, "Mat_DarkTitanium")
+        add_box(b, 0, 0.175, gz, 0.10, 0.015, 0.02, "Mat_PlasmaCyan")
+
+    # Lateral Cooling Radiators & Power Louvers
+    for gx in [-0.48, 0.48]:
+        add_box(b, gx, 0.13, 0, 0.03, 0.08, 0.22, "Mat_DarkTitanium")
+        for vz in [-0.07, 0.0, 0.07]:
+            add_box(b, gx + (0.01 if gx > 0 else -0.01), 0.13, vz, 0.015, 0.06, 0.035, "Mat_CopperCoil")
+
+    # 3. Mid-Tier Command Citadel
+    add_cylinder_y(b, 0, 0.28, 0, 0.32, 0.38, 0.08, 8, "Mat_DarkTitanium")
+    add_cylinder_y(b, 0, 0.32, 0, 0.28, 0.32, 0.03, 8, "Mat_FactionArmor")
+
+    # Command Bridge Observation Visors (Slit windows)
+    for i in range(8):
+        ang = i * (math.pi * 0.25)
+        vx, vz = math.cos(ang) * 0.30, math.sin(ang) * 0.30
+        add_box(b, vx, 0.285, vz, 0.05, 0.022, 0.05, "Mat_Optics")
+
+    # 4. Central Planetary Shield Reactor Core
+    add_cylinder_y(b, 0, 0.38, 0, 0.18, 0.18, 0.10, 12, "Mat_PlasmaCyan")
+    # Copper Toroidal Induction & Containment Coils
+    add_cylinder_y(b, 0, 0.34, 0, 0.22, 0.22, 0.025, 12, "Mat_CopperCoil")
+    add_cylinder_y(b, 0, 0.38, 0, 0.22, 0.22, 0.025, 12, "Mat_CopperCoil")
+    add_cylinder_y(b, 0, 0.42, 0, 0.22, 0.22, 0.025, 12, "Mat_CopperCoil")
+
+    # Vertical Titanium Containment Ribs (Cage around the plasma reactor)
+    for i in range(6):
+        ang = i * (math.pi / 3.0)
+        cx, cz = math.cos(ang) * 0.21, math.sin(ang) * 0.21
+        add_cylinder_between(b, (cx, 0.32, cz), (cx, 0.44, cz), 0.014, 6, "Mat_DarkTitanium")
+
+    # 5. Four Corner Communications & Shield Bastions
+    for i in range(4):
+        angle = (i + 0.5) * (math.pi * 0.5)
+        ca, sa = math.cos(angle), math.sin(angle)
+        px, pz = ca * 0.38, sa * 0.38
+
+        # Bastion Base Pillar
+        add_box(b, px, 0.18, pz, 0.13, 0.22, 0.13, "Mat_DarkTitanium")
+        add_box(b, px, 0.29, pz, 0.11, 0.04, 0.11, "Mat_FactionArmor")
+
+        # Heavy Diagonal Feed Conduits connecting Bastion to Central Reactor
+        add_cylinder_between(b, (px * 0.75, 0.22, pz * 0.75), (ca * 0.19, 0.35, sa * 0.19), 0.018, 6, "Mat_DarkTitanium")
+        add_cylinder_between(b, (px * 0.75, 0.25, pz * 0.75), (ca * 0.19, 0.38, sa * 0.19), 0.012, 6, "Mat_CopperCoil")
+
+        # Upper Relay Mast
+        add_cylinder_between(b, (px, 0.31, pz), (px, 0.54, pz), 0.016, 6, "Mat_DarkTitanium")
+        # Copper Tuning Rings on Pylon Mast
+        add_cylinder_y(b, px, 0.38, pz, 0.028, 0.028, 0.020, 8, "Mat_CopperCoil")
+        add_cylinder_y(b, px, 0.44, pz, 0.028, 0.028, 0.020, 8, "Mat_CopperCoil")
+
+        # Sensor / Uplink Fin on Pylon Top
+        add_box(b, px, 0.52, pz, 0.04, 0.05, 0.01, "Mat_FactionArmor")
+        # Beacon Cap
+        add_box(b, px, 0.56, pz, 0.03, 0.03, 0.03, "Mat_PlasmaCyan")
+        # Needle Spire
+        add_cylinder_between(b, (px, 0.57, pz), (px, 0.65, pz), 0.004, 4, "Mat_DarkTitanium")
+
+    # 6. Top Commander Cupola
+    add_commander_cupola(b, 0, 0.47, 0)
     return b
 
 def build_harvester_mesh():
