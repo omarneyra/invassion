@@ -19,7 +19,7 @@ class TestTurretModelGenerator(unittest.TestCase):
         self.assertGreaterEqual(result["normals_count"], 50)
         self.assertGreaterEqual(result["faces_count"], 600)
         
-        expected_materials = {"Mat_DarkTitanium", "Mat_FactionArmor", "Mat_PlasmaCyan", "Mat_Optics"}
+        expected_materials = {"Mat_DarkTitanium", "Mat_FactionArmor", "Mat_PlasmaCyan", "Mat_Optics", "Mat_CopperCoil"}
         self.assertEqual(set(result["materials"]), expected_materials)
 
     def test_turret_file_integrity(self):
@@ -32,6 +32,7 @@ class TestTurretModelGenerator(unittest.TestCase):
             self.assertIn("newmtl Mat_FactionArmor", mtl_content)
             self.assertIn("newmtl Mat_PlasmaCyan", mtl_content)
             self.assertIn("newmtl Mat_Optics", mtl_content)
+            self.assertIn("newmtl Mat_CopperCoil", mtl_content)
 
         with open(self.test_obj, "r") as f:
             lines = f.readlines()
@@ -41,7 +42,7 @@ class TestTurretModelGenerator(unittest.TestCase):
 
             self.assertGreaterEqual(len(v_lines), 400)
             self.assertGreaterEqual(len(f_lines), 600)
-            self.assertGreaterEqual(len(usemtl_lines), 4)
+            self.assertGreaterEqual(len(usemtl_lines), 5)
 
     def test_turret_bounding_box_scale(self):
         # Reads vertices to ensure scale fits the planetary geodesic nodes

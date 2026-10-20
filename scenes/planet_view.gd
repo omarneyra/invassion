@@ -27,6 +27,7 @@ var mat_base_glow: StandardMaterial3D
 var mat_turret: StandardMaterial3D
 var mat_railgun_glow: StandardMaterial3D
 var mat_optics: StandardMaterial3D
+var mat_copper: StandardMaterial3D
 var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
 
@@ -168,6 +169,9 @@ func _setup_materials() -> void:
 	mat_turret.rim = 0.60
 	mat_turret.rim_tint = 0.3
 	mat_turret.rim_color = Color("#e2e8f0")
+	mat_turret.uv1_triplanar = true
+	mat_turret.uv1_triplanar_sharpness = 4.0
+	mat_turret.uv1_scale = Vector3(1.8, 1.8, 1.8)
 	mat_turret.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_railgun_glow = StandardMaterial3D.new()
@@ -186,6 +190,15 @@ func _setup_materials() -> void:
 	mat_optics.emission = Color("#00e5ff")
 	mat_optics.emission_energy_multiplier = 2.2
 	mat_optics.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	mat_copper = StandardMaterial3D.new()
+	mat_copper.albedo_color = Color("#d97706")
+	mat_copper.metallic = 0.92
+	mat_copper.roughness = 0.22
+	mat_copper.emission_enabled = true
+	mat_copper.emission = Color("#b45309")
+	mat_copper.emission_energy_multiplier = 0.5
+	mat_copper.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_harvester = StandardMaterial3D.new()
 	mat_harvester.albedo_color = Color("#f59e0b")
@@ -393,6 +406,9 @@ func get_faction_armor_material(faction_id: int, color_hex: String = "") -> Stan
 		mat.normal_texture = TEX_TURRET_NORMAL
 		mat.normal_scale = 1.4
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mat.uv1_triplanar = true
+		mat.uv1_triplanar_sharpness = 4.0
+		mat.uv1_scale = Vector3(2.0, 2.0, 2.0)
 		mat.rim_enabled = true
 		mat.rim = 0.45
 		mat.rim_tint = 0.5
@@ -567,6 +583,7 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 			mi.set_surface_override_material(1, fact_armor)
 			mi.set_surface_override_material(2, mat_railgun_glow)
 			mi.set_surface_override_material(3, mat_optics)
+			mi.set_surface_override_material(4, mat_copper)
 			root.add_child(mi)
 
 			var light = OmniLight3D.new()

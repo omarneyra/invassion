@@ -8,12 +8,11 @@ Faithfully recreates the visual silhouette, proportions, and details of the stud
 - Dual prominent hydraulic elevation rams connecting turntable front to gun cradle
 - Side cylindrical trunnion recoil hubs with concentric cap discs
 - 4 rear recoil buffer accumulator tubes with glowing cyan status indicators
-- Twin heavy pulse railguns at 16 degrees elevation:
-  * Breech trunnion blocks
-  * 3 concentric ribbed induction cooling coils per barrel with plasma separators
+- Twin heavy pulse railguns with chunky wide-spaced artillery profile (7.5 deg elevation):
+  * Breech trunnion blocks with central heavy armored mantlet
+  * 3 concentric ribbed induction copper coils per barrel (Mat_CopperCoil)
   * Heavy rectangular upper & lower rail beams with side armor shrouds
-  * Recessed central plasma acceleration channel (glowing cyan)
-  * 5 side heat dissipation cooling vent slits per barrel
+  * Recessed central plasma acceleration channel with segmented cooling louvers
   * Quad-prong heavy muzzle compensators with glowing bore exit
 - 100% verified Counter-Clockwise (CCW) outward face winding.
 """
@@ -27,11 +26,12 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
     uvs = []
     faces = {} # mat_name -> list of faces
 
-    # Elevation angle: 16.0 degrees (imposing, forward-facing combat posture)
-    ELEVATION_ANGLE = math.radians(16.0)
+    # Low-profile ground artillery elevation angle: 7.5 degrees
+    # This prevents the cannons from looking like vertical chimneys on curved planets.
+    ELEVATION_ANGLE = math.radians(7.5)
     cos_el = math.cos(ELEVATION_ANGLE)
     sin_el = math.sin(ELEVATION_ANGLE)
-    PIVOT_Y = 0.32
+    PIVOT_Y = 0.30
     PIVOT_Z = 0.04
 
     def add_vertex(x, y, z):
@@ -71,7 +71,7 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
 
     def rotate_normal(nx, ny, nz):
         rny = ny * cos_el + nz * sin_el
-        rnz = -ny * sin_el + dz_norm if False else (-ny * sin_el + nz * cos_el)
+        rnz = -ny * sin_el + nz * cos_el
         return (nx, rny, rnz)
 
     def add_box(cx, cy, cz, sx, sy, sz, mat_name, elevated=False):
@@ -105,18 +105,12 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
             n_lft = (-1, 0, 0)
 
         # All quads wound CCW looking from outside
-        # Front (+Z)
-        add_quad(c[4], c[5], c[6], c[7], n_fwd, mat_name)
-        # Back (-Z)
-        add_quad(c[1], c[0], c[3], c[2], n_bck, mat_name)
-        # Top (+Y)
-        add_quad(c[7], c[6], c[2], c[3], n_top, mat_name)
-        # Bottom (-Y)
-        add_quad(c[0], c[1], c[5], c[4], n_bot, mat_name)
-        # Right (+X)
-        add_quad(c[5], c[1], c[2], c[6], n_rgt, mat_name)
-        # Left (-X)
-        add_quad(c[0], c[4], c[7], c[3], n_lft, mat_name)
+        add_quad(c[4], c[5], c[6], c[7], n_fwd, mat_name) # Front (+Z)
+        add_quad(c[1], c[0], c[3], c[2], n_bck, mat_name) # Back (-Z)
+        add_quad(c[7], c[6], c[2], c[3], n_top, mat_name) # Top (+Y)
+        add_quad(c[0], c[1], c[5], c[4], n_bot, mat_name) # Bottom (-Y)
+        add_quad(c[5], c[1], c[2], c[6], n_rgt, mat_name) # Right (+X)
+        add_quad(c[0], c[4], c[7], c[3], n_lft, mat_name) # Left (-X)
 
     def add_cylinder_y(cx, cy, cz, r_top, r_bot, height, segments, mat_name):
         hy = height * 0.5
@@ -140,11 +134,8 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
 
         for i in range(segments):
             next_i = (i + 1) % segments
-            # Top cap (CCW looking down +Y)
             faces[mat_name].append([(top_center, t0, vn_up), (top_verts[next_i], t0, vn_up), (top_verts[i], t0, vn_up)])
-            # Bottom cap (CCW looking up -Y)
             faces[mat_name].append([(bot_center, t0, vn_down), (bot_verts[i], t0, vn_down), (bot_verts[next_i], t0, vn_down)])
-            # Side quad
             angle_mid = (i + 0.5) * (2.0 * math.pi / segments)
             n_side = (math.cos(angle_mid), 0, math.sin(angle_mid))
             add_quad(bot_verts[i], top_verts[i], top_verts[next_i], bot_verts[next_i], n_side, mat_name)
@@ -182,18 +173,14 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
 
         for i in range(segments):
             next_i = (i + 1) % segments
-            # Front cap (+Z)
             faces[mat_name].append([(front_center, t0, vn_fwd), (front_verts[i], t0, vn_fwd), (front_verts[next_i], t0, vn_fwd)])
-            # Back cap (-Z)
             faces[mat_name].append([(back_center, t0, vn_bck), (back_verts[next_i], t0, vn_bck), (back_verts[i], t0, vn_bck)])
-            # Side quad
             angle_mid = (i + 0.5) * (2.0 * math.pi / segments)
             raw_n_side = (math.cos(angle_mid), math.sin(angle_mid), 0)
             n_side = rotate_normal(*raw_n_side) if elevated else raw_n_side
             add_quad(back_verts[i], back_verts[next_i], front_verts[next_i], front_verts[i], n_side, mat_name)
 
     def add_cylinder_between(p1, p2, radius, segments, mat_name, elevated=False):
-        """Constructs a volumetric cylinder directly connecting two 3D points."""
         ax = p2[0] - p1[0]
         ay = p2[1] - p1[1]
         az = p2[2] - p1[2]
@@ -203,20 +190,17 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
 
         dx, dy, dz = ax / length, ay / length, az / length
 
-        # Orthonormal basis
         if abs(dy) < 0.9:
             rx, ry, rz = 0.0, 1.0, 0.0
         else:
             rx, ry, rz = 1.0, 0.0, 0.0
 
-        # u = d x ref
         ux = dy * rz - dz * ry
         uy = dz * rx - dx * rz
         uz = dx * ry - dy * rx
         umag = math.sqrt(ux*ux + uy*uy + uz*uz)
         ux, uy, uz = ux / umag, uy / umag, uz / umag
 
-        # v = d x u
         vx = dy * uz - dz * uy
         vy = dz * ux - dx * uz
         vz = dx * uy - dy * ux
@@ -257,11 +241,8 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
 
         for i in range(segments):
             next_i = (i + 1) % segments
-            # Bottom cap
             faces[mat_name].append([(b_center, t0, vn_bot), (bot_verts[next_i], t0, vn_bot), (bot_verts[i], t0, vn_bot)])
-            # Top cap
             faces[mat_name].append([(t_center, t0, vn_top), (top_verts[i], t0, vn_top), (top_verts[next_i], t0, vn_top)])
-            # Side quad
             angle_mid = (i + 0.5) * (2.0 * math.pi / segments)
             ca, sa = math.cos(angle_mid), math.sin(angle_mid)
             nx = ca * ux + sa * vx
@@ -274,14 +255,14 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
 
     # 1. Industrial Foundation Bunker Plinth
     # Heavy square steel base slab
-    add_box(0, 0.03, 0, 0.86, 0.06, 0.86, "Mat_DarkTitanium")
+    add_box(0, 0.03, 0, 0.88, 0.06, 0.88, "Mat_DarkTitanium")
     # Corner heavy reinforcement brackets
     for sx in [-1, 1]:
         for sz in [-1, 1]:
-            add_box(sx * 0.38, 0.05, sz * 0.38, 0.10, 0.08, 0.10, "Mat_DarkTitanium")
+            add_box(sx * 0.39, 0.05, sz * 0.39, 0.10, 0.08, 0.10, "Mat_DarkTitanium")
 
     # Foundation octagonal beveled collar ring
-    add_cylinder_y(0, 0.075, 0, 0.42, 0.46, 0.03, 16, "Mat_DarkTitanium")
+    add_cylinder_y(0, 0.075, 0, 0.43, 0.47, 0.03, 16, "Mat_DarkTitanium")
 
     # 2. Four Articulated Outrigger Stabilizers (at 45, 135, 225, 315 degrees)
     for i in range(4):
@@ -295,41 +276,45 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
         add_cylinder_between(p_sh, p_ft, 0.024, 8, "Mat_DarkTitanium")
         # Heavy tank-tread footpad
         add_box(ca * 0.48, 0.035, sa * 0.48, 0.15, 0.06, 0.16, "Mat_DarkTitanium")
-        # Cyan telemetry / status indicator on footpad
+        # Cyan telemetry indicator on footpad
         add_box(ca * 0.48, 0.07, sa * 0.48, 0.04, 0.02, 0.04, "Mat_PlasmaCyan")
 
     # 3. Rotating Turntable Ring & Gear Collar
-    add_cylinder_y(0, 0.105, 0, 0.33, 0.35, 0.03, 16, "Mat_DarkTitanium")
-    add_cylinder_y(0, 0.135, 0, 0.29, 0.31, 0.03, 16, "Mat_FactionArmor")
-    add_cylinder_y(0, 0.165, 0, 0.26, 0.28, 0.03, 16, "Mat_DarkTitanium")
+    add_cylinder_y(0, 0.105, 0, 0.34, 0.36, 0.03, 16, "Mat_DarkTitanium")
+    add_cylinder_y(0, 0.135, 0, 0.30, 0.32, 0.03, 16, "Mat_FactionArmor")
+    add_cylinder_y(0, 0.165, 0, 0.27, 0.29, 0.03, 16, "Mat_DarkTitanium")
 
     # 4. Armored Gun Carriage Body & Trunnion Stanchions
     # Central armored housing
-    add_box(0, 0.24, -0.04, 0.34, 0.13, 0.32, "Mat_DarkTitanium")
+    add_box(0, 0.24, -0.04, 0.36, 0.13, 0.34, "Mat_DarkTitanium")
     # Sloped faction armor cowl / upper mantlet
-    add_box(0, 0.31, -0.06, 0.28, 0.07, 0.26, "Mat_FactionArmor")
+    add_box(0, 0.31, -0.06, 0.30, 0.07, 0.28, "Mat_FactionArmor")
 
     # Left & Right heavy trunnion upright stanchions
-    add_box(-0.165, 0.27, 0.04, 0.05, 0.16, 0.14, "Mat_DarkTitanium")
-    add_box(0.165, 0.27, 0.04, 0.05, 0.16, 0.14, "Mat_DarkTitanium")
+    add_box(-0.21, 0.27, 0.04, 0.05, 0.16, 0.14, "Mat_DarkTitanium")
+    add_box(0.21, 0.27, 0.04, 0.05, 0.16, 0.14, "Mat_DarkTitanium")
+
+    # Central armored mantlet between the twin barrels
+    add_box(0, PIVOT_Y, PIVOT_Z + 0.10, 0.16, 0.12, 0.20, "Mat_DarkTitanium", elevated=True)
+    add_box(0, PIVOT_Y + 0.05, PIVOT_Z + 0.08, 0.12, 0.04, 0.16, "Mat_FactionArmor", elevated=True)
 
     # DUAL PROMINENT HYDRAULIC ELEVATION RAMS (Connecting turntable front directly to gun cradle)
-    for hx in [-0.08, 0.08]:
+    for hx in [-0.10, 0.10]:
         p_base = (hx, 0.165, 0.14)
-        p_mid = (hx, 0.24, 0.11)
-        p_top = (hx, 0.31, 0.08)
+        p_mid = (hx, 0.23, 0.11)
+        p_top = (hx, 0.29, 0.08)
         # Lower cylinder casing
         add_cylinder_between(p_base, p_mid, 0.022, 8, "Mat_DarkTitanium")
-        # Chrome piston rod
+        # Chrome/satin piston rod
         add_cylinder_between(p_mid, p_top, 0.015, 8, "Mat_FactionArmor")
 
     # 5. Side Trunnion Recoil Hubs
     # Left trunnion cylindrical disk
-    add_cylinder_between((-0.20, PIVOT_Y, PIVOT_Z), (-0.16, PIVOT_Y, PIVOT_Z), 0.085, 12, "Mat_DarkTitanium")
-    add_cylinder_between((-0.21, PIVOT_Y, PIVOT_Z), (-0.20, PIVOT_Y, PIVOT_Z), 0.055, 12, "Mat_FactionArmor")
+    add_cylinder_between((-0.24, PIVOT_Y, PIVOT_Z), (-0.20, PIVOT_Y, PIVOT_Z), 0.085, 12, "Mat_DarkTitanium")
+    add_cylinder_between((-0.25, PIVOT_Y, PIVOT_Z), (-0.24, PIVOT_Y, PIVOT_Z), 0.055, 12, "Mat_FactionArmor")
     # Right trunnion cylindrical disk
-    add_cylinder_between((0.16, PIVOT_Y, PIVOT_Z), (0.20, PIVOT_Y, PIVOT_Z), 0.085, 12, "Mat_DarkTitanium")
-    add_cylinder_between((0.20, PIVOT_Y, PIVOT_Z), (0.21, PIVOT_Y, PIVOT_Z), 0.055, 12, "Mat_FactionArmor")
+    add_cylinder_between((0.20, PIVOT_Y, PIVOT_Z), (0.24, PIVOT_Y, PIVOT_Z), 0.085, 12, "Mat_DarkTitanium")
+    add_cylinder_between((0.24, PIVOT_Y, PIVOT_Z), (0.25, PIVOT_Y, PIVOT_Z), 0.055, 12, "Mat_FactionArmor")
 
     # 6. Top Commander Cupola & Sensor Pod
     # Commander dome (octagonal cupola)
@@ -337,61 +322,64 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
     # Vision slit band
     add_cylinder_y(0, 0.395, -0.06, 0.065, 0.075, 0.02, 8, "Mat_Optics")
     # Top rotating sensor pod (on top-right)
-    add_box(0.08, 0.435, -0.03, 0.07, 0.06, 0.09, "Mat_DarkTitanium")
+    add_box(0.09, 0.435, -0.03, 0.07, 0.06, 0.09, "Mat_DarkTitanium")
     # Dual cyan optical targeting lenses
-    add_box(0.08, 0.45, 0.02, 0.04, 0.018, 0.012, "Mat_Optics")
-    add_box(0.08, 0.42, 0.02, 0.04, 0.018, 0.012, "Mat_Optics")
+    add_box(0.09, 0.45, 0.02, 0.04, 0.018, 0.012, "Mat_Optics")
+    add_box(0.09, 0.42, 0.02, 0.04, 0.018, 0.012, "Mat_Optics")
 
     # Dual antenna needles
-    add_cylinder_between((-0.08, 0.38, -0.12), (-0.08, 0.52, -0.12), 0.005, 4, "Mat_DarkTitanium")
-    add_cylinder_between((0.04, 0.38, -0.16), (0.04, 0.49, -0.16), 0.005, 4, "Mat_DarkTitanium")
+    add_cylinder_between((-0.09, 0.38, -0.12), (-0.09, 0.52, -0.12), 0.005, 4, "Mat_DarkTitanium")
+    add_cylinder_between((0.05, 0.38, -0.16), (0.05, 0.49, -0.16), 0.005, 4, "Mat_DarkTitanium")
 
     # 7. Four Rear Recoil Buffer Accumulators (Horizontal tubes at rear)
-    for ox in [-0.09, 0.09]:
+    for ox in [-0.10, 0.10]:
         for oy in [0.24, 0.30]:
             add_cylinder_z(ox, oy, -0.22, 0.035, 0.035, 0.12, 8, "Mat_DarkTitanium")
             add_cylinder_z(ox, oy, -0.285, 0.025, 0.025, 0.012, 8, "Mat_PlasmaCyan")
 
-    # 8. TWIN HEAVY PULSE RAILGUNS (ELEVATED AT 16 DEGREES)
-    barrel_x_offsets = [-0.125, 0.125]
+    # 8. TWIN HEAVY PULSE RAILGUNS (WIDE SPACING, LOW-PROFILE ARTILLERY POSTURE AT 7.5 DEGREES)
+    barrel_x_offsets = [-0.165, 0.165]
     for bx in barrel_x_offsets:
         # Breech Trunnion Mount Block
         add_box(bx, PIVOT_Y, PIVOT_Z, 0.11, 0.12, 0.14, "Mat_DarkTitanium", elevated=True)
 
-        # Concentric Breech Induction Coils (3 segmented ribbed rings)
-        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.10, 0.062, 0.062, 0.022, 10, "Mat_FactionArmor", elevated=True)
-        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.14, 0.062, 0.062, 0.022, 10, "Mat_FactionArmor", elevated=True)
-        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.18, 0.062, 0.062, 0.022, 10, "Mat_FactionArmor", elevated=True)
+        # Concentric Breech Induction Coils (3 segmented ribbed rings of COPPER)
+        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.09, 0.064, 0.064, 0.022, 12, "Mat_CopperCoil", elevated=True)
+        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.13, 0.064, 0.064, 0.022, 12, "Mat_CopperCoil", elevated=True)
+        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.17, 0.064, 0.064, 0.022, 12, "Mat_CopperCoil", elevated=True)
 
         # Induction coil glowing plasma separators
-        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.12, 0.056, 0.056, 0.015, 10, "Mat_PlasmaCyan", elevated=True)
-        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.16, 0.056, 0.056, 0.015, 10, "Mat_PlasmaCyan", elevated=True)
+        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.11, 0.057, 0.057, 0.014, 10, "Mat_PlasmaCyan", elevated=True)
+        add_cylinder_z(bx, PIVOT_Y, PIVOT_Z + 0.15, 0.057, 0.057, 0.014, 10, "Mat_PlasmaCyan", elevated=True)
 
-        # Upper and Lower Armored Rail Beams
-        add_box(bx, PIVOT_Y + 0.038, PIVOT_Z + 0.40, 0.09, 0.032, 0.44, "Mat_DarkTitanium", elevated=True)
-        add_box(bx, PIVOT_Y - 0.038, PIVOT_Z + 0.40, 0.09, 0.032, 0.44, "Mat_DarkTitanium", elevated=True)
+        # Upper and Lower Armored Rail Beams (Heavy structural rectangular casing)
+        add_box(bx, PIVOT_Y + 0.038, PIVOT_Z + 0.36, 0.095, 0.032, 0.36, "Mat_DarkTitanium", elevated=True)
+        add_box(bx, PIVOT_Y - 0.038, PIVOT_Z + 0.36, 0.095, 0.032, 0.36, "Mat_DarkTitanium", elevated=True)
 
         # Outer and Inner Side Armor Shroud Plates
         side_dir = 1.0 if bx > 0 else -1.0
-        add_box(bx + side_dir * 0.046, PIVOT_Y, PIVOT_Z + 0.36, 0.014, 0.08, 0.32, "Mat_DarkTitanium", elevated=True)
-        add_box(bx - side_dir * 0.046, PIVOT_Y, PIVOT_Z + 0.36, 0.014, 0.08, 0.32, "Mat_DarkTitanium", elevated=True)
+        add_box(bx + side_dir * 0.048, PIVOT_Y, PIVOT_Z + 0.33, 0.014, 0.08, 0.28, "Mat_DarkTitanium", elevated=True)
+        add_box(bx - side_dir * 0.048, PIVOT_Y, PIVOT_Z + 0.33, 0.014, 0.08, 0.28, "Mat_DarkTitanium", elevated=True)
 
-        # Recessed Central Plasma Acceleration Channel (Intense Cyan Glow Core)
-        add_box(bx, PIVOT_Y, PIVOT_Z + 0.41, 0.045, 0.045, 0.42, "Mat_PlasmaCyan", elevated=True)
+        # Recessed Central Plasma Acceleration Channel (Glowing Cyan Core)
+        add_box(bx, PIVOT_Y, PIVOT_Z + 0.36, 0.048, 0.048, 0.34, "Mat_PlasmaCyan", elevated=True)
 
-        # 5 Side Heat Dissipation Cooling Vent Slits per Barrel
-        for vz in [0.26, 0.32, 0.38, 0.44, 0.50]:
-            add_box(bx + side_dir * 0.050, PIVOT_Y, PIVOT_Z + vz, 0.012, 0.020, 0.035, "Mat_PlasmaCyan", elevated=True)
+        # Armored grill ribs over the plasma channel (segmented windows)
+        for vz in [0.25, 0.31, 0.37, 0.43]:
+            add_box(bx, PIVOT_Y + 0.042, PIVOT_Z + vz, 0.052, 0.010, 0.020, "Mat_DarkTitanium", elevated=True)
+            add_box(bx, PIVOT_Y - 0.042, PIVOT_Z + vz, 0.052, 0.010, 0.020, "Mat_DarkTitanium", elevated=True)
+            # Side cooling vent slits
+            add_box(bx + side_dir * 0.052, PIVOT_Y, PIVOT_Z + vz, 0.012, 0.022, 0.025, "Mat_PlasmaCyan", elevated=True)
 
         # Quad-Prong Heavy Muzzle Brake
-        add_box(bx, PIVOT_Y, PIVOT_Z + 0.63, 0.105, 0.115, 0.05, "Mat_DarkTitanium", elevated=True)
-        add_box(bx, PIVOT_Y + 0.055, PIVOT_Z + 0.655, 0.06, 0.02, 0.03, "Mat_DarkTitanium", elevated=True)
-        add_box(bx, PIVOT_Y - 0.055, PIVOT_Z + 0.655, 0.06, 0.02, 0.03, "Mat_DarkTitanium", elevated=True)
-        add_box(bx - 0.052, PIVOT_Y, PIVOT_Z + 0.655, 0.02, 0.06, 0.03, "Mat_DarkTitanium", elevated=True)
-        add_box(bx + 0.052, PIVOT_Y, PIVOT_Z + 0.655, 0.02, 0.06, 0.03, "Mat_DarkTitanium", elevated=True)
+        add_box(bx, PIVOT_Y, PIVOT_Z + 0.55, 0.110, 0.120, 0.05, "Mat_DarkTitanium", elevated=True)
+        add_box(bx, PIVOT_Y + 0.055, PIVOT_Z + 0.575, 0.065, 0.02, 0.025, "Mat_DarkTitanium", elevated=True)
+        add_box(bx, PIVOT_Y - 0.055, PIVOT_Z + 0.575, 0.065, 0.02, 0.025, "Mat_DarkTitanium", elevated=True)
+        add_box(bx - 0.054, PIVOT_Y, PIVOT_Z + 0.575, 0.02, 0.065, 0.025, "Mat_DarkTitanium", elevated=True)
+        add_box(bx + 0.054, PIVOT_Y, PIVOT_Z + 0.575, 0.02, 0.065, 0.025, "Mat_DarkTitanium", elevated=True)
 
         # Glowing Muzzle Bore Exit
-        add_box(bx, PIVOT_Y, PIVOT_Z + 0.658, 0.05, 0.05, 0.01, "Mat_PlasmaCyan", elevated=True)
+        add_box(bx, PIVOT_Y, PIVOT_Z + 0.578, 0.052, 0.052, 0.01, "Mat_PlasmaCyan", elevated=True)
 
     # ================= WRITE OBJ & MTL FILES =================
     os.makedirs(os.path.dirname(output_obj_path), exist_ok=True)
@@ -427,6 +415,14 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
         f.write("Ks 0.95 0.98 1.00\n")
         f.write("Ke 0.02 0.25 0.45\n")
         f.write("Ns 90.0\n")
+        f.write("d 1.0\n\n")
+
+        f.write("newmtl Mat_CopperCoil\n")
+        f.write("Ka 0.45 0.25 0.12\n")
+        f.write("Kd 0.75 0.42 0.18\n")
+        f.write("Ks 0.90 0.80 0.65\n")
+        f.write("Ke 0.25 0.12 0.03\n")
+        f.write("Ns 60.0\n")
         f.write("d 1.0\n")
 
     with open(output_obj_path, "w") as f:
@@ -447,7 +443,8 @@ def create_turret_obj(output_obj_path="assets/models/turret.obj", output_mtl_pat
             "Mat_DarkTitanium",
             "Mat_FactionArmor",
             "Mat_PlasmaCyan",
-            "Mat_Optics"
+            "Mat_Optics",
+            "Mat_CopperCoil"
         ]
 
         for mat_name in MATERIAL_ORDER:
