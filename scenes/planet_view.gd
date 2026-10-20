@@ -29,6 +29,9 @@ var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
 
 const MESH_TURRET = preload("res://assets/models/turret.obj")
+const TEX_TURRET_ALBEDO = preload("res://assets/models/turret_titanium_albedo.png")
+const TEX_TURRET_NORMAL = preload("res://assets/models/turret_titanium_normal.png")
+const TEX_TURRET_ROUGH = preload("res://assets/models/turret_titanium_rough.png")
 var mat_alien_hive: StandardMaterial3D
 var mat_invader: StandardMaterial3D
 var mat_invader_scout: StandardMaterial3D
@@ -151,16 +154,18 @@ func _setup_materials() -> void:
 	mat_base_glow.normal_texture = panel_normal
 
 	mat_turret = StandardMaterial3D.new()
-	mat_turret.albedo_color = Color("#384252")
-	mat_turret.metallic = 0.85
-	mat_turret.roughness = 0.28
-	mat_turret.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat_turret.albedo_texture = TEX_TURRET_ALBEDO
+	mat_turret.albedo_color = Color("#8a99ad")
+	mat_turret.metallic = 0.88
+	mat_turret.roughness_texture = TEX_TURRET_ROUGH
 	mat_turret.normal_enabled = true
-	mat_turret.normal_texture = panel_normal
+	mat_turret.normal_texture = TEX_TURRET_NORMAL
+	mat_turret.normal_scale = 1.8
 	mat_turret.rim_enabled = true
-	mat_turret.rim = 0.45
-	mat_turret.rim_tint = 0.5
-	mat_turret.rim_color = Color("#94a3b8")
+	mat_turret.rim = 0.55
+	mat_turret.rim_tint = 0.4
+	mat_turret.rim_color = Color("#cbd5e1")
+	mat_turret.cull_mode = BaseMaterial3D.CULL_DISABLED
 
 	mat_railgun_glow = StandardMaterial3D.new()
 	mat_railgun_glow.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
@@ -374,14 +379,18 @@ func get_faction_armor_material(faction_id: int, color_hex: String = "") -> Stan
 
 	if not _faction_materials.has(key):
 		var mat = StandardMaterial3D.new()
+		mat.albedo_texture = TEX_TURRET_ALBEDO
 		mat.albedo_color = col
-		mat.metallic = 0.75
-		mat.roughness = 0.35
+		mat.metallic = 0.72
+		mat.roughness_texture = TEX_TURRET_ROUGH
+		mat.normal_enabled = true
+		mat.normal_texture = TEX_TURRET_NORMAL
+		mat.normal_scale = 1.4
 		mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 		mat.rim_enabled = true
-		mat.rim = 0.4
+		mat.rim = 0.45
 		mat.rim_tint = 0.5
-		mat.rim_color = col.lightened(0.25)
+		mat.rim_color = col.lightened(0.3)
 		_faction_materials[key] = mat
 	elif color_hex != "":
 		var mat = _faction_materials[key]
@@ -504,12 +513,21 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 	elif btype == "turret":
 		var mi = MeshInstance3D.new()
 		mi.mesh = MESH_TURRET
+		mi.scale = Vector3(1.35, 1.35, 1.35)
 		var fact_armor = get_faction_armor_material(faction_id, color_hex)
 		mi.set_surface_override_material(0, mat_turret)
 		mi.set_surface_override_material(1, fact_armor)
 		mi.set_surface_override_material(2, mat_railgun_glow)
 		mi.set_surface_override_material(3, mat_optics)
 		root.add_child(mi)
+
+		# Resplandor dinámico de plasma cian que baña la torreta y el suelo geodésico
+		var light = OmniLight3D.new()
+		light.light_color = Color("#00f5ff")
+		light.light_energy = 1.2
+		light.omni_range = 2.2
+		light.position = Vector3(0, 0.45, 0.25)
+		root.add_child(light)
 
 	elif btype == "harvester":
 		# Extractor minero con núcleo y aros del color de la facción
