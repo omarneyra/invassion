@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dnjmgpgjpekg3"
+path="res://.godot/imported/krynn_purifier.obj-b9c4d7232bdd4eed7d4d06eed08aa48d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/krynn_purifier.obj-b9c4d7232bdd4eed7d4d06eed08aa48d.mesh"]
+
+source_file="res://assets/models/krynn_purifier.obj"
+dest_files=["res://.godot/imported/krynn_purifier.obj-b9c4d7232bdd4eed7d4d06eed08aa48d.mesh", "res://.godot/imported/krynn_purifier.obj-b9c4d7232bdd4eed7d4d06eed08aa48d.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false

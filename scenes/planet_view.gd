@@ -31,6 +31,7 @@ var mat_copper: StandardMaterial3D
 var mat_harvester: StandardMaterial3D
 var mat_wall: StandardMaterial3D
 
+# Solarian Models
 const MESH_TURRET = preload("res://assets/models/turret.obj")
 const MESH_BASE = preload("res://assets/models/base.obj")
 const MESH_HARVESTER = preload("res://assets/models/harvester.obj")
@@ -38,6 +39,21 @@ const MESH_WALL = preload("res://assets/models/wall.obj")
 const MESH_PURIFIER = preload("res://assets/models/purifier.obj")
 const MESH_VANGUARD = preload("res://assets/models/vanguard.obj")
 const MESH_MARINE = preload("res://assets/models/marine.obj")
+
+# Krynn Swarm Models
+const MESH_KRYNN_TURRET = preload("res://assets/models/krynn_turret.obj")
+const MESH_KRYNN_BASE = preload("res://assets/models/krynn_base.obj")
+const MESH_KRYNN_HARVESTER = preload("res://assets/models/krynn_harvester.obj")
+const MESH_KRYNN_WALL = preload("res://assets/models/krynn_wall.obj")
+const MESH_KRYNN_PURIFIER = preload("res://assets/models/krynn_purifier.obj")
+const MESH_KRYNN_RAVAGER = preload("res://assets/models/krynn_ravager.obj")
+
+# Krynn Materials
+var mat_krynn_chitin: StandardMaterial3D
+var mat_krynn_flesh: StandardMaterial3D
+var mat_krynn_acid: StandardMaterial3D
+var mat_krynn_bone: StandardMaterial3D
+
 const TEX_TURRET_TOKEN = preload("res://assets/models/turret_token.png")
 const TEX_TURRET_ALBEDO = preload("res://assets/models/turret_titanium_albedo.png")
 const TEX_TURRET_NORMAL = preload("res://assets/models/turret_titanium_normal.png")
@@ -271,6 +287,36 @@ func _setup_materials() -> void:
 	mat_purifier_beam.shading_mode = StandardMaterial3D.SHADING_MODE_UNSHADED
 	mat_purifier_beam.albedo_color = Color(0.2, 0.95, 0.85, 0.95)
 
+	# 4. Materiales Orgánicos PBR Krynn Swarm
+	mat_krynn_chitin = StandardMaterial3D.new()
+	mat_krynn_chitin.albedo_color = Color("#261530")
+	mat_krynn_chitin.metallic = 0.70
+	mat_krynn_chitin.roughness = 0.22
+	mat_krynn_chitin.rim_enabled = true
+	mat_krynn_chitin.rim = 0.85
+	mat_krynn_chitin.rim_tint = 0.5
+	mat_krynn_chitin.rim_color = Color("#a855f7")
+	mat_krynn_chitin.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	mat_krynn_flesh = StandardMaterial3D.new()
+	mat_krynn_flesh.albedo_color = Color("#581c87")
+	mat_krynn_flesh.roughness = 0.60
+	mat_krynn_flesh.normal_enabled = true
+	mat_krynn_flesh.normal_texture = bio_normal
+	mat_krynn_flesh.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	mat_krynn_acid = StandardMaterial3D.new()
+	mat_krynn_acid.albedo_color = Color("#84cc16")
+	mat_krynn_acid.emission_enabled = true
+	mat_krynn_acid.emission = Color("#a3e635")
+	mat_krynn_acid.emission_energy_multiplier = 2.4
+	mat_krynn_acid.cull_mode = BaseMaterial3D.CULL_DISABLED
+
+	mat_krynn_bone = StandardMaterial3D.new()
+	mat_krynn_bone.albedo_color = Color("#e2e8f0")
+	mat_krynn_bone.roughness = 0.50
+	mat_krynn_bone.cull_mode = BaseMaterial3D.CULL_DISABLED
+
 func generate_planet() -> void:
 	icosphere_data = IcosphereLogic.create_icosphere(subdivisions, planet_radius)
 
@@ -472,17 +518,20 @@ func update_visuals(world_state: Dictionary, factions_state: Variant = null) -> 
 			var btype = building.get("type", "turret")
 			var b_fid: int = building.get("faction_id", 1)
 			var b_col: String = ""
+			var b_race: String = "solarian"
 			if factions_state != null and (factions_state is Dictionary) and factions_state.has("factions"):
 				if factions_state["factions"].has(b_fid):
 					b_col = factions_state["factions"][b_fid].get("color", "")
+					b_race = factions_state["factions"][b_fid].get("race", "solarian")
 
-			# Crear o actualizar si cambió la facción de la estructura
-			if not building_instances.has(nid) or building_instances[nid].get_meta("faction_id", -1) != b_fid:
+			# Crear o actualizar si cambió la facción o raza de la estructura
+			if not building_instances.has(nid) or building_instances[nid].get_meta("faction_id", -1) != b_fid or building_instances[nid].get_meta("race", "") != b_race:
 				if building_instances.has(nid):
 					building_instances[nid].queue_free()
 					building_instances.erase(nid)
-				var bld_obj = _create_building_3d(btype, b_fid, b_col)
+				var bld_obj = _create_building_3d(btype, b_fid, b_col, b_race)
 				bld_obj.set_meta("faction_id", b_fid)
+				bld_obj.set_meta("race", b_race)
 				_align_with_surface(bld_obj, node_pos)
 				add_child(bld_obj)
 				building_instances[nid] = bld_obj
@@ -499,26 +548,41 @@ func _apply_building_materials(mi: MeshInstance3D, fact_armor: StandardMaterial3
 	mi.set_surface_override_material(3, mat_optics)
 	mi.set_surface_override_material(4, mat_copper)
 
-func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String = "") -> Node3D:
+func _apply_krynn_materials(mi: MeshInstance3D, fact_armor: StandardMaterial3D) -> void:
+	# Surface 0: Mat_KrynnChitin (blended with faction armor or chitin)
+	mi.set_surface_override_material(0, fact_armor if fact_armor != null else mat_krynn_chitin)
+	# Surface 1: Mat_KrynnFlesh
+	mi.set_surface_override_material(1, mat_krynn_flesh)
+	# Surface 2: Mat_KrynnAcid
+	mi.set_surface_override_material(2, mat_krynn_acid)
+	# Surface 3: Mat_KrynnBone
+	mi.set_surface_override_material(3, mat_krynn_bone)
+
+func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String = "", race_id: String = "solarian") -> Node3D:
 	var root = Node3D.new()
 	var fact_armor: StandardMaterial3D = get_faction_armor_material(faction_id, color_hex)
+	var is_krynn: bool = (race_id == "krynn")
+	var glow_color: Color = Color("#84cc16") if is_krynn else Color("#00f5ff")
 
 	if btype == "base":
 		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_BASE
+		mi.mesh = MESH_KRYNN_BASE if is_krynn else MESH_BASE
 		mi.scale = Vector3(1.10, 1.10, 1.10)
-		_apply_building_materials(mi, fact_armor)
+		if is_krynn:
+			_apply_krynn_materials(mi, fact_armor)
+		else:
+			_apply_building_materials(mi, fact_armor)
 		root.add_child(mi)
 
 		var light = OmniLight3D.new()
-		light.light_color = Color("#00f5ff")
-		light.light_energy = 0.6
+		light.light_color = glow_color
+		light.light_energy = 0.7 if is_krynn else 0.6
 		light.omni_range = 1.8
 		light.position = Vector3(0, 0.40, 0)
 		root.add_child(light)
 
 	elif btype == "turret":
-		if use_tactical_tokens:
+		if not is_krynn and use_tactical_tokens:
 			var base = MeshInstance3D.new()
 			var cyl = CylinderMesh.new()
 			cyl.top_radius = 0.44
@@ -558,56 +622,68 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 			root.add_child(light)
 		else:
 			var mi = MeshInstance3D.new()
-			mi.mesh = MESH_TURRET
+			mi.mesh = MESH_KRYNN_TURRET if is_krynn else MESH_TURRET
 			mi.scale = Vector3(1.10, 1.10, 1.10)
-			_apply_building_materials(mi, fact_armor)
+			if is_krynn:
+				_apply_krynn_materials(mi, fact_armor)
+			else:
+				_apply_building_materials(mi, fact_armor)
 			root.add_child(mi)
 
 			var light = OmniLight3D.new()
-			light.light_color = Color("#00f5ff")
-			light.light_energy = 0.45
+			light.light_color = glow_color
+			light.light_energy = 0.55 if is_krynn else 0.45
 			light.omni_range = 1.4
 			light.position = Vector3(0, 0.32, 0.22)
 			root.add_child(light)
 
 	elif btype == "harvester":
 		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_HARVESTER
+		mi.mesh = MESH_KRYNN_HARVESTER if is_krynn else MESH_HARVESTER
 		mi.scale = Vector3(1.10, 1.10, 1.10)
-		_apply_building_materials(mi, fact_armor)
+		if is_krynn:
+			_apply_krynn_materials(mi, fact_armor)
+		else:
+			_apply_building_materials(mi, fact_armor)
 		root.add_child(mi)
 
 		var light = OmniLight3D.new()
-		light.light_color = Color("#00f5ff")
-		light.light_energy = 0.5
+		light.light_color = glow_color
+		light.light_energy = 0.6 if is_krynn else 0.5
 		light.omni_range = 1.6
 		light.position = Vector3(0, 0.32, 0)
 		root.add_child(light)
 
 	elif btype == "wall":
 		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_WALL
+		mi.mesh = MESH_KRYNN_WALL if is_krynn else MESH_WALL
 		mi.scale = Vector3(1.10, 1.10, 1.10)
-		_apply_building_materials(mi, fact_armor)
+		if is_krynn:
+			_apply_krynn_materials(mi, fact_armor)
+		else:
+			_apply_building_materials(mi, fact_armor)
 		root.add_child(mi)
 
 		var light = OmniLight3D.new()
-		light.light_color = Color("#00f5ff")
-		light.light_energy = 0.4
+		light.light_color = glow_color
+		light.light_energy = 0.5 if is_krynn else 0.4
 		light.omni_range = 1.2
 		light.position = Vector3(0, 0.25, 0)
 		root.add_child(light)
 
 	elif btype == "purifier":
 		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_PURIFIER
+		mi.mesh = MESH_KRYNN_PURIFIER if is_krynn else MESH_PURIFIER
 		mi.scale = Vector3(1.10, 1.10, 1.10)
-		_apply_building_materials(mi, fact_armor)
+		if is_krynn:
+			_apply_krynn_materials(mi, fact_armor)
+		else:
+			_apply_building_materials(mi, fact_armor)
 		root.add_child(mi)
 
 		var light = OmniLight3D.new()
-		light.light_color = Color("#00f5ff")
-		light.light_energy = 0.6
+		light.light_color = glow_color
+		light.light_energy = 0.7 if is_krynn else 0.6
 		light.omni_range = 2.0
 		light.position = Vector3(0, 0.50, 0)
 		root.add_child(light)
@@ -737,6 +813,14 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		mi.mesh = MESH_MARINE
 		mi.scale = Vector3(scale_val, scale_val, scale_val)
 		_apply_building_materials(mi, custom_mat if custom_mat != null else mat_turret)
+		root.add_child(mi)
+		return root
+
+	elif archetype == "ravager":
+		var mi = MeshInstance3D.new()
+		mi.mesh = MESH_KRYNN_RAVAGER
+		mi.scale = Vector3(scale_val, scale_val, scale_val)
+		_apply_krynn_materials(mi, custom_mat)
 		root.add_child(mi)
 		return root
 

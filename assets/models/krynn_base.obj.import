@@ -1,0 +1,22 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bjj4xp5lobnb"
+path="res://.godot/imported/krynn_base.obj-2f7cb54ce36070e6afe50b91ac5cd2dc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/krynn_base.obj-2f7cb54ce36070e6afe50b91ac5cd2dc.mesh"]
+
+source_file="res://assets/models/krynn_base.obj"
+dest_files=["res://.godot/imported/krynn_base.obj-2f7cb54ce36070e6afe50b91ac5cd2dc.mesh", "res://.godot/imported/krynn_base.obj-2f7cb54ce36070e6afe50b91ac5cd2dc.mesh"]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+optimize_mesh=true
+force_disable_mesh_compression=false
