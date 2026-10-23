@@ -31,7 +31,7 @@
   * **Titanforge Lithoids** (`#78716c`): Monolithic volcanic stone colossi, basalt masonry, molten magma channels, passive damage resistance.
   * **Zephyrian Nomads** (`#38bdf8`): Atmospheric aviators, aerodynamic white composite, carbon wings, evasion maneuvers and repulsor engines.
   * **Umbral Parasites** (`#831843`): Void corruption entities, obsidian shards, weeping dark matter tendrils, corrupt node income.
-  * *High-resolution concept art for all factions tracked in `assets/concept_art/`.*
+  * 🎨 **[View Complete Faction Kits & Concept Art Compendium](docs/RACES_VISUAL_COMPENDIUM.md)**: Exhaustive visual catalog with high-resolution concept art, building breakdowns, and lore profiles.
 * **Planetary Tech Tree & Diplomacy**: Upgrade offensive firepower, deploy shields, trade planetary tributes, and negotiate alliances.
 * **Blind Hemisphere Radar**: Screen-edge dynamic threat badges tracking off-screen enemies navigating the occluded hemisphere.
 
