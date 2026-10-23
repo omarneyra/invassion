@@ -182,13 +182,13 @@ This document establishes the **canonical visual identity**, color palettes, arc
 * **Archetype:** Void Entities / Cosmic Corruption
 * **Base Color:** `#831843` (Deep Burgundy, Glassy Obsidian & Crimson)
 * **Materials:** Razor-sharp obsidian crystals, weeping viscous dark matter, necrotic tentacles, pulsing eldritch eye cores.
-* **In-Engine Status:** Base Concept Art Complete; Kit specifications ready.
+* **In-Engine Status:** Core Buildings Kit Complete (5/6 assets generated); Non-humanoid Void Infestor unit pending quota reset.
 * **Gameplay Trait:** +0.5 E/s per controlled corrupt node, 30% chance to reanimate fallen enemy units as void parasites.
 
 ### Umbral Kit:
 | Base | Turret | Harvester | Wall | Purifier | Void Infestor |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/umbral_flagship.jpg) | *(Generating)* | *(Generating)* | *(Generating)* | *(Generating)* | *(Generating)* |
+| ![Base](../assets/concept_art/umbral_flagship.jpg) | ![Turret](../assets/concept_art/umbral_turret.jpg) | ![Harvester](../assets/concept_art/umbral_harvester.jpg) | ![Wall](../assets/concept_art/umbral_wall.jpg) | ![Purifier](../assets/concept_art/umbral_purifier.jpg) | *(Generating - Non-humanoid Void Horror)* |
 
 1. **Base (`base`)**: *Void Eye Obelisk* — Levitation obelisk of obsidian shards surrounding a colossal dark cosmic eye core.
 2. **Turret (`turret`)**: *Umbral Spine Tentacle* — Retractable biomechanical tendril bursting from the earth to impale targets.
@@ -196,4 +196,6 @@ This document establishes the **canonical visual identity**, color palettes, arc
 4. **Wall (`wall`)**: *Void Cyst Barrier* — Interconnected dark pustules weeping caustic necrotic filaments.
 5. **Purifier (`purifier`)**: *Entropic Reality Sink* — Sub-spatial singularity absorbing anomalies into sterile void.
 6. **Doctrinal Units**:
-   - *Void Infestor* (Heavy, 110 HP): Tentacled horror spreading corruption along its path and reanimating the fallen.
+   - *Void Infestor* (Heavy, 110 HP): Floating eldritch multi-tentacled cosmic horror spreading corruption along its path and reanimating the fallen.
+
+---
