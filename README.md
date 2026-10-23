@@ -22,18 +22,27 @@
   * **Base Defensive Batteries**: Primary command bases feature automated perimeter defense fire to prevent premature rush victories.
   * **Clean Grid Collapse**: Defeated faction bases immediately decommission their peripheral installations, eliminating ghost structures.
 * **Symmetrical AI Commander**: Autonomous procedural AI managing harvesting operations, fortified perimeters, tech research, and strategic counter-assaults.
-* **8 Distinct Galactic Factions & Visual Identities**:
-  * **Solarian Hegemony** (`#22c55e`): Heavy industrial human empire, dark titanium, copper coils, cyan plasma. Full 5-structure procedural kit + Vanguard mech & Marine.
-  * **Krynn Swarm** (`#a855f7`): Organic chitinous insectoids, toxic acid sacs, rapid reproduction and health regeneration. Full 5-structure kit + Ravager beast.
-  * **Nexus Protocol** (`#06b6d4`): Quantum synthetic automatons, pristine white ceramic, levitating chrome rings, long-range electromagnetic railguns.
-  * **Aethelian Enclave** (`#eab308`): Ancient psionic templars, polished gold and alabaster, sun halos, rapid atmospheric purification.
-  * **Vorash Scavengers** (`#f97316`): Nomadic space pirates, welded scrap metal, diesel smoke exhausts, structure demolition bonus.
-  * **Titanforge Lithoids** (`#78716c`): Monolithic volcanic stone colossi, basalt masonry, molten magma channels, passive damage resistance.
-  * **Zephyrian Nomads** (`#38bdf8`): Atmospheric aviators, aerodynamic white composite, carbon wings, evasion maneuvers and repulsor engines.
-  * **Umbral Parasites** (`#831843`): Void corruption entities, obsidian shards, weeping dark matter tendrils, corrupt node income.
-  * 🎨 **[View Complete Faction Kits & Concept Art Compendium](docs/RACES_VISUAL_COMPENDIUM.md)**: Exhaustive visual catalog with high-resolution concept art, building breakdowns, and lore profiles.
 * **Planetary Tech Tree & Diplomacy**: Upgrade offensive firepower, deploy shields, trade planetary tributes, and negotiate alliances.
 * **Blind Hemisphere Radar**: Screen-edge dynamic threat badges tracking off-screen enemies navigating the occluded hemisphere.
+
+---
+
+## 8 Distinct Galactic Factions & Visual Identities
+
+*Invassion* features 8 playable galactic civilizations, each with unique economic models, combat doctrines, structural architecture, and aesthetic palettes:
+
+| Faction | Theme & Materials | Gameplay Trait | Flagship Base (`base`) |
+| :--- | :--- | :--- | :---: |
+| **Solarian Hegemony** (`#22c55e`) | Industrial Titanium & Cyan Plasma | -20% Turret CD, +25% Harvester Yield | ![Solarian Base](assets/concept_art/solarian_base.jpg) |
+| **Krynn Swarm** (`#a855f7`) | Biological Chitin & Acid Sacs | -20% Cost, +25% Speed, Passive Regen | ![Krynn Base](assets/concept_art/krynn_flagship.jpg) |
+| **Nexus Protocol** (`#06b6d4`) | Quantum Ceramic & Levitating Rings | +3.0 E/s Base Income, +1 Turret Range | ![Nexus Base](assets/concept_art/nexus_flagship.jpg) |
+| **Aethelian Enclave** (`#eab308`) | Psionic Alabaster & Solar Gold | 2x Purification Rate, +1 Base Territory Hop | ![Aethelian Base](assets/concept_art/aethelian_flagship.jpg) |
+| **Vorash Scavengers** (`#f97316`) | Welded Scrap, Rust & Diesel | +35 E Kill Bounty, 2x Structure Damage | ![Vorash Base](assets/concept_art/vorash_flagship.jpg) |
+| **Titanforge Lithoids** (`#78716c`) | Volcanic Basalt & Magma Channels | Walls at 48% Cost (12 E), 20% Damage Reduction | ![Titanforge Base](assets/concept_art/titanforge_flagship.jpg) |
+| **Zephyrian Nomads** (`#38bdf8`) | Aerodynamic Composite & Solar Sails | 30% Attack Evasion, +15% Unit Speed | ![Zephyrian Base](assets/concept_art/zephyrian_flagship.jpg) |
+| **Umbral Parasites** (`#831843`) | Obsidian Shards & Weeping Void Matter | +0.5 E/s Corrupt Node Income, 30% Reanimate | ![Umbral Base](assets/concept_art/umbral_flagship.jpg) |
+
+> 🎨 **[Explore the Complete 48-Piece Faction Kits & Concept Art Compendium](docs/RACES_VISUAL_COMPENDIUM.md)**: Exhaustive visual catalog detailing all 5 core buildings (`base`, `turret`, `harvester`, `wall`, `purifier`) and unique doctrinal combat units for every race.
 
 ---
 
