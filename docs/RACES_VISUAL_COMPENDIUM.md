@@ -96,9 +96,9 @@ This document establishes the **canonical visual identity**, color palettes, arc
 * **Gameplay Trait:** Double purification rate (30 pts/s), starts with 3 influence hops.
 
 ### Complete Aethelian Kit:
-| Base | Turret | Harvester | Wall | Purifier | Archon Strider |
+| Base | Turret | Harvester | Wall | Purifier | Archon Ophanim |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/aethelian_flagship.jpg) | ![Turret](../assets/concept_art/aethelian_turret.jpg) | ![Harvester](../assets/concept_art/aethelian_harvester.jpg) | ![Wall](../assets/concept_art/aethelian_wall.jpg) | ![Purifier](../assets/concept_art/aethelian_purifier.jpg) | ![Archon Strider](../assets/concept_art/aethelian_archon_strider.jpg) |
+| ![Base](../assets/concept_art/aethelian_flagship.jpg) | ![Turret](../assets/concept_art/aethelian_turret.jpg) | ![Harvester](../assets/concept_art/aethelian_harvester.jpg) | ![Wall](../assets/concept_art/aethelian_wall.jpg) | ![Purifier](../assets/concept_art/aethelian_purifier.jpg) | ![Archon Ophanim](../assets/concept_art/aethelian_archon_ophanim.jpg) |
 
 1. **Base (`base`)**: *Solar Temple Monolith* — Sacred alabaster spire with levitating sun-disc halo channeling planetary psionic energy.
 2. **Turret (`turret`)**: *Solar Ray Prism Obelisk* — Suspended amber crystal discharging focused beams of searing solar plasma.
@@ -106,7 +106,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 4. **Wall (`wall`)**: *Sacred Alabaster Screen* — Carved stone barrier projecting amber psionic kinetic deflection grids.
 5. **Purifier (`purifier`)**: *Beacon of Transcendence* — Massive tiered temple channeling a celestial flame pillar.
 6. **Doctrinal Units**:
-   - *Archon Strider* (Heavy, 120 HP): Tall psionic titan enclosed in a radiant golden spherical aura.
+   - *Archon Ophanim* (Heavy, 120 HP): Purely non-humanoid celestial war engine composed of concentric gyroscopic golden rings with glowing runic script, an amber octahedron solar eye core, and detached levitating alabaster wing blades.
    - *Psionic Disciple* (Light, 50 HP): Levitate disciples with guided plasma staves.
 
 ---

@@ -189,17 +189,17 @@ const RACES_CATALOG: Dictionary = {
 		},
 		"unique_unit": {
 			"type": "archon_strider",
-			"name": "Archon Strider",
+			"name": "Archon Ophanim",
 			"hp": 120.0,
 			"max_hp": 120.0,
 			"speed": 0.50,
 			"damage": 22.0,
-			"trait": "Emite campos de energía psiónica al avanzar.",
+			"trait": "Constructo celestial de anillos giroscópicos y núcleo solar.",
 		},
 		"squad_doctrine": {
 			"name": "Psionic Phalanx",
 			"units": [
-				{"archetype": "archon_strider", "name": "Archon Strider", "hp": 120.0, "max_hp": 120.0, "speed": 0.50, "damage": 22.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.2},
+				{"archetype": "archon_strider", "name": "Archon Ophanim", "hp": 120.0, "max_hp": 120.0, "speed": 0.50, "damage": 22.0, "role": "heavy", "spawn_delay": 0.0, "scale": 1.2},
 				{"archetype": "psionic_disciple", "name": "Psionic Disciple", "hp": 50.0, "max_hp": 50.0, "speed": 0.65, "damage": 10.0, "role": "light", "spawn_delay": 0.35, "scale": 0.8},
 				{"archetype": "psionic_disciple", "name": "Psionic Disciple", "hp": 50.0, "max_hp": 50.0, "speed": 0.65, "damage": 10.0, "role": "light", "spawn_delay": 0.70, "scale": 0.8},
 			],
