@@ -45,8 +45,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ## 2. Krynn Swarm (`krynn`)
 * **Archetype:** Biological Insectoid / Swarm Growth
 * **Base Color:** `#a855f7` (Biological Purple & Toxic Lime Green)
-* **Materials:** Segmented purple-black chitin carapaces, translucent bioluminescent acid sacs, organic bone barbs.
-* **In-Engine Status:** Concept Art 100% Complete; 3D generation pending.
+* **In-Engine Status:** **100% Implemented in 3D & Concept Art (`assets/models/krynn_*.obj`)**
 * **Gameplay Trait:** Buildings 20% cheaper, units 25% faster with 1.5 HP/s passive regeneration.
 
 ### Complete Krynn Kit:

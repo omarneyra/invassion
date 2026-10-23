@@ -1,0 +1,30 @@
+# Materials for Invassion Krynn Swarm (Organic Bio-PBR Spec)
+
+newmtl Mat_KrynnChitin
+Ka 0.15 0.08 0.22
+Kd 0.24 0.12 0.35
+Ks 0.85 0.80 0.95
+Ns 60.0
+d 1.0
+
+newmtl Mat_KrynnFlesh
+Ka 0.28 0.08 0.18
+Kd 0.45 0.15 0.28
+Ks 0.35 0.25 0.30
+Ns 20.0
+d 1.0
+
+newmtl Mat_KrynnAcid
+Ka 0.35 0.85 0.10
+Kd 0.50 0.92 0.15
+Ks 0.20 0.80 0.20
+Ke 0.65 1.00 0.20
+Ns 80.0
+d 1.0
+
+newmtl Mat_KrynnBone
+Ka 0.70 0.68 0.62
+Kd 0.85 0.82 0.76
+Ks 0.50 0.48 0.45
+Ns 35.0
+d 1.0

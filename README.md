@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-0.7.0-blue.svg)
 ![Godot](https://img.shields.io/badge/engine-Godot%204.x-478cbf.svg)
-![Python](https://img.shields.io/badge/tests-92%20passing%20(<0.20s)-success.svg)
+![Python](https://img.shields.io/badge/tests-100%20passing%20(<0.25s)-success.svg)
 ![Architecture](https://img.shields.io/badge/style-pure%20procedural%20%7C%20no%20OOP-orange.svg)
 
 **invassion** is a 3D real-time strategy and planetary defense game played across a continuous geodetic spherical grid (icosphere). Combining macro-economic expansion and base management (*Age of Empires*, *StarCraft*) with geodesic lane defense and tactical positioning (*Plants vs. Zombies*), the game challenges players to command planetary empires, expand territorial influence, research technological advancements, and orchestrate military invasions across a living 3D world.
@@ -52,7 +52,7 @@ The codebase strictly adheres to a **data-oriented, pure procedural architecture
 * **Zero OOP Bloat**: No class inheritance hierarchies, no stateful object instances, and no hidden mutation.
 * **Flat Data Schemas**: All game state lives in plain dictionaries and arrays, ensuring 100% serializability and simple debugging.
 * **Dual Python & GDScript Parity**: All mathematical, territorial, combat, and AI algorithms are implemented in pure Python (`logic/`) and mirrored in GDScript (`scripts/logic/`).
-* **Instant TDD Unit Tests**: 92 unit tests execute in under **200 milliseconds** (`./run_tests.sh`) without requiring engine or graphics initialization.
+* **Instant TDD Unit Tests**: 100 unit tests execute in under **250 milliseconds** (`./run_tests.sh`) without requiring engine or graphics initialization.
 
 ---
 
@@ -62,7 +62,7 @@ The codebase strictly adheres to a **data-oriented, pure procedural architecture
 ```bash
 ./run_tests.sh
 ```
-Executes all 92 unit tests across graph mathematics, territorial influence, economic cycles, combat resolution, AI decisions, building models, and save systems.
+Executes all 100 unit tests across graph mathematics, territorial influence, economic cycles, combat resolution, AI decisions, building models, and save systems.
 
 ### Running the Game
 Open the project directory in **Godot 4.x** and press **F5** (or open `scenes/main.tscn`).
