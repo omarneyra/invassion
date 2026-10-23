@@ -160,13 +160,13 @@ This document establishes the **canonical visual identity**, color palettes, arc
 * **Archetype:** Sky Nomads / Atmospheric Agility
 * **Base Color:** `#38bdf8` (Sky Blue, White Composite & Carbon Fiber)
 * **Materials:** Aerodynamic composite fairings, woven carbon-fiber hydrofoils, cyan repulsor rings, holographic solar sails.
-* **In-Engine Status:** Base Concept Art Complete; Kit specifications ready.
+* **In-Engine Status:** Complete Concept Kit (6/6 assets generated); 3D procedural models pending.
 * **Gameplay Trait:** 30% complete attack evasion chance, units move 15% faster.
 
 ### Zephyrian Kit:
 | Base | Turret | Harvester | Wall | Purifier | Storm Skimmer |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/zephyrian_flagship.jpg) | *(Generating)* | *(Generating)* | *(Generating)* | *(Generating)* | *(Generating)* |
+| ![Base](../assets/concept_art/zephyrian_flagship.jpg) | ![Turret](../assets/concept_art/zephyrian_turret.jpg) | ![Harvester](../assets/concept_art/zephyrian_harvester.jpg) | ![Wall](../assets/concept_art/zephyrian_wall.jpg) | ![Purifier](../assets/concept_art/zephyrian_purifier.jpg) | ![Storm Skimmer](../assets/concept_art/zephyrian_storm_skimmer.jpg) |
 
 1. **Base (`base`)**: *Aerodynamic Sky Spire* — Arrowhead composite tower with solar hydrofoil masts and air docking bays.
 2. **Turret (`turret`)**: *Sonic Vortex Cannon* — Fluid acceleration turbine firing focused atmospheric shockwaves.
@@ -174,7 +174,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 4. **Wall (`wall`)**: *Kinetic Flow Deflector* — Aerodynamic winglet panels deflecting incoming projectiles with compressed wind curtains.
 5. **Purifier (`purifier`)**: *Ozone Tempest Disperser* — High-velocity fan dispersing ozone micro-cyclones.
 6. **Doctrinal Units**:
-   - *Storm Skimmer* (Light, 70 HP): High-speed atmospheric skimmer bypassing ground terrain obstacles.
+   - *Storm Skimmer* (Light, 70 HP): Supersonic non-humanoid mechanical manta-ray combat skimmer drone bypassing ground terrain obstacles.
 
 ---
 
