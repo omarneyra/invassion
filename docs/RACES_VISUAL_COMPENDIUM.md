@@ -138,21 +138,21 @@ This document establishes the **canonical visual identity**, color palettes, arc
 * **Archetype:** Mineral Lithoids / Fortification Masters
 * **Base Color:** `#78716c` (Basalt Gray, Obsidian & Glowing Magma)
 * **Materials:** Chiseled basalt megaliths, granite blocks, obsidian slabs, glowing molten lava channels.
-* **In-Engine Status:** Concept Art: Base, Turret, Harvester generated; Wall, Purifier, Unit in progress.
+* **In-Engine Status:** Concept Art 100% Complete; 3D generation pending.
 * **Gameplay Trait:** Walls cost 52% less (12 E instead of 25 E), 20% passive global damage reduction.
 
-### Titanforge Kit (In Progress):
+### Complete Titanforge Kit:
 | Base | Turret | Harvester | Wall | Purifier | Juggernaut Colossus |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/titanforge_flagship.jpg) | ![Turret](../assets/concept_art/titanforge_turret.jpg) | ![Harvester](../assets/concept_art/titanforge_harvester.jpg) | *(Generating)* | *(Generating)* | *(Generating)* |
+| ![Base](../assets/concept_art/titanforge_flagship.jpg) | ![Turret](../assets/concept_art/titanforge_turret.jpg) | ![Harvester](../assets/concept_art/titanforge_harvester.jpg) | ![Wall](../assets/concept_art/titanforge_wall.jpg) | ![Purifier](../assets/concept_art/titanforge_purifier.jpg) | ![Juggernaut](../assets/concept_art/titanforge_juggernaut.jpg) |
 
-1. **Base (`base`)**: *Cyclopean Basalt Citadel* — Colossal stepped ziggurat with magma melting crucibles.
+1. **Base (`base`)**: *Cyclopean Basalt Citadel* — Colossal stepped ziggurat with magma melting crucibles and ash chimneys.
 2. **Turret (`turret`)**: *Volcanic Magma Mortar* — Wide-bore stone mortar lobbing burning lava bombs.
 3. **Extractor (`harvester`)**: *Geothermal Stone Forge* — Massive stone counterweight pump harnessing volcanic veins.
-4. **Wall (`wall`)**: *Cyclopean Megalith Rampart* — Interlocking mortise-and-tenon granite blocks.
-5. **Purifier (`purifier`)**: *Seismic Crystallization Spire* — Low-frequency harmonic resonator vitrifying corrupt terrain.
+4. **Wall (`wall`)**: *Cyclopean Megalith Rampart* — Interlocking mortise-and-tenon granite blocks with glowing lava seams.
+5. **Purifier (`purifier`)**: *Seismic Crystallization Spire* — Low-frequency harmonic resonator with floating geode vitrifying corrupt terrain.
 6. **Doctrinal Units**:
-   - *Juggernaut Colossus* (Heavy, 260 HP): Walking granite megalith with molten core that shrugs off crossfire.
+   - *Juggernaut Colossus* (Heavy, 260 HP): Quadrupedal living tectonic siege behemoth carved from basalt with volcanic dorsal vents and battering ram head.
 
 ---
 
