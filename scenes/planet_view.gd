@@ -560,109 +560,80 @@ func _apply_krynn_materials(mi: MeshInstance3D, fact_armor: StandardMaterial3D) 
 	# Surface 3: Mat_KrynnBone
 	mi.set_surface_override_material(3, mat_krynn_bone)
 
+func get_race_glow_color(race_id: String) -> Color:
+	match race_id.to_lower():
+		"solarian": return Color("#00f5ff")
+		"krynn": return Color("#84cc16")
+		"nexus": return Color("#06b6d4")
+		"titanforge": return Color("#f97316")
+		"umbral": return Color("#a855f7")
+		"zephyrian": return Color("#38bdf8")
+		"vorash": return Color("#eab308")
+		"aethelian": return Color("#facc15")
+		_: return Color("#00f5ff")
+
 func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String = "", race_id: String = "solarian") -> Node3D:
 	var root = Node3D.new()
+	var clean_race = race_id.to_lower()
+	var glow_color = Color(color_hex) if color_hex != "" else get_race_glow_color(clean_race)
 	var fact_armor: StandardMaterial3D = get_faction_armor_material(faction_id, color_hex)
-	var is_krynn: bool = (race_id == "krynn")
-	var glow_color: Color = Color("#84cc16") if is_krynn else Color("#00f5ff")
 
-	if btype == "base":
-		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_KRYNN_BASE if is_krynn else MESH_BASE
-		mi.scale = Vector3(1.10, 1.10, 1.10)
-		if is_krynn:
-			_apply_krynn_materials(mi, fact_armor)
-		else:
-			_apply_building_materials(mi, fact_armor)
-		root.add_child(mi)
+	# 1. Cargar el modelo 3D GLB real de la raza
+	var model_path = "res://assets/models/%s/%s_%s.glb" % [clean_race, clean_race, btype]
+	if not ResourceLoader.exists(model_path):
+		model_path = "res://assets/models/solarian/solarian_%s.glb" % btype
 
-		var light = OmniLight3D.new()
-		light.light_color = glow_color
-		light.light_energy = 0.7 if is_krynn else 0.6
-		light.omni_range = 1.8
-		light.position = Vector3(0, 0.40, 0)
-		root.add_child(light)
-
-	elif btype == "turret":
-		if not is_krynn:
-			var turret_inst = SCENE_SOLARIAN_TURRET.instantiate()
-			turret_inst.scale = Vector3(0.52, 0.52, 0.52)
-			var anim = turret_inst.get_node_or_null("AnimationPlayer")
+	if ResourceLoader.exists(model_path):
+		var packed = load(model_path)
+		if packed:
+			var inst = packed.instantiate()
+			var s = 0.50
+			if btype == "base": s = 0.55
+			elif btype == "turret": s = 0.46
+			elif btype == "wall": s = 0.42
+			elif btype == "harvester": s = 0.48
+			elif btype == "purifier": s = 0.52
+			inst.scale = Vector3(s, s, s)
+			var anim = inst.get_node_or_null("AnimationPlayer")
 			if anim and anim.has_animation("idle"):
 				anim.play("idle")
-			root.add_child(turret_inst)
-
-			var light = OmniLight3D.new()
-			light.light_color = Color("#00f5ff")
-			light.light_energy = 0.85
-			light.omni_range = 1.8
-			light.position = Vector3(0, 0.65, 0.2)
-			root.add_child(light)
-		else:
-			var mi = MeshInstance3D.new()
-			mi.mesh = MESH_KRYNN_TURRET
-			mi.scale = Vector3(1.10, 1.10, 1.10)
-			_apply_krynn_materials(mi, fact_armor)
-			root.add_child(mi)
+			root.add_child(inst)
 
 			var light = OmniLight3D.new()
 			light.light_color = glow_color
-			light.light_energy = 0.55
-			light.omni_range = 1.4
-			light.position = Vector3(0, 0.32, 0.22)
+			light.light_energy = 0.85
+			light.omni_range = 1.8
+			light.position = Vector3(0, 0.40, 0.1)
 			root.add_child(light)
+			return root
 
+	# Fallback a primitivas si no existe el glb
+	var is_krynn: bool = (clean_race == "krynn")
+	var mi = MeshInstance3D.new()
+	if btype == "base":
+		mi.mesh = MESH_KRYNN_BASE if is_krynn else MESH_BASE
+	elif btype == "turret":
+		mi.mesh = MESH_KRYNN_TURRET if is_krynn else MESH_TURRET
 	elif btype == "harvester":
-		var mi = MeshInstance3D.new()
 		mi.mesh = MESH_KRYNN_HARVESTER if is_krynn else MESH_HARVESTER
-		mi.scale = Vector3(1.10, 1.10, 1.10)
-		if is_krynn:
-			_apply_krynn_materials(mi, fact_armor)
-		else:
-			_apply_building_materials(mi, fact_armor)
-		root.add_child(mi)
-
-		var light = OmniLight3D.new()
-		light.light_color = glow_color
-		light.light_energy = 0.6 if is_krynn else 0.5
-		light.omni_range = 1.6
-		light.position = Vector3(0, 0.32, 0)
-		root.add_child(light)
-
 	elif btype == "wall":
-		var mi = MeshInstance3D.new()
 		mi.mesh = MESH_KRYNN_WALL if is_krynn else MESH_WALL
-		mi.scale = Vector3(1.10, 1.10, 1.10)
-		if is_krynn:
-			_apply_krynn_materials(mi, fact_armor)
-		else:
-			_apply_building_materials(mi, fact_armor)
-		root.add_child(mi)
-
-		var light = OmniLight3D.new()
-		light.light_color = glow_color
-		light.light_energy = 0.5 if is_krynn else 0.4
-		light.omni_range = 1.2
-		light.position = Vector3(0, 0.25, 0)
-		root.add_child(light)
-
 	elif btype == "purifier":
-		var mi = MeshInstance3D.new()
 		mi.mesh = MESH_KRYNN_PURIFIER if is_krynn else MESH_PURIFIER
-		mi.scale = Vector3(1.10, 1.10, 1.10)
-		if is_krynn:
-			_apply_krynn_materials(mi, fact_armor)
-		else:
-			_apply_building_materials(mi, fact_armor)
-		root.add_child(mi)
 
-		var light = OmniLight3D.new()
-		light.light_color = glow_color
-		light.light_energy = 0.7 if is_krynn else 0.6
-		light.omni_range = 2.0
-		light.position = Vector3(0, 0.50, 0)
-		root.add_child(light)
+	mi.scale = Vector3(1.10, 1.10, 1.10)
+	if is_krynn:
+		_apply_krynn_materials(mi, fact_armor)
+	else:
+		_apply_building_materials(mi, fact_armor)
+	root.add_child(mi)
 
+	var light = OmniLight3D.new()
+	light.light_color = glow_color
+	light.light_energy = 0.6
+	light.omni_range = 1.6
+	light.position = Vector3(0, 0.35, 0)
+	root.add_child(light)
 	return root
 
 func _create_crater_3d() -> Node3D:
@@ -775,28 +746,37 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		custom_mat.emission = col.darkened(0.15)
 		custom_mat.emission_energy_multiplier = 1.3
 
-	if archetype == "vanguard":
-		var mech_inst = SCENE_SOLARIAN_VANGUARD.instantiate()
-		mech_inst.scale = Vector3(scale_val * 0.38, scale_val * 0.38, scale_val * 0.38)
-		var anim = mech_inst.get_node_or_null("AnimationPlayer")
-		if anim and anim.has_animation("idle"):
-			anim.play("idle")
-		root.add_child(mech_inst)
-		return root
+	var doctrinal_units = {
+		"vanguard": "solarian/solarian_vanguard.glb",
+		"ravager": "krynn/krynn_ravager.glb",
+		"railgun_mech": "nexus/nexus_railgun_mech.glb",
+		"juggernaut": "titanforge/titanforge_juggernaut.glb",
+		"void_infestor": "umbral/umbral_void_infestor.glb",
+		"storm_skimmer": "zephyrian/zephyrian_storm_skimmer.glb",
+		"scrap_tank": "vorash/vorash_scrap_tank.glb",
+		"archon_ophanim": "aethelian/aethelian_archon_ophanim.glb",
+		"psionic_disciple": "aethelian/aethelian_archon_ophanim.glb"
+	}
 
-	elif archetype == "marine":
+	if doctrinal_units.has(archetype):
+		var path = "res://assets/models/" + doctrinal_units[archetype]
+		if ResourceLoader.exists(path):
+			var packed = load(path)
+			if packed:
+				var inst = packed.instantiate()
+				var s = scale_val * 0.40
+				inst.scale = Vector3(s, s, s)
+				var anim = inst.get_node_or_null("AnimationPlayer")
+				if anim and anim.has_animation("idle"):
+					anim.play("idle")
+				root.add_child(inst)
+				return root
+
+	if archetype == "marine":
 		var mi = MeshInstance3D.new()
 		mi.mesh = MESH_MARINE
 		mi.scale = Vector3(scale_val, scale_val, scale_val)
 		_apply_building_materials(mi, custom_mat if custom_mat != null else mat_turret)
-		root.add_child(mi)
-		return root
-
-	elif archetype == "ravager":
-		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_KRYNN_RAVAGER
-		mi.scale = Vector3(scale_val, scale_val, scale_val)
-		_apply_krynn_materials(mi, custom_mat)
 		root.add_child(mi)
 		return root
 
