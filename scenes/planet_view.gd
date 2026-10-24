@@ -579,6 +579,8 @@ func _tune_pbr_materials(node: Node) -> void:
 			for s in range(m.get_surface_count()):
 				var active_mat = node.get_active_material(s)
 				if active_mat is StandardMaterial3D or active_mat is ORMMaterial3D:
+					if active_mat.resource_name != "" and not active_mat.resource_name.begins_with("Material"):
+						continue
 					var tuned = active_mat.duplicate()
 					if tuned.metallic > 0.60:
 						tuned.metallic = 0.45
@@ -621,9 +623,9 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 
 			var light = OmniLight3D.new()
 			light.light_color = glow_color
-			light.light_energy = 1.35
-			light.omni_range = 2.4
-			light.position = Vector3(0, 0.55, 0.15)
+			light.light_energy = 0.35
+			light.omni_range = 0.9
+			light.position = Vector3(0, 0.35, 0)
 			root.add_child(light)
 			return root
 
