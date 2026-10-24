@@ -572,6 +572,25 @@ func get_race_glow_color(race_id: String) -> Color:
 		"aethelian": return Color("#facc15")
 		_: return Color("#00f5ff")
 
+func _tune_pbr_materials(node: Node) -> void:
+	if node is MeshInstance3D:
+		var m = node.mesh
+		if m:
+			for s in range(m.get_surface_count()):
+				var active_mat = node.get_active_material(s)
+				if active_mat is StandardMaterial3D or active_mat is ORMMaterial3D:
+					var tuned = active_mat.duplicate()
+					if tuned.metallic > 0.60:
+						tuned.metallic = 0.45
+					if tuned.roughness < 0.35:
+						tuned.roughness = 0.45
+					tuned.rim_enabled = true
+					tuned.rim = 0.65
+					tuned.rim_tint = 0.40
+					node.set_surface_override_material(s, tuned)
+	for child in node.get_children():
+		_tune_pbr_materials(child)
+
 func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String = "", race_id: String = "solarian") -> Node3D:
 	var root = Node3D.new()
 	var clean_race = race_id.to_lower()
@@ -587,12 +606,13 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 		var packed = load(model_path)
 		if packed:
 			var inst = packed.instantiate()
-			var s = 0.50
-			if btype == "base": s = 0.55
-			elif btype == "turret": s = 0.46
-			elif btype == "wall": s = 0.42
-			elif btype == "harvester": s = 0.48
-			elif btype == "purifier": s = 0.52
+			_tune_pbr_materials(inst)
+			var s = 0.58
+			if btype == "base": s = 0.68
+			elif btype == "turret": s = 0.58
+			elif btype == "wall": s = 0.54
+			elif btype == "harvester": s = 0.56
+			elif btype == "purifier": s = 0.60
 			inst.scale = Vector3(s, s, s)
 			var anim = inst.get_node_or_null("AnimationPlayer")
 			if anim and anim.has_animation("idle"):
@@ -601,9 +621,9 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 
 			var light = OmniLight3D.new()
 			light.light_color = glow_color
-			light.light_energy = 0.85
-			light.omni_range = 1.8
-			light.position = Vector3(0, 0.40, 0.1)
+			light.light_energy = 1.35
+			light.omni_range = 2.4
+			light.position = Vector3(0, 0.55, 0.15)
 			root.add_child(light)
 			return root
 
@@ -764,7 +784,8 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 			var packed = load(path)
 			if packed:
 				var inst = packed.instantiate()
-				var s = scale_val * 0.40
+				_tune_pbr_materials(inst)
+				var s = scale_val * 0.55
 				inst.scale = Vector3(s, s, s)
 				var anim = inst.get_node_or_null("AnimationPlayer")
 				if anim and anim.has_animation("idle"):
