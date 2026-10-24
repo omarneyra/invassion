@@ -8,14 +8,14 @@ This document establishes the **canonical visual identity**, color palettes, arc
 
 | Faction | Theme | Command Base (`base`) |
 | :--- | :--- | :---: |
-| **Solarian Hegemony** | Industrial Titanium & Cyan Plasma | ![Solarian Base](../assets/concept_art/solarian_base.jpg) |
-| **Krynn Swarm** | Biological Chitin & Acid Sacs | ![Krynn Base](../assets/concept_art/krynn_flagship.jpg) |
-| **Nexus Protocol** | Quantum Ceramic & Levitating Rings | ![Nexus Base](../assets/concept_art/nexus_flagship.jpg) |
-| **Aethelian Enclave** | Psionic Alabaster & Solar Gold | ![Aethelian Base](../assets/concept_art/aethelian_flagship.jpg) |
-| **Vorash Scavengers** | Welded Scrap, Rust & Diesel | ![Vorash Base](../assets/concept_art/vorash_flagship.jpg) |
-| **Titanforge Lithoids** | Volcanic Basalt & Magma Channels | ![Titanforge Base](../assets/concept_art/titanforge_flagship.jpg) |
-| **Zephyrian Nomads** | Aerodynamic Composite & Solar Sails | ![Zephyrian Base](../assets/concept_art/zephyrian_flagship.jpg) |
-| **Umbral Parasites** | Obsidian Shards & Void Matter | ![Umbral Base](../assets/concept_art/umbral_flagship.jpg) |
+| **Solarian Hegemony** | Industrial Titanium & Cyan Plasma | ![Solarian Base](../assets/concept_art/solarian/solarian_base.jpg) |
+| **Krynn Swarm** | Biological Chitin & Acid Sacs | ![Krynn Base](../assets/concept_art/krynn/krynn_flagship.jpg) |
+| **Nexus Protocol** | Quantum Ceramic & Levitating Rings | ![Nexus Base](../assets/concept_art/nexus/nexus_flagship.jpg) |
+| **Aethelian Enclave** | Psionic Alabaster & Solar Gold | ![Aethelian Base](../assets/concept_art/aethelian/aethelian_flagship.jpg) |
+| **Vorash Scavengers** | Welded Scrap, Rust & Diesel | ![Vorash Base](../assets/concept_art/vorash/vorash_flagship.jpg) |
+| **Titanforge Lithoids** | Volcanic Basalt & Magma Channels | ![Titanforge Base](../assets/concept_art/titanforge/titanforge_flagship.jpg) |
+| **Zephyrian Nomads** | Aerodynamic Composite & Solar Sails | ![Zephyrian Base](../assets/concept_art/zephyrian/zephyrian_flagship.jpg) |
+| **Umbral Parasites** | Obsidian Shards & Void Matter | ![Umbral Base](../assets/concept_art/umbral/umbral_flagship.jpg) |
 
 ---
 
@@ -29,7 +29,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Complete Solarian Kit:
 | Base | Turret | Harvester | Wall | Purifier | Vanguard Mech |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/solarian_base.jpg) | ![Turret](../assets/concept_art/solarian_turret.jpg) | ![Harvester](../assets/concept_art/solarian_harvester.jpg) | ![Wall](../assets/concept_art/solarian_wall.jpg) | ![Purifier](../assets/concept_art/solarian_purifier.jpg) | ![Vanguard](../assets/concept_art/solarian_vanguard.jpg) |
+| ![Base](../assets/concept_art/solarian/solarian_base.jpg) | ![Turret](../assets/concept_art/solarian/solarian_turret.jpg) | ![Harvester](../assets/concept_art/solarian/solarian_harvester.jpg) | ![Wall](../assets/concept_art/solarian/solarian_wall.jpg) | ![Purifier](../assets/concept_art/solarian/solarian_purifier.jpg) | ![Vanguard](../assets/concept_art/solarian/solarian_vanguard.jpg) |
 
 1. **Base (`base`)**: *Planetary Command Core* — Hexagonal bunker with perimeter forcefield emitter and telemetry array.
 2. **Turret (`turret`)**: *Pulse Defense Cannon* — Dual-barrel rapid-fire ballistic turret with copper induction rings.
@@ -51,7 +51,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Complete Krynn Kit:
 | Base | Turret | Harvester | Wall | Purifier | Ravager Beast |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/krynn_flagship.jpg) | ![Turret](../assets/concept_art/krynn_turret.jpg) | ![Harvester](../assets/concept_art/krynn_harvester.jpg) | ![Wall](../assets/concept_art/krynn_wall.jpg) | ![Purifier](../assets/concept_art/krynn_purifier.jpg) | ![Ravager](../assets/concept_art/krynn_ravager.jpg) |
+| ![Base](../assets/concept_art/krynn/krynn_flagship.jpg) | ![Turret](../assets/concept_art/krynn/krynn_turret.jpg) | ![Harvester](../assets/concept_art/krynn/krynn_harvester.jpg) | ![Wall](../assets/concept_art/krynn/krynn_wall.jpg) | ![Purifier](../assets/concept_art/krynn/krynn_purifier.jpg) | ![Ravager](../assets/concept_art/krynn/krynn_ravager.jpg) |
 
 1. **Base (`base`)**: *Swarm Matrix Spire* — Living organic hive spire with central pulsating venom heart and rooting tendrils.
 2. **Turret (`turret`)**: *Acid Spore Cannon* — Predatory insectoid maw spitting pressurized caustic acid globs.
@@ -74,7 +74,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Complete Nexus Kit:
 | Base | Turret | Harvester | Wall | Purifier | Railgun Automaton |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/nexus_flagship.jpg) | ![Turret](../assets/concept_art/nexus_turret.jpg) | ![Harvester](../assets/concept_art/nexus_harvester.jpg) | ![Wall](../assets/concept_art/nexus_wall.jpg) | ![Purifier](../assets/concept_art/nexus_purifier.jpg) | ![Railgun Mech](../assets/concept_art/nexus_railgun_mech.jpg) |
+| ![Base](../assets/concept_art/nexus/nexus_flagship.jpg) | ![Turret](../assets/concept_art/nexus/nexus_turret.jpg) | ![Harvester](../assets/concept_art/nexus/nexus_harvester.jpg) | ![Wall](../assets/concept_art/nexus/nexus_wall.jpg) | ![Purifier](../assets/concept_art/nexus/nexus_purifier.jpg) | ![Railgun Mech](../assets/concept_art/nexus/nexus_railgun_mech.jpg) |
 
 1. **Base (`base`)**: *Quantum Core Matrix* — White ceramic pylon surrounded by rotating levitation rings and holographic processing core.
 2. **Turret (`turret`)**: *Electromagnetic Railgun Accelerator* — Long-range precision magnetic accelerator cannon.
@@ -97,7 +97,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Complete Aethelian Kit:
 | Base | Turret | Harvester | Wall | Purifier | Archon Ophanim |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/aethelian_flagship.jpg) | ![Turret](../assets/concept_art/aethelian_turret.jpg) | ![Harvester](../assets/concept_art/aethelian_harvester.jpg) | ![Wall](../assets/concept_art/aethelian_wall.jpg) | ![Purifier](../assets/concept_art/aethelian_purifier.jpg) | ![Archon Ophanim](../assets/concept_art/aethelian_archon_ophanim.jpg) |
+| ![Base](../assets/concept_art/aethelian/aethelian_flagship.jpg) | ![Turret](../assets/concept_art/aethelian/aethelian_turret.jpg) | ![Harvester](../assets/concept_art/aethelian/aethelian_harvester.jpg) | ![Wall](../assets/concept_art/aethelian/aethelian_wall.jpg) | ![Purifier](../assets/concept_art/aethelian/aethelian_purifier.jpg) | ![Archon Ophanim](../assets/concept_art/aethelian/aethelian_archon_ophanim.jpg) |
 
 1. **Base (`base`)**: *Solar Temple Monolith* — Sacred alabaster spire with levitating sun-disc halo channeling planetary psionic energy.
 2. **Turret (`turret`)**: *Solar Ray Prism Obelisk* — Suspended amber crystal discharging focused beams of searing solar plasma.
@@ -120,7 +120,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Complete Vorash Kit:
 | Base | Turret | Harvester | Wall | Purifier | Scrap Tank |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/vorash_flagship.jpg) | ![Turret](../assets/concept_art/vorash_turret.jpg) | ![Harvester](../assets/concept_art/vorash_harvester.jpg) | ![Wall](../assets/concept_art/vorash_wall.jpg) | ![Purifier](../assets/concept_art/vorash_purifier.jpg) | ![Scrap Tank](../assets/concept_art/vorash_scrap_tank.jpg) |
+| ![Base](../assets/concept_art/vorash/vorash_flagship.jpg) | ![Turret](../assets/concept_art/vorash/vorash_turret.jpg) | ![Harvester](../assets/concept_art/vorash/vorash_harvester.jpg) | ![Wall](../assets/concept_art/vorash/vorash_wall.jpg) | ![Purifier](../assets/concept_art/vorash/vorash_purifier.jpg) | ![Scrap Tank](../assets/concept_art/vorash/vorash_scrap_tank.jpg) |
 
 1. **Base (`base`)**: *Fortified Scrap Bastion* — Irregular multi-level junk fortress with watchtowers and diesel smoke stacks.
 2. **Turret (`turret`)**: *Twin Recycled Flak Cannon* — Heavy dual-barrel cannon mounted on vehicle axle swivel.
@@ -143,7 +143,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Complete Titanforge Kit:
 | Base | Turret | Harvester | Wall | Purifier | Juggernaut Colossus |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/titanforge_flagship.jpg) | ![Turret](../assets/concept_art/titanforge_turret.jpg) | ![Harvester](../assets/concept_art/titanforge_harvester.jpg) | ![Wall](../assets/concept_art/titanforge_wall.jpg) | ![Purifier](../assets/concept_art/titanforge_purifier.jpg) | ![Juggernaut](../assets/concept_art/titanforge_juggernaut.jpg) |
+| ![Base](../assets/concept_art/titanforge/titanforge_flagship.jpg) | ![Turret](../assets/concept_art/titanforge/titanforge_turret.jpg) | ![Harvester](../assets/concept_art/titanforge/titanforge_harvester.jpg) | ![Wall](../assets/concept_art/titanforge/titanforge_wall.jpg) | ![Purifier](../assets/concept_art/titanforge/titanforge_purifier.jpg) | ![Juggernaut](../assets/concept_art/titanforge/titanforge_juggernaut.jpg) |
 
 1. **Base (`base`)**: *Cyclopean Basalt Citadel* — Colossal stepped ziggurat with magma melting crucibles and ash chimneys.
 2. **Turret (`turret`)**: *Volcanic Magma Mortar* — Wide-bore stone mortar lobbing burning lava bombs.
@@ -165,7 +165,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Zephyrian Kit:
 | Base | Turret | Harvester | Wall | Purifier | Storm Skimmer |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/zephyrian_flagship.jpg) | ![Turret](../assets/concept_art/zephyrian_turret.jpg) | ![Harvester](../assets/concept_art/zephyrian_harvester.jpg) | ![Wall](../assets/concept_art/zephyrian_wall.jpg) | ![Purifier](../assets/concept_art/zephyrian_purifier.jpg) | ![Storm Skimmer](../assets/concept_art/zephyrian_storm_skimmer.jpg) |
+| ![Base](../assets/concept_art/zephyrian/zephyrian_flagship.jpg) | ![Turret](../assets/concept_art/zephyrian/zephyrian_turret.jpg) | ![Harvester](../assets/concept_art/zephyrian/zephyrian_harvester.jpg) | ![Wall](../assets/concept_art/zephyrian/zephyrian_wall.jpg) | ![Purifier](../assets/concept_art/zephyrian/zephyrian_purifier.jpg) | ![Storm Skimmer](../assets/concept_art/zephyrian/zephyrian_storm_skimmer.jpg) |
 
 1. **Base (`base`)**: *Aerodynamic Sky Spire* — Arrowhead composite tower with solar hydrofoil masts and air docking bays.
 2. **Turret (`turret`)**: *Sonic Vortex Cannon* — Fluid acceleration turbine firing focused atmospheric shockwaves.
@@ -187,7 +187,7 @@ This document establishes the **canonical visual identity**, color palettes, arc
 ### Umbral Kit:
 | Base | Turret | Harvester | Wall | Purifier | Void Infestor |
 | :---: | :---: | :---: | :---: | :---: | :---: |
-| ![Base](../assets/concept_art/umbral_flagship.jpg) | ![Turret](../assets/concept_art/umbral_turret.jpg) | ![Harvester](../assets/concept_art/umbral_harvester.jpg) | ![Wall](../assets/concept_art/umbral_wall.jpg) | ![Purifier](../assets/concept_art/umbral_purifier.jpg) | ![Void Infestor](../assets/concept_art/umbral_void_infestor.jpg) |
+| ![Base](../assets/concept_art/umbral/umbral_flagship.jpg) | ![Turret](../assets/concept_art/umbral/umbral_turret.jpg) | ![Harvester](../assets/concept_art/umbral/umbral_harvester.jpg) | ![Wall](../assets/concept_art/umbral/umbral_wall.jpg) | ![Purifier](../assets/concept_art/umbral/umbral_purifier.jpg) | ![Void Infestor](../assets/concept_art/umbral/umbral_void_infestor.jpg) |
 
 1. **Base (`base`)**: *Void Eye Obelisk* — Levitation obelisk of obsidian shards surrounding a colossal dark cosmic eye core.
 2. **Turret (`turret`)**: *Umbral Spine Tentacle* — Retractable biomechanical tendril bursting from the earth to impale targets.

@@ -39,6 +39,8 @@ const MESH_WALL = preload("res://assets/models/wall.obj")
 const MESH_PURIFIER = preload("res://assets/models/purifier.obj")
 const MESH_VANGUARD = preload("res://assets/models/vanguard.obj")
 const MESH_MARINE = preload("res://assets/models/marine.obj")
+const SCENE_SOLARIAN_VANGUARD = preload("res://assets/models/solarian_vanguard.glb")
+const SCENE_SOLARIAN_TURRET = preload("res://assets/models/solarian_turret.glb")
 
 # Krynn Swarm Models
 const MESH_KRYNN_TURRET = preload("res://assets/models/krynn_turret.obj")
@@ -582,57 +584,30 @@ func _create_building_3d(btype: String, faction_id: int = 1, color_hex: String =
 		root.add_child(light)
 
 	elif btype == "turret":
-		if not is_krynn and use_tactical_tokens:
-			var base = MeshInstance3D.new()
-			var cyl = CylinderMesh.new()
-			cyl.top_radius = 0.44
-			cyl.bottom_radius = 0.50
-			cyl.height = 0.08
-			cyl.radial_segments = 16
-			base.mesh = cyl
-			base.material_override = mat_turret
-			base.position = Vector3(0, 0.04, 0)
-			root.add_child(base)
-
-			var ring = MeshInstance3D.new()
-			var r_mesh = CylinderMesh.new()
-			r_mesh.top_radius = 0.46
-			r_mesh.bottom_radius = 0.46
-			r_mesh.height = 0.02
-			r_mesh.radial_segments = 16
-			ring.mesh = r_mesh
-			ring.material_override = fact_armor
-			ring.position = Vector3(0, 0.08, 0)
-			root.add_child(ring)
-
-			var sprite = Sprite3D.new()
-			sprite.texture = TEX_TURRET_TOKEN
-			sprite.pixel_size = 0.0028
-			sprite.billboard = BaseMaterial3D.BILLBOARD_FIXED_Y
-			sprite.shaded = true
-			sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
-			sprite.position = Vector3(0, 0.65, 0)
-			root.add_child(sprite)
+		if not is_krynn:
+			var turret_inst = SCENE_SOLARIAN_TURRET.instantiate()
+			turret_inst.scale = Vector3(0.52, 0.52, 0.52)
+			var anim = turret_inst.get_node_or_null("AnimationPlayer")
+			if anim and anim.has_animation("idle"):
+				anim.play("idle")
+			root.add_child(turret_inst)
 
 			var light = OmniLight3D.new()
 			light.light_color = Color("#00f5ff")
-			light.light_energy = 1.4
-			light.omni_range = 2.4
-			light.position = Vector3(0, 0.55, 0.15)
+			light.light_energy = 0.85
+			light.omni_range = 1.8
+			light.position = Vector3(0, 0.65, 0.2)
 			root.add_child(light)
 		else:
 			var mi = MeshInstance3D.new()
-			mi.mesh = MESH_KRYNN_TURRET if is_krynn else MESH_TURRET
+			mi.mesh = MESH_KRYNN_TURRET
 			mi.scale = Vector3(1.10, 1.10, 1.10)
-			if is_krynn:
-				_apply_krynn_materials(mi, fact_armor)
-			else:
-				_apply_building_materials(mi, fact_armor)
+			_apply_krynn_materials(mi, fact_armor)
 			root.add_child(mi)
 
 			var light = OmniLight3D.new()
 			light.light_color = glow_color
-			light.light_energy = 0.55 if is_krynn else 0.45
+			light.light_energy = 0.55
 			light.omni_range = 1.4
 			light.position = Vector3(0, 0.32, 0.22)
 			root.add_child(light)
@@ -801,11 +776,12 @@ func _create_invader_3d(archetype: String, scale_val: float = 1.0, color_hex: St
 		custom_mat.emission_energy_multiplier = 1.3
 
 	if archetype == "vanguard":
-		var mi = MeshInstance3D.new()
-		mi.mesh = MESH_VANGUARD
-		mi.scale = Vector3(scale_val, scale_val, scale_val)
-		_apply_building_materials(mi, custom_mat if custom_mat != null else mat_turret)
-		root.add_child(mi)
+		var mech_inst = SCENE_SOLARIAN_VANGUARD.instantiate()
+		mech_inst.scale = Vector3(scale_val * 0.38, scale_val * 0.38, scale_val * 0.38)
+		var anim = mech_inst.get_node_or_null("AnimationPlayer")
+		if anim and anim.has_animation("idle"):
+			anim.play("idle")
+		root.add_child(mech_inst)
 		return root
 
 	elif archetype == "marine":

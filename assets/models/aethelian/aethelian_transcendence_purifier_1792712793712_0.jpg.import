@@ -1,0 +1,39 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://wnqck4p011fn"
+path.s3tc="res://.godot/imported/aethelian_transcendence_purifier_1792712793712_0.jpg-e5bcb2bd638684fa6a23e2bedec1f8dd.s3tc.ctex"
+path.etc2="res://.godot/imported/aethelian_transcendence_purifier_1792712793712_0.jpg-e5bcb2bd638684fa6a23e2bedec1f8dd.etc2.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "239d60c07ce6a3d0654509694a1caeda"
+}
+
+[deps]
+
+source_file="res://assets/models/aethelian/aethelian_transcendence_purifier_1792712793712_0.jpg"
+dest_files=["res://.godot/imported/aethelian_transcendence_purifier_1792712793712_0.jpg-e5bcb2bd638684fa6a23e2bedec1f8dd.s3tc.ctex", "res://.godot/imported/aethelian_transcendence_purifier_1792712793712_0.jpg-e5bcb2bd638684fa6a23e2bedec1f8dd.etc2.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

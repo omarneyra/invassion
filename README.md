@@ -33,16 +33,17 @@
 
 | Faction | Theme & Materials | Gameplay Trait | Flagship Base (`base`) |
 | :--- | :--- | :--- | :---: |
-| **Solarian Hegemony** (`#22c55e`) | Industrial Titanium & Cyan Plasma | -20% Turret CD, +25% Harvester Yield | ![Solarian Base](assets/concept_art/solarian_base.jpg) |
-| **Krynn Swarm** (`#a855f7`) | Biological Chitin & Acid Sacs | -20% Cost, +25% Speed, Passive Regen | ![Krynn Base](assets/concept_art/krynn_flagship.jpg) |
-| **Nexus Protocol** (`#06b6d4`) | Quantum Ceramic & Levitating Rings | +3.0 E/s Base Income, +1 Turret Range | ![Nexus Base](assets/concept_art/nexus_flagship.jpg) |
-| **Aethelian Enclave** (`#eab308`) | Psionic Alabaster & Solar Gold | 2x Purification Rate, +1 Base Territory Hop | ![Aethelian Base](assets/concept_art/aethelian_flagship.jpg) |
-| **Vorash Scavengers** (`#f97316`) | Welded Scrap, Rust & Diesel | +35 E Kill Bounty, 2x Structure Damage | ![Vorash Base](assets/concept_art/vorash_flagship.jpg) |
-| **Titanforge Lithoids** (`#78716c`) | Volcanic Basalt & Magma Channels | Walls at 48% Cost (12 E), 20% Damage Reduction | ![Titanforge Base](assets/concept_art/titanforge_flagship.jpg) |
-| **Zephyrian Nomads** (`#38bdf8`) | Aerodynamic Composite & Solar Sails | 30% Attack Evasion, +15% Unit Speed | ![Zephyrian Base](assets/concept_art/zephyrian_flagship.jpg) |
-| **Umbral Parasites** (`#831843`) | Obsidian Shards & Weeping Void Matter | +0.5 E/s Corrupt Node Income, 30% Reanimate | ![Umbral Base](assets/concept_art/umbral_flagship.jpg) |
+| **Solarian Hegemony** (`#22c55e`) | Industrial Titanium & Cyan Plasma | -20% Turret CD, +25% Harvester Yield | ![Solarian Base](assets/concept_art/solarian/solarian_base.jpg) |
+| **Krynn Swarm** (`#a855f7`) | Biological Chitin & Acid Sacs | -20% Cost, +25% Speed, Passive Regen | ![Krynn Base](assets/concept_art/krynn/krynn_flagship.jpg) |
+| **Nexus Protocol** (`#06b6d4`) | Quantum Ceramic & Levitating Rings | +3.0 E/s Base Income, +1 Turret Range | ![Nexus Base](assets/concept_art/nexus/nexus_flagship.jpg) |
+| **Aethelian Enclave** (`#eab308`) | Psionic Alabaster & Solar Gold | 2x Purification Rate, +1 Base Territory Hop | ![Aethelian Base](assets/concept_art/aethelian/aethelian_flagship.jpg) |
+| **Vorash Scavengers** (`#f97316`) | Welded Scrap, Rust & Diesel | +35 E Kill Bounty, 2x Structure Damage | ![Vorash Base](assets/concept_art/vorash/vorash_flagship.jpg) |
+| **Titanforge Lithoids** (`#78716c`) | Volcanic Basalt & Magma Channels | Walls at 48% Cost (12 E), 20% Damage Reduction | ![Titanforge Base](assets/concept_art/titanforge/titanforge_flagship.jpg) |
+| **Zephyrian Nomads** (`#38bdf8`) | Aerodynamic Composite & Solar Sails | 30% Attack Evasion, +15% Unit Speed | ![Zephyrian Base](assets/concept_art/zephyrian/zephyrian_flagship.jpg) |
+| **Umbral Parasites** (`#831843`) | Obsidian Shards & Weeping Void Matter | +0.5 E/s Corrupt Node Income, 30% Reanimate | ![Umbral Base](assets/concept_art/umbral/umbral_flagship.jpg) |
 
 > 🎨 **[Explore the Complete 48-Piece Faction Kits & Concept Art Compendium](docs/RACES_VISUAL_COMPENDIUM.md)**: Exhaustive visual catalog detailing all 5 core buildings (`base`, `turret`, `harvester`, `wall`, `purifier`) and unique doctrinal combat units for every race.
+> 🚀 **[Industrial 3D Generation Pipeline on AWS SageMaker](docs/PIPELINE_3D_SAGEMAKER.md)**: Complete guide to transforming 2D concept art into real-time PBR 3D `.glb` models using Stable Fast 3D on AWS SageMaker (`ml.g5.xlarge`).
 
 ---
 

@@ -1,0 +1,39 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://ctyhja180dxpq"
+path.s3tc="res://.godot/imported/harvester_rig_1792526016557_0.jpg-16ff92f3fa1d7c2abf216f6ffab37b34.s3tc.ctex"
+path.etc2="res://.godot/imported/harvester_rig_1792526016557_0.jpg-16ff92f3fa1d7c2abf216f6ffab37b34.etc2.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "521ed709e89b8bb54626861a1ed2aadd"
+}
+
+[deps]
+
+source_file="res://assets/models/solarian/harvester_rig_1792526016557_0.jpg"
+dest_files=["res://.godot/imported/harvester_rig_1792526016557_0.jpg-16ff92f3fa1d7c2abf216f6ffab37b34.s3tc.ctex", "res://.godot/imported/harvester_rig_1792526016557_0.jpg-16ff92f3fa1d7c2abf216f6ffab37b34.etc2.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0
